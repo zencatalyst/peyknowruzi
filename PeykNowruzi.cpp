@@ -31,60 +31,20 @@ class Character
 
 inline void gotoxy( const int(&coordArr)[2] );
 
+inline auto initialize( );
+
+inline auto getCoords( );
+
+inline void drawToScreen( const bool& clsState );
+
+inline void cleanUp( const bool& clsState );
+
 // --- main function ---
 int main()
 {
-	system( "cls" );
+	drawToScreen( true );
 
-	Character charForwardSlash( '/' );
-	Character charBackSlash( '\\' );
-	Character charVerticalSlash( '|' );
-	Character charDash( '-' );
-
-	unsigned int numOfSymbols;
-	cin >> numOfSymbols;
-
-	std::vector<int> coordVec( 4, 0 );
-	for ( unsigned int i = 0; i < numOfSymbols; ++i )
-	{
-		cin >> coordVec[0] >> coordVec[1] >> coordVec[2] >> coordVec[3];
-		char ch = Character::findCharType( coordVec );
-
-		if ( ch == '/' )
-		{
-			charForwardSlash.setVectorOfCoords( coordVec );
-		}
-		else if ( ch == '\\' )
-		{
-			charBackSlash.setVectorOfCoords( coordVec );
-		}
-		else if ( ch == '|' )
-		{
-			charVerticalSlash.setVectorOfCoords( coordVec );
-		}
-		else if ( ch == '-' )
-		{
-			charDash.setVectorOfCoords( coordVec );
-		}
-		else
-		{
-			// pass (do nothing!)
-		}
-
-	}
-
-	system( "cls" );
-
-	charForwardSlash.writeToConsole( );
-	charBackSlash.writeToConsole( );
-	charVerticalSlash.writeToConsole( );
-	charDash.writeToConsole( );
-
-	cin.get();
-	gotoxy( {0, 20} );
-	cin.get();
-
-	system( "cls" );
+	cleanUp( true );
 
 	return 0;
 }
@@ -214,4 +174,84 @@ inline void Character::writeToConsole( )
 inline void gotoxy( const int(&coordArr)[2] )
 {
 	printf( "%c[%d;%df", 0x1B, coordArr[1] + 1, coordArr[0] + 1);
+}
+
+inline auto initialize( )
+{
+	struct retVals
+	{
+		std::unique_ptr<Character> up2ForwardSlash, up2BackSlash, up2VerticalSlash, up2Dash;
+	};
+
+	return retVals { std::make_unique<Character>( '/' ), std::make_unique<Character>( '\\' ),
+						std::make_unique<Character>( '|' ), std::make_unique<Character>( '-' ) };
+}
+
+inline auto getCoords(  )
+{
+	auto uniquePtrs = initialize( );
+
+	unsigned int numOfSymbols;
+	cin >> numOfSymbols;
+
+	std::vector<int> coordVec( 4, 0 );
+	for ( unsigned int i = 0; i < numOfSymbols; ++i )
+	{
+		cin >> coordVec[0] >> coordVec[1] >> coordVec[2] >> coordVec[3];
+		char ch = Character::findCharType( coordVec );
+
+		if ( ch == '/' )
+		{
+			uniquePtrs.up2ForwardSlash->setVectorOfCoords( coordVec );
+		}
+		else if ( ch == '\\' )
+		{
+			uniquePtrs.up2BackSlash->setVectorOfCoords( coordVec );
+		}
+		else if ( ch == '|' )
+		{
+			uniquePtrs.up2VerticalSlash->setVectorOfCoords( coordVec );
+		}
+		else if ( ch == '-' )
+		{
+			uniquePtrs.up2Dash->setVectorOfCoords( coordVec );
+		}
+		else
+		{
+			// pass (do nothing!)
+		}
+
+	}
+
+	return uniquePtrs;
+}
+
+inline void drawToScreen( const bool& clsState )
+{
+	if ( clsState )
+	{
+		system( "cls" );
+	}
+
+	auto uniquePtrs = getCoords( );
+
+	system( "cls" );
+
+	uniquePtrs.up2ForwardSlash->writeToConsole( );
+	uniquePtrs.up2BackSlash->writeToConsole( );
+	uniquePtrs.up2VerticalSlash->writeToConsole( );
+	uniquePtrs.up2Dash->writeToConsole( );
+
+	cin.get();
+}
+
+inline void cleanUp( const bool& clsState )
+{
+	gotoxy( {0, 20} );
+	cin.get();
+
+	if ( clsState )
+	{
+		system( "cls" );
+	}
 }
