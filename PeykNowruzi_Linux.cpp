@@ -260,23 +260,21 @@ inline auto getCoords(  )
 
 inline void drawToScreen( const bool& clsState )
 {
-	/*
 	if ( clsState )
 	{
 		system( "clear" );
 	}
-	*/
 
 	auto uniquePtrs = getCoords( );
 
-	// system( "clear" );
+	system( "clear" );
 
 	uniquePtrs.up2ForwardSlash->writeToConsole( );
 	uniquePtrs.up2BackSlash->writeToConsole( );
 	uniquePtrs.up2VerticalSlash->writeToConsole( );
 	uniquePtrs.up2Dash->writeToConsole( );
 
-	// cin.get();
+	cin.get();
 }
 
 inline void cleanUp( const bool& clsState )
@@ -286,6 +284,6 @@ inline void cleanUp( const bool& clsState )
 
 	if ( clsState )
 	{
-		system( "cls" );
+		system( "clear" );
 	}
 }
