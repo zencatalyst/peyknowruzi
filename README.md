@@ -3,7 +3,7 @@
 Welcome to the REAMDME.md of PeykNowruzi.cpp
 
 Below you can see the instructions on how to interact with the program (PeykNowruzi.cpp).
-This program can draw your desired shapes using four characters ('/', '\', '|', '-') on the cmd screen given that you've provided the corect coordinates of each character.
+This program can draw your desired shapes using four characters ('/', '\\', '|', '-') on the cmd screen given that you've provided the corect coordinates of each character.
 
 
 How to use the program:
