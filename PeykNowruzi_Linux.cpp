@@ -193,13 +193,27 @@ inline auto getCoords(  )
 {
 	auto uniquePtrs = initialize( );
 
+	bool isAcceptable = true;
+
 	unsigned int numOfSymbols;
 	cin >> numOfSymbols;
 
 	std::vector<int> coordVec( 4, 0 );
 	for ( unsigned int i = 0; i < numOfSymbols; ++i )
 	{
-		cin >> coordVec[0] >> coordVec[1] >> coordVec[2] >> coordVec[3];
+		do
+		{
+			cin >> coordVec[0] >> coordVec[1] >> coordVec[2] >> coordVec[3];
+			if ( coordVec[0] > 168 || coordVec[2] > 168 )
+			{
+				isAcceptable = false;
+			}
+			else
+			{
+				isAcceptable = true;
+			}
+		} while ( !isAcceptable );
+
 		char ch = Character::findCharType( coordVec );
 
 		if ( ch == '/' )
