@@ -1,13 +1,15 @@
 "# magical-creations" 
 
-Welcome to the REAMDME.md of PeykNowruzi.cpp
+Welcome to the REAMDME.md of PeykNowruzi
 
-Below you can see the instructions on how to interact with the program (PeykNowruzi.cpp).
+Note: PeykNowruzi_Linux.cpp is slightly different compared to PeykNowruzi_Windows.cpp. The guide below describes how to interact with runPeykNowruzi_Windows.exe.
+
+Below you can see the instructions on how to interact with the program PeykNowruzi.
 This program can draw your desired shapes using four characters ('/', '\\', '|', '-') on the cmd screen given that you've provided the corect coordinates of each character.
 
 
 How to use the program:
-- Run the PeykNowruzi.exe file in Windows 10 Command Prompt
+- Run the runPeykNowruzi_Windows.exe file in Windows 10 Command Prompt
 - On the first line enter the number n of characters you want to be printed
 - Now you will need to give n lines of input to the program each one containing the initial and final coords (x, y) of each character
 - Enter 4 numbers on each line using this format: x1 y1 x2 y2
