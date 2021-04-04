@@ -1,4 +1,5 @@
-// Windows version (Not compatible with Linux or macOS)
+// Windows version (Not compatible with Linux or macOS  -- \
+	Modified version for Linux available at https://github.com/Kasra-coder/magical-creations)
 
 
 #include <iostream>
