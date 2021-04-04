@@ -1,3 +1,5 @@
+// Windows version (Not compatible with Linux or macOS)
+
 
 #include <iostream>
 #include <iomanip>
