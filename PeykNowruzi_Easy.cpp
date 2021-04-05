@@ -1,4 +1,5 @@
 // PeykNowruzi, easy implementation
+// repo available at https://github.com/Kasra-coder/magical-creations
 
 
 #include <iostream>
@@ -18,11 +19,11 @@ public:
 	inline CharMatrix( const CharMatrix& ) = delete;
 	CharMatrix& operator=( const CharMatrix& ) = delete;
 
-	inline const int& getY_DIM( );
-	inline const int& getX_DIM( );
+	inline const int& getY_DIM( ) const;
+	inline const int& getX_DIM( ) const;
 	inline std::vector<std::vector<char>>& getCharacterMatrix( );
 
-	inline void writeToConsole( );
+	inline void writeToConsole( ) const;
 
 	inline static char findCharType( const int(&coordArr)[4] );
 	inline static auto initialize( const char& ch );
@@ -52,12 +53,12 @@ inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM )
 {
 }
 
-inline const int& CharMatrix::getY_DIM( )
+inline const int& CharMatrix::getY_DIM( ) const
 {
 	return _Y_DIM;
 }
 
-inline const int& CharMatrix::getX_DIM( )
+inline const int& CharMatrix::getX_DIM( ) const
 {
 	return _X_DIM;
 }
@@ -67,7 +68,7 @@ inline std::vector<std::vector<char>>& CharMatrix::getCharacterMatrix( )
 	return _characterMatrix;
 }
 
-inline void CharMatrix::writeToConsole( )
+inline void CharMatrix::writeToConsole( ) const
 {
 	for ( int row = 0; row < _Y_DIM; row++ )
 	{
