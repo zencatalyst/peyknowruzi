@@ -22,12 +22,11 @@ public:
 	inline const int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( );
 
-	inline void writeToConsole( ) const;
 
 	inline static char findCharType( const int(&coordArr)[4] );
 	inline static auto initialize( const char& ch );
 	inline static auto getCoords( );
-	inline static void drawToScreen( );
+	inline static void writeToOutput( );
 
 private:
 	int _Y_DIM;
@@ -37,7 +36,7 @@ private:
 
 int main()
 {
-	CharMatrix::drawToScreen( );
+	CharMatrix::writeToOutput( );
 
 	return 0;
 }
@@ -89,17 +88,6 @@ inline const int& CharMatrix::getX_DIM( ) const
 inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( )
 {
 	return _characterMatrix;
-}
-
-inline void CharMatrix::writeToConsole( ) const
-{
-	for ( int row = 0; row < _Y_DIM; row++ )
-	{
-		for ( int col = 0; col < _X_DIM; col++ )
-		{
-			std::cout << _characterMatrix[row][col];
-		}
-	}
 }
 
 inline char CharMatrix::findCharType( const int(&coordArr)[4] )
@@ -206,9 +194,20 @@ inline auto CharMatrix::getCoords( )
 	return uniquePtr2Matrix;
 }
 
-inline void CharMatrix::drawToScreen( )
+inline void CharMatrix::writeToOutput( )
+
 {
 	auto uniquePtr2Matrix = CharMatrix::getCoords( );
 
-	uniquePtr2Matrix->writeToConsole( );
+	const int& Y_DIM = uniquePtr2Matrix->getY_DIM( );
+	const int& X_DIM = uniquePtr2Matrix->getX_DIM( );
+	const std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
+
+	for ( int row = 0; row < Y_DIM; row++ )
+	{
+		for ( int col = 0; col < X_DIM; col++ )
+		{
+			std::cout << characterMatrix[row][col];
+		}
+	}
 }
