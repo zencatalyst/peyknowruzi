@@ -1,4 +1,4 @@
-// PeykNowruzi, easy implementation
+// PeykNowruzi, easy implementation ( multi platform )
 // repo available at https://github.com/Kasra-coder/magical-creations
 
 
@@ -35,7 +35,7 @@ public:
 private:
 	int _Y_DIM;
 	int _X_DIM;
-	std::vector<std::vector<char>> _characterMatrix;
+	std::vector< std::vector<char> > _characterMatrix;
 };
 
 int main()
@@ -137,7 +137,7 @@ inline auto CharMatrix::initialize( const char& ch )
 
 	const int& Y_DIM = up2Matrix->getY_DIM( );
 	const int& X_DIM = up2Matrix->getX_DIM( );
-	std::vector<std::vector<char>>& characterMatrix = up2Matrix->getCharacterMatrix( );
+	std::vector< std::vector<char> >& characterMatrix = up2Matrix->getCharacterMatrix( );
 
 	for ( int row = 0; row < Y_DIM; row++ )
 	{
