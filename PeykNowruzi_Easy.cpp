@@ -6,9 +6,6 @@
 #include <vector>
 #include <memory>
 
-using std::cout;
-using std::cin;
-
 
 class CharMatrix
 {
@@ -160,13 +157,13 @@ inline auto CharMatrix::getCoords( )
 	bool isAcceptable = true;
 
 	unsigned int numOfInputLines;
-	cin >> numOfInputLines;
+	std::cin >> numOfInputLines;
 
 	for ( unsigned int i = 0; i < numOfInputLines; ++i )
 	{
 		do
 		{
-			cin >> coordArr[0] >> coordArr[1] >> coordArr[2] >> coordArr[3];
+			std::cin >> coordArr[0] >> coordArr[1] >> coordArr[2] >> coordArr[3];
 			if ( coordArr[0] > 168 || coordArr[2] > 168 )
 			{
 				isAcceptable = false;
