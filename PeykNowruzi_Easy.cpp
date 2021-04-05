@@ -194,7 +194,6 @@ inline auto CharMatrix::getCoords( )
 }
 
 inline void CharMatrix::writeToOutput( )
-
 {
 	auto uniquePtr2Matrix = CharMatrix::getCoords( );
 
