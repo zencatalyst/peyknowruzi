@@ -59,6 +59,7 @@ inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
 	:_Y_DIM( rhs._Y_DIM ), _X_DIM( rhs._X_DIM )
 {
 	_characterMatrix = std::move( rhs._characterMatrix );
+	
 	rhs._Y_DIM = 0;
 	rhs._X_DIM = 0;
 }
