@@ -17,7 +17,7 @@ public:
 	inline CharMatrix( const int& Y_DIM, const int& X_DIM );
 	inline ~CharMatrix( ) = default;
 	inline CharMatrix( const CharMatrix& ) = delete;
-	CharMatrix& operator=( const CharMatrix& ) = delete;
+	inline CharMatrix& operator=( const CharMatrix& ) = delete;
 	inline CharMatrix( CharMatrix&& rhs ) noexcept;
 	inline CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 
