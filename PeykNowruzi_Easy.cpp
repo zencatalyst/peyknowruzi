@@ -23,7 +23,7 @@ public:
 
 	inline const int& getY_DIM( ) const;
 	inline const int& getX_DIM( ) const;
-	inline std::vector<std::vector<char>>& getCharacterMatrix( );
+	inline std::vector< std::vector<char> >& getCharacterMatrix( );
 
 	inline void writeToConsole( ) const;
 
@@ -89,7 +89,7 @@ inline const int& CharMatrix::getX_DIM( ) const
 	return _X_DIM;
 }
 
-inline std::vector<std::vector<char>>& CharMatrix::getCharacterMatrix( )
+inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( )
 {
 	return _characterMatrix;
 }
@@ -159,10 +159,10 @@ inline auto CharMatrix::getCoords( )
 	int coordArr[4] { 0, 0, 0, 0 };
 	bool isAcceptable = true;
 
-	unsigned int numOfSymbols;
-	cin >> numOfSymbols;
+	unsigned int numOfInputLines;
+	cin >> numOfInputLines;
 
-	for ( unsigned int i = 0; i < numOfSymbols; ++i )
+	for ( unsigned int i = 0; i < numOfInputLines; ++i )
 	{
 		do
 		{
@@ -178,7 +178,7 @@ inline auto CharMatrix::getCoords( )
 		} while ( !isAcceptable );
 
 		char ch = CharMatrix::findCharType( coordArr );
-		std::vector<std::vector<char>>& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
+		std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
 		if ( ch == '/' )
 		{
 			characterMatrix[coordArr[1]][coordArr[0]] = '/';
