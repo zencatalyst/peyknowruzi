@@ -22,7 +22,6 @@ public:
 	inline const int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( );
 
-
 	inline static char findCharType( const int(&coordArr)[4] );
 	inline static auto initialize( const char& ch );
 	inline static auto getCoords( );
