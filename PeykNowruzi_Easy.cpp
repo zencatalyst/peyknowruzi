@@ -18,6 +18,8 @@ public:
 	inline ~CharMatrix( ) = default;
 	inline CharMatrix( const CharMatrix& ) = delete;
 	CharMatrix& operator=( const CharMatrix& ) = delete;
+	inline CharMatrix( CharMatrix&& rhs ) noexcept;
+	inline CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 
 	inline const int& getY_DIM( ) const;
 	inline const int& getX_DIM( ) const;
@@ -31,8 +33,8 @@ public:
 	inline static void drawToScreen( );
 
 private:
-	const int _Y_DIM;
-	const int _X_DIM;
+	int _Y_DIM;
+	int _X_DIM;
 	std::vector<std::vector<char>> _characterMatrix;
 };
 
@@ -51,6 +53,29 @@ inline CharMatrix::CharMatrix( )
 inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM )
 	: _Y_DIM( Y_DIM ), _X_DIM( X_DIM )
 {
+}
+
+inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
+	:_Y_DIM( rhs._Y_DIM ), _X_DIM( rhs._X_DIM )
+{
+	_characterMatrix = std::move( rhs._characterMatrix );
+	rhs._Y_DIM = 0;
+	rhs._X_DIM = 0;
+}
+
+inline CharMatrix& CharMatrix::operator=( CharMatrix&& rhs ) noexcept
+{
+	if ( this != &rhs )
+	{
+		_characterMatrix = std::move( rhs._characterMatrix );
+		_Y_DIM = rhs._Y_DIM;
+		_X_DIM = rhs._X_DIM;
+
+		rhs._Y_DIM = 0;
+		rhs._X_DIM = 0;
+	}
+
+	return *this;
 }
 
 inline const int& CharMatrix::getY_DIM( ) const
@@ -115,12 +140,12 @@ inline auto CharMatrix::initialize( const char& ch )
 
 	for ( int row = 0; row < Y_DIM; row++ )
 	{
-		characterMatrix.push_back(std::vector<char>());
+		characterMatrix.push_back( std::vector<char>() );
 		for ( int col = 0; col < X_DIM - 1; col++ )
 		{
-			characterMatrix[row].push_back(ch);
+			characterMatrix[row].push_back( ch );
 		}
-		characterMatrix[row].push_back('\n');
+		characterMatrix[row].push_back( '\n' );
 	}
 
 	return up2Matrix;
