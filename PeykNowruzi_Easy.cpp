@@ -151,7 +151,8 @@ inline auto CharMatrix::initialize( const char& ch )
 
 inline auto CharMatrix::getCoords( )
 {
-	auto uniquePtr2Matrix = CharMatrix::initialize( ' ' );
+	const char fillCharacter = ' ';
+	auto uniquePtr2Matrix = CharMatrix::initialize( fillCharacter );
 
 	int coordArr[4] { 0, 0, 0, 0 };
 	const int MAX_ALLOWED_Y = uniquePtr2Matrix->getY_DIM( ) - 1;
