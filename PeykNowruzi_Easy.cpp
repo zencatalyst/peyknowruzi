@@ -48,6 +48,12 @@ inline CharMatrix::CharMatrix( )
 inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM )
 	: _Y_DIM( Y_DIM ), _X_DIM( X_DIM )
 {
+	_characterMatrix.reserve( _Y_DIM );
+
+	for ( int row = 0; row < _Y_DIM; row++ )
+	{
+		_characterMatrix.push_back( std::vector<char>( _X_DIM ) );
+	}
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
@@ -125,12 +131,11 @@ inline auto CharMatrix::initialize( const char& ch )
 
 	for ( int row = 0; row < Y_DIM; row++ )
 	{
-		characterMatrix.push_back( std::vector<char>() );
 		for ( int col = 0; col < X_DIM - 1; col++ )
 		{
-			characterMatrix[row].push_back( ch );
+			characterMatrix[row][col] = ch;
 		}
-		characterMatrix[row].push_back( '\n' );
+		characterMatrix[row][X_DIM - 1] = '\n';
 	}
 
 	return up2Matrix;
