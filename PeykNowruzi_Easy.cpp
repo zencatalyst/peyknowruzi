@@ -43,6 +43,12 @@ int main()
 inline CharMatrix::CharMatrix( )
 	:_Y_DIM( 20 ), _X_DIM( 20 )
 {
+	_characterMatrix.reserve( _Y_DIM );
+
+	for ( int row = 0; row < _Y_DIM; row++ )
+	{
+		_characterMatrix.push_back( std::vector<char>( _X_DIM ) );
+	}
 }
 
 inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM )
@@ -123,7 +129,9 @@ inline char CharMatrix::findCharType( const int(&coordArr)[4] )
 
 inline auto CharMatrix::initialize( const char& ch )
 {
-	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( 20, 168 );
+	const unsigned Y_AXIS_LENGTH = 20;
+	const unsigned X_AXIS_LENGTH = 168;
+	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH );
 
 	const int& Y_DIM = up2Matrix->getY_DIM( );
 	const int& X_DIM = up2Matrix->getX_DIM( );
