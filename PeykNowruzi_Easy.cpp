@@ -45,7 +45,7 @@ inline CharMatrix::CharMatrix( )
 {
 	_characterMatrix.reserve( _Y_DIM );
 
-	for ( int row = 0; row < _Y_DIM; row++ )
+	for ( int row = 0; row < _Y_DIM; ++row )
 	{
 		_characterMatrix.push_back( std::vector<char>( _X_DIM ) );
 	}
@@ -56,7 +56,7 @@ inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM )
 {
 	_characterMatrix.reserve( _Y_DIM );
 
-	for ( int row = 0; row < _Y_DIM; row++ )
+	for ( int row = 0; row < _Y_DIM; ++row )
 	{
 		_characterMatrix.push_back( std::vector<char>( _X_DIM ) );
 	}
@@ -137,9 +137,9 @@ inline auto CharMatrix::initialize( const char& ch )
 	const int& X_DIM = up2Matrix->getX_DIM( );
 	std::vector< std::vector<char> >& characterMatrix = up2Matrix->getCharacterMatrix( );
 
-	for ( int row = 0; row < Y_DIM; row++ )
+	for ( int row = 0; row < Y_DIM; ++row )
 	{
-		for ( int col = 0; col < X_DIM - 1; col++ )
+		for ( int col = 0; col < X_DIM - 1; ++col )
 		{
 			characterMatrix[row][col] = ch;
 		}
@@ -218,9 +218,9 @@ inline void CharMatrix::writeToOutput( )
 	const int& X_DIM = uniquePtr2Matrix->getX_DIM( );
 	const std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
 
-	for ( int row = 0; row < Y_DIM; row++ )
+	for ( int row = 0; row < Y_DIM; ++row )
 	{
-		for ( int col = 0; col < X_DIM; col++ )
+		for ( int col = 0; col < X_DIM; ++col )
 		{
 			std::cout << characterMatrix[row][col];
 		}
