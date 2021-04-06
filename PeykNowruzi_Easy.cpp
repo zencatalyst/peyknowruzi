@@ -146,6 +146,8 @@ inline auto CharMatrix::getCoords( )
 	auto uniquePtr2Matrix = CharMatrix::initialize( ' ' );
 
 	int coordArr[4] { 0, 0, 0, 0 };
+	const int MAX_ALLOWED_Y = uniquePtr2Matrix->getY_DIM( ) - 1;
+	const int MAX_ALLOWED_X = uniquePtr2Matrix->getX_DIM( ) - 1;
 	bool isAcceptable = true;
 
 	unsigned int numOfInputLines;
@@ -156,7 +158,8 @@ inline auto CharMatrix::getCoords( )
 		do
 		{
 			std::cin >> coordArr[0] >> coordArr[1] >> coordArr[2] >> coordArr[3];
-			if ( coordArr[0] > 168 || coordArr[2] > 168 )
+			if ( coordArr[0] > MAX_ALLOWED_X || coordArr[2] > MAX_ALLOWED_X ||
+					coordArr[1] > MAX_ALLOWED_Y || coordArr[3] > MAX_ALLOWED_Y )
 			{
 				isAcceptable = false;
 			}
