@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <unordered_set>
 
 
 class CharMatrix
@@ -31,6 +32,7 @@ private:
 	int _Y_DIM;
 	int _X_DIM;
 	std::vector< std::vector<char> > _characterMatrix;
+	inline static const std::unordered_set<char> CHAR_SET { '/', '\\', '|', '-' };
 };
 
 int main()
@@ -151,6 +153,7 @@ inline auto CharMatrix::getCoords( )
 		do
 		{
 			std::cin >> coordArr[0] >> coordArr[1] >> coordArr[2] >> coordArr[3];
+
 			if ( coordArr[0] > MAX_ALLOWED_X || coordArr[2] > MAX_ALLOWED_X ||
 					coordArr[1] > MAX_ALLOWED_Y || coordArr[3] > MAX_ALLOWED_Y )
 			{
@@ -160,34 +163,16 @@ inline auto CharMatrix::getCoords( )
 			{
 				isAcceptable = true;
 			}
+
 		} while ( !isAcceptable );
 
-		char ch = CharMatrix::findCharType( coordArr );
+		const char ch = CharMatrix::findCharType( coordArr );
 		std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
 		
-		if ( ch == '/' )
+		if ( CHAR_SET.count( ch ) )
 		{
-			characterMatrix[coordArr[1]][coordArr[0]] = '/';
-			characterMatrix[coordArr[3]][coordArr[2]] = '/';
-		}
-		else if ( ch == '\\' )
-		{
-			characterMatrix[coordArr[1]][coordArr[0]] = '\\';
-			characterMatrix[coordArr[3]][coordArr[2]] = '\\';
-		}
-		else if ( ch == '|' )
-		{
-			characterMatrix[coordArr[1]][coordArr[0]] = '|';
-			characterMatrix[coordArr[3]][coordArr[2]] = '|';
-		}
-		else if ( ch == '-' )
-		{
-			characterMatrix[coordArr[1]][coordArr[0]] = '-';
-			characterMatrix[coordArr[3]][coordArr[2]] = '-';
-		}
-		else
-		{
-			// pass (do nothing!)
+			characterMatrix[coordArr[1]][coordArr[0]] = ch;
+			characterMatrix[coordArr[3]][coordArr[2]] = ch;
 		}
 
 	}
