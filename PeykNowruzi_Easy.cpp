@@ -11,7 +11,7 @@ class CharMatrix
 {
 public:
 	inline CharMatrix( );
-	inline CharMatrix( const int& Y_DIM, const int& X_DIM );
+	inline CharMatrix( const int& Y_DIM, const int& X_DIM, const char FILL_CHARACTER = ' ' );
 	inline ~CharMatrix( ) = default;
 	inline CharMatrix( const CharMatrix& ) = delete;
 	inline CharMatrix& operator=( const CharMatrix& ) = delete;
@@ -23,7 +23,7 @@ public:
 	inline std::vector< std::vector<char> >& getCharacterMatrix( );
 
 	inline static char findCharType( const int(&coordArr)[4] );
-	inline static auto initialize( const char& ch );
+	inline static auto initialize( );
 	inline static auto getCoords( );
 	inline static void writeToOutput( );
 
@@ -41,25 +41,13 @@ int main()
 }
 
 inline CharMatrix::CharMatrix( )
-	:_Y_DIM( 20 ), _X_DIM( 20 )
+	:_Y_DIM( 20 ), _X_DIM( 20 ), _characterMatrix( 20, std::vector<char>( 20, ' ' ) )
 {
-	_characterMatrix.reserve( _Y_DIM );
-
-	for ( int row = 0; row < _Y_DIM; ++row )
-	{
-		_characterMatrix.push_back( std::vector<char>( _X_DIM ) );
-	}
 }
 
-inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM )
-	: _Y_DIM( Y_DIM ), _X_DIM( X_DIM )
+inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM, const char FILL_CHARACTER )
+	: _Y_DIM( Y_DIM ), _X_DIM( X_DIM ), _characterMatrix( Y_DIM, std::vector<char>( X_DIM, FILL_CHARACTER ) )
 {
-	_characterMatrix.reserve( _Y_DIM );
-
-	for ( int row = 0; row < _Y_DIM; ++row )
-	{
-		_characterMatrix.push_back( std::vector<char>( _X_DIM ) );
-	}
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
@@ -127,11 +115,12 @@ inline char CharMatrix::findCharType( const int(&coordArr)[4] )
 	}
 }
 
-inline auto CharMatrix::initialize( const char& ch )
+inline auto CharMatrix::initialize( )
 {
+	//const char FILL_CHARACTER = '-';
 	const unsigned Y_AXIS_LENGTH = 20;
 	const unsigned X_AXIS_LENGTH = 168;
-	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH );
+	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
 
 	const int& Y_DIM = up2Matrix->getY_DIM( );
 	const int& X_DIM = up2Matrix->getX_DIM( );
@@ -139,10 +128,6 @@ inline auto CharMatrix::initialize( const char& ch )
 
 	for ( int row = 0; row < Y_DIM; ++row )
 	{
-		for ( int col = 0; col < X_DIM - 1; ++col )
-		{
-			characterMatrix[row][col] = ch;
-		}
 		characterMatrix[row][X_DIM - 1] = '\n';
 	}
 
@@ -151,8 +136,7 @@ inline auto CharMatrix::initialize( const char& ch )
 
 inline auto CharMatrix::getCoords( )
 {
-	const char fillCharacter = ' ';
-	auto uniquePtr2Matrix = CharMatrix::initialize( fillCharacter );
+	auto uniquePtr2Matrix = CharMatrix::initialize( );
 
 	int coordArr[4] { 0, 0, 0, 0 };
 	const int MAX_ALLOWED_Y = uniquePtr2Matrix->getY_DIM( ) - 1;
@@ -180,6 +164,7 @@ inline auto CharMatrix::getCoords( )
 
 		char ch = CharMatrix::findCharType( coordArr );
 		std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
+		
 		if ( ch == '/' )
 		{
 			characterMatrix[coordArr[1]][coordArr[0]] = '/';
