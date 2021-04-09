@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_set>
+#include <climits>
 
 
 class CharMatrix
@@ -23,8 +24,9 @@ public:
 	inline const int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( );
 
-	inline static char findCharType( const int(&coordArr)[4] );
+	inline static char findCharType( const long int(&coordArr)[4] );
 	inline static auto initialize( );
+	inline static unsigned long int getNumOfInputLines( );
 	inline static auto getCoords( );
 	inline static void writeToOutput( );
 
@@ -35,11 +37,62 @@ private:
 	inline static const std::unordered_set<char> CHAR_SET { '/', '\\', '|', '-' };
 };
 
+class Util
+{
+public:
+	inline static auto isLongInt( const std::string& inputStr, const long int minValue = LONG_MIN, const long int maxValue = LONG_MAX );
+};
+
 int main()
 {
 	CharMatrix::writeToOutput( );
 
 	return 0;
+}
+
+inline auto Util::isLongInt( const std::string& inputStr, const long int minValue, const long int maxValue )
+{
+	size_t pos = 0;
+	bool isAcceptable = true;
+	long int resultLongInt = 0;
+
+	try
+	{
+		resultLongInt = std::stol( inputStr, &pos, 10 );
+
+		if ( pos != inputStr.length( ) )
+		{
+			isAcceptable = false;
+		}
+		if ( isAcceptable )
+		{
+			isAcceptable = ( (resultLongInt > maxValue || resultLongInt < minValue) ) ? false : true;
+		}
+	}
+	catch( const std::invalid_argument& ia )
+	{
+		isAcceptable = false;
+	}
+	catch ( const std::out_of_range& oor )
+	{
+		isAcceptable = false;
+	}
+	catch ( const std::exception& e )
+	{
+		isAcceptable = false;
+	}
+	catch ( ... )
+	{
+		isAcceptable = false;
+	}
+
+	struct retVals
+	{
+		bool _isAcceptable;
+		long int _resultLongInt;
+	};
+
+	return retVals { isAcceptable, resultLongInt };
 }
 
 inline CharMatrix::CharMatrix( )
@@ -91,7 +144,7 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( )
 	return _characterMatrix;
 }
 
-inline char CharMatrix::findCharType( const int(&coordArr)[4] )
+inline char CharMatrix::findCharType( const long int(&coordArr)[4] )
 {
 	if ( abs(coordArr[0] - coordArr[2]) == 1 && abs(coordArr[1] - coordArr[3]) == 1 &&
 				((coordArr[0] < coordArr[2] && coordArr[1] > coordArr[3]) || (coordArr[0] > coordArr[2] && coordArr[1] < coordArr[3])) )
@@ -119,9 +172,9 @@ inline char CharMatrix::findCharType( const int(&coordArr)[4] )
 
 inline auto CharMatrix::initialize( )
 {
-	//const char FILL_CHARACTER = '-';
-	const unsigned Y_AXIS_LENGTH = 20;
-	const unsigned X_AXIS_LENGTH = 168;
+	//constexpr char FILL_CHARACTER = '-';
+	constexpr unsigned int Y_AXIS_LENGTH = 20;
+	constexpr unsigned int X_AXIS_LENGTH = 168;
 	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
 
 	const int& Y_DIM = up2Matrix->getY_DIM( );
@@ -136,33 +189,48 @@ inline auto CharMatrix::initialize( )
 	return up2Matrix;
 }
 
+inline unsigned long int CharMatrix::getNumOfInputLines( )
+{
+	constexpr long int MAX_NUM_OF_INPUT_LINES = 1000000;
+	constexpr long int MIN_NUM_OF_INPUT_LINES = 0;
+	std::string str_numOfInputLines;
+	bool isAcceptable = true;
+	long int li_numOfInputLines = 0;
+
+	do
+	{
+		std::getline( std::cin, str_numOfInputLines );
+		auto retValues = Util::isLongInt( str_numOfInputLines, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
+		isAcceptable = retValues._isAcceptable;
+		li_numOfInputLines = retValues._resultLongInt;
+
+	} while ( !isAcceptable );
+
+	return ( unsigned long int )li_numOfInputLines;
+}
+
 inline auto CharMatrix::getCoords( )
 {
+	const unsigned long int uli_numOfInputLines = CharMatrix::getNumOfInputLines( );
 	auto uniquePtr2Matrix = CharMatrix::initialize( );
 
-	int coordArr[4] { 0, 0, 0, 0 };
-	const int MAX_ALLOWED_Y = uniquePtr2Matrix->getY_DIM( ) - 1;
-	const int MAX_ALLOWED_X = uniquePtr2Matrix->getX_DIM( ) - 1;
+	size_t pos = 0;
 	bool isAcceptable = true;
+	std::string str_coord;
+	long int coordArr[4] { 0, 0, 0, 0 };
+	const long int MAX_ALLOWED_Y = uniquePtr2Matrix->getY_DIM( ) - 1;
+	const long int MAX_ALLOWED_X = uniquePtr2Matrix->getX_DIM( ) - 1;
 
-	unsigned int numOfInputLines;
-	std::cin >> numOfInputLines;
-
-	for ( unsigned int i = 0; i < numOfInputLines; ++i )
+	for ( unsigned long int i = 0; i < uli_numOfInputLines; ++i )
 	{
 		do
 		{
+			isAcceptable = true;
+
 			std::cin >> coordArr[0] >> coordArr[1] >> coordArr[2] >> coordArr[3];
 
-			if ( coordArr[0] > MAX_ALLOWED_X || coordArr[2] > MAX_ALLOWED_X ||
-					coordArr[1] > MAX_ALLOWED_Y || coordArr[3] > MAX_ALLOWED_Y )
-			{
-				isAcceptable = false;
-			}
-			else
-			{
-				isAcceptable = true;
-			}
+			isAcceptable = ( coordArr[0] > MAX_ALLOWED_X || coordArr[2] > MAX_ALLOWED_X ||
+					coordArr[1] > MAX_ALLOWED_Y || coordArr[3] > MAX_ALLOWED_Y ) ? false : true ;
 
 		} while ( !isAcceptable );
 
@@ -174,7 +242,6 @@ inline auto CharMatrix::getCoords( )
 			characterMatrix[coordArr[1]][coordArr[0]] = ch;
 			characterMatrix[coordArr[3]][coordArr[2]] = ch;
 		}
-
 	}
 
 	return uniquePtr2Matrix;
