@@ -73,19 +73,13 @@ inline auto Util::tokenize( std::string& inputStr, const unsigned long int& toke
 	while ( ptr2NextToken )
 	{
 		foundedTokens.push_back( ptr2NextToken );
-	    std::cout << "Token: " << ptr2NextToken << " --- count: " << foundedTokens.size( ) << std::endl;
 	    ptr2NextToken = strtok( NULL, " 	" );
 	}
 
 	if ( foundedTokens.size( ) != tokenCount )
 	{
 		isAcceptable = false;
-		std::cout << "1st isAcceptable: " << isAcceptable << std::endl;
 	}
-	std::cout << "2nd isAcceptable: " << isAcceptable << std::endl;
-	std::cout << "Back: " << foundedTokens.back( ) << std::endl;
-	for ( std::string str : foundedTokens ) { std::cout << "Elements: " << str << ", "; }
-	std::cout << std::endl;
 
 	return retValues { isAcceptable, foundedTokens };
 }
@@ -287,7 +281,6 @@ inline unsigned long int CharMatrix::getNumOfInputLines( )
 
 	} while ( !isAcceptable );
 
-	std::cout << "getNum...: " << "isAcceptable: " << isAcceptable << " li_numOfInputLines: " << li_numOfInputLines[0] << std::endl;
 	return ( unsigned long int )li_numOfInputLines[0];
 }
 
@@ -317,29 +310,22 @@ inline auto CharMatrix::getCoords( )
 	{
 		do
 		{
-			std::cout << "Now!" << std::endl;
 			std::getline( std::cin, str_userEnteredCoords );
 			str_userEnteredCoords_dup = str_userEnteredCoords;
 			auto retValues = Util::isLongInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES_FOR_Y,
 													MIN_ALLOWED_Y, MAX_ALLOWED_Y );
 			isAcceptable = retValues._isAcceptable;
 			li_userEnteredCoords = retValues._resultLongInts;
-			std::cout << "isAcceptable: " << isAcceptable << " coords: " <<
-								li_userEnteredCoords[0] << li_userEnteredCoords[1] << li_userEnteredCoords[2] << li_userEnteredCoords[3] << std::endl;
 
 			if ( isAcceptable )
 			{
 				coordArr[1] = li_userEnteredCoords[1];
 				coordArr[3] = li_userEnteredCoords[3];
 
-				std::cout << "str: " << str_userEnteredCoords << std::endl;
-
 				retValues = Util::isLongInt( str_userEnteredCoords_dup, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES_FOR_X,
 													MIN_ALLOWED_X, MAX_ALLOWED_X );
 				isAcceptable = retValues._isAcceptable;
 				li_userEnteredCoords = retValues._resultLongInts;
-				std::cout << "isAcceptable: " << isAcceptable << " coords: " <<
-								li_userEnteredCoords[0] << li_userEnteredCoords[1] << li_userEnteredCoords[2] << li_userEnteredCoords[3] << std::endl;
 
 				if ( isAcceptable )
 				{
