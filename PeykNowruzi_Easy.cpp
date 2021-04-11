@@ -46,8 +46,7 @@ public:
 										std::vector< std::string >& foundedTokens );
 
 	inline static bool isUInt( std::string& inputStr, const unsigned int& tokenCount, std::vector<unsigned int>& result_Uints,
-											const std::vector<unsigned int>& specificTokensIndices,
-											const int minValue = 0, const int maxValue = INT_MAX );
+			const std::vector<unsigned int>& specificTokensIndices, const int minValue = 0, const int maxValue = INT_MAX );
 };
 
 int main( )
@@ -76,7 +75,7 @@ inline bool Util::tokenize( std::string& inputStr, const unsigned int& tokenCoun
 }
 
 inline bool Util::isUInt( std::string& inputStr, const unsigned int& tokenCount, std::vector<unsigned int>& result_Uints,
-		const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
+				const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	bool isAcceptable = ( minValue < 0 || maxValue < 0 ) ? false : true;
 
