@@ -42,10 +42,12 @@ private:
 class Util
 {
 public:
-	inline static auto tokenize( std::string& inputStr, const unsigned long int& tokenCount );
-	inline static auto isLongInt( std::string& inputStr, const unsigned long int& tokenCount,
-										const std::vector<unsigned long>& specificTokensIndices,
-										const long int minValue = LONG_MIN, const long int maxValue = LONG_MAX );
+	inline static bool tokenize( std::string& inputStr, const unsigned long int& tokenCount,
+														std::vector< std::string >& foundedTokens );
+
+	inline static bool isLongInt( std::string& inputStr, const unsigned long int& tokenCount, std::vector<long int>& resultLongInts,
+											const std::vector<unsigned long>& specificTokensIndices,
+											const long int minValue = LONG_MIN, const long int maxValue = LONG_MAX );
 };
 
 int main()
@@ -55,17 +57,9 @@ int main()
 	return 0;
 }
 
-inline auto Util::tokenize( std::string& inputStr, const unsigned long int& tokenCount )
+inline bool Util::tokenize( std::string& inputStr, const unsigned long int& tokenCount, std::vector< std::string >& foundedTokens )
 {
-	struct retValues
-	{
-		bool _isAcceptable;
-		std::vector< std::string > _foundedTokens;
-	};
-
 	bool isAcceptable = true;
-	std::vector< std::string > foundedTokens;
-	foundedTokens.reserve( tokenCount );
 
 	char* ptr2FirstChar = &inputStr[0];
 	char* ptr2NextToken = strtok( ptr2FirstChar,   "	 " );
@@ -76,39 +70,28 @@ inline auto Util::tokenize( std::string& inputStr, const unsigned long int& toke
 	    ptr2NextToken = strtok( NULL, " 	" );
 	}
 
-	if ( foundedTokens.size( ) != tokenCount )
-	{
-		isAcceptable = false;
-	}
+	isAcceptable = ( foundedTokens.size( ) != tokenCount ) ? false : true;
 
-	return retValues { isAcceptable, foundedTokens };
+	return isAcceptable;
 }
 
-inline auto Util::isLongInt( std::string& inputStr, const unsigned long int& tokenCount,
+inline bool Util::isLongInt( std::string& inputStr, const unsigned long int& tokenCount, std::vector<long int>& resultLongInts,
 		const std::vector<unsigned long>& specificTokensIndices, const long int minValue, const long int maxValue )
 {
-	struct isLongInt_retVals
+	std::vector< std::string > foundedTokens;
+	foundedTokens.reserve( tokenCount );
+
+	bool isAcceptable = tokenize( inputStr, tokenCount, foundedTokens );
+
+	if ( !isAcceptable )
 	{
-		bool _isAcceptable;
-		std::vector<long int> _resultLongInts;
-	};
-
-	bool isAcceptable = true;
-	std::vector<long int> resultLongInts( tokenCount );
-
-	auto tokenize_retValues = tokenize( inputStr, tokenCount );
-
-	if ( !tokenize_retValues._isAcceptable )
-	{
-		isAcceptable = false;
-
-		return isLongInt_retVals { isAcceptable, resultLongInts };
+		return isAcceptable;
 	}
 
 	size_t pos = 0;
 	unsigned long int j = 0;
 
-	for ( unsigned long int i = 0; i < tokenize_retValues._foundedTokens.size( ); ++i )
+	for ( unsigned long int i = 0; i < foundedTokens.size( ); ++i )
 	{
 		isAcceptable = true;
 
@@ -127,9 +110,9 @@ inline auto Util::isLongInt( std::string& inputStr, const unsigned long int& tok
 
 		try
 		{
-			resultLongInts[i] = std::stol( tokenize_retValues._foundedTokens[i], &pos, 10 );
+			resultLongInts[i] = std::stol( foundedTokens[i], &pos, 10 );
 
-			if ( pos != tokenize_retValues._foundedTokens[i].length( ) )
+			if ( pos != foundedTokens[i].length( ) )
 			{
 				isAcceptable = false;
 			}
@@ -161,7 +144,7 @@ inline auto Util::isLongInt( std::string& inputStr, const unsigned long int& tok
 		}
 	}
 
-	return isLongInt_retVals { isAcceptable, resultLongInts };
+	return isAcceptable;
 }
 
 inline CharMatrix::CharMatrix( )
@@ -268,16 +251,14 @@ inline unsigned long int CharMatrix::getNumOfInputLines( )
 	std::string str_numOfInputLines;
 	std::vector<long int> li_numOfInputLines;
 	li_numOfInputLines.reserve( REQUIRED_TOKENS_COUNT );
-
+	
 	bool isAcceptable = true;
 
 	do
 	{
 		std::getline( std::cin, str_numOfInputLines );
-		auto retValues = Util::isLongInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES,
-												MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
-		isAcceptable = retValues._isAcceptable;
-		li_numOfInputLines = retValues._resultLongInts;
+		bool isAcceptable = Util::isLongInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, li_numOfInputLines,
+												SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
 
 	} while ( !isAcceptable );
 
@@ -312,20 +293,17 @@ inline auto CharMatrix::getCoords( )
 		{
 			std::getline( std::cin, str_userEnteredCoords );
 			str_userEnteredCoords_dup = str_userEnteredCoords;
-			auto retValues = Util::isLongInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES_FOR_Y,
-													MIN_ALLOWED_Y, MAX_ALLOWED_Y );
-			isAcceptable = retValues._isAcceptable;
-			li_userEnteredCoords = retValues._resultLongInts;
+
+			isAcceptable = Util::isLongInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, li_userEnteredCoords,
+															SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y );
 
 			if ( isAcceptable )
 			{
 				coordArr[1] = li_userEnteredCoords[1];
 				coordArr[3] = li_userEnteredCoords[3];
 
-				retValues = Util::isLongInt( str_userEnteredCoords_dup, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES_FOR_X,
-													MIN_ALLOWED_X, MAX_ALLOWED_X );
-				isAcceptable = retValues._isAcceptable;
-				li_userEnteredCoords = retValues._resultLongInts;
+				isAcceptable = Util::isLongInt( str_userEnteredCoords_dup, REQUIRED_TOKENS_COUNT, li_userEnteredCoords,
+															SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X );
 
 				if ( isAcceptable )
 				{
