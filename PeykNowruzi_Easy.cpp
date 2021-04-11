@@ -28,7 +28,7 @@ public:
 
 	inline static char findCharType( const unsigned int(&coordArr)[4] );
 	inline static auto initialize( );
-	inline static unsigned int getNumOfInputLines( );
+	inline static unsigned int getNumOfInputLines( const unsigned int& Y_DIM, const unsigned int& X_DIM );
 	inline static auto getCoords( );
 	inline static void writeToOutput( );
 
@@ -206,12 +206,12 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( )
 inline char CharMatrix::findCharType( const unsigned int(&coordArr)[4] )
 {
 	if ( abs(coordArr[0] - coordArr[2]) == 1 && abs(coordArr[1] - coordArr[3]) == 1 &&
-				((coordArr[0] < coordArr[2] && coordArr[1] > coordArr[3]) || (coordArr[0] > coordArr[2] && coordArr[1] < coordArr[3])) )
+		((coordArr[0] < coordArr[2] && coordArr[1] > coordArr[3]) || (coordArr[0] > coordArr[2] && coordArr[1] < coordArr[3])) )
 	{
 		return '/';
 	}
 	else if ( abs(coordArr[0] - coordArr[2]) == 1 && abs(coordArr[1] - coordArr[3]) == 1 &&
-				((coordArr[0] < coordArr[2] && coordArr[1] < coordArr[3]) || (coordArr[0] > coordArr[2] && coordArr[1] > coordArr[3])) )
+		((coordArr[0] < coordArr[2] && coordArr[1] < coordArr[3]) || (coordArr[0] > coordArr[2] && coordArr[1] > coordArr[3])) )
 	{
 		return '\\';
 	}
@@ -248,9 +248,9 @@ inline auto CharMatrix::initialize( )
 	return up2Matrix;
 }
 
-inline unsigned int CharMatrix::getNumOfInputLines( )
+inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, const unsigned int& X_DIM )
 {
-	constexpr int MAX_NUM_OF_INPUT_LINES = 1000000;
+	const int MAX_NUM_OF_INPUT_LINES = ( Y_DIM * X_DIM ) / 2 ;
 	constexpr int MIN_NUM_OF_INPUT_LINES = 0;
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 1;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES;
@@ -274,8 +274,9 @@ inline unsigned int CharMatrix::getNumOfInputLines( )
 
 inline auto CharMatrix::getCoords( )
 {
-	const unsigned int uint_numOfInputLines = CharMatrix::getNumOfInputLines( );
 	auto uniquePtr2Matrix = CharMatrix::initialize( );
+	const unsigned int uint_numOfInputLines = CharMatrix::getNumOfInputLines( uniquePtr2Matrix->getY_DIM( ),
+																				uniquePtr2Matrix->getX_DIM( ) );
 
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 4;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
