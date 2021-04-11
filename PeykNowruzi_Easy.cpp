@@ -6,7 +6,9 @@
 #include <vector>
 #include <memory>
 #include <unordered_set>
+#include <string>
 #include <climits>
+#include <cstring>
 
 
 class CharMatrix
@@ -40,7 +42,10 @@ private:
 class Util
 {
 public:
-	inline static auto isLongInt( const std::string& inputStr, const long int minValue = LONG_MIN, const long int maxValue = LONG_MAX );
+	inline static auto tokenize( std::string& inputStr, const unsigned long int& tokenCount );
+	inline static auto isLongInt( std::string& inputStr, const unsigned long int& tokenCount,
+										const std::vector<unsigned long>& specificTokensIndices,
+										const long int minValue = LONG_MIN, const long int maxValue = LONG_MAX );
 };
 
 int main()
@@ -50,49 +55,119 @@ int main()
 	return 0;
 }
 
-inline auto Util::isLongInt( const std::string& inputStr, const long int minValue, const long int maxValue )
+inline auto Util::tokenize( std::string& inputStr, const unsigned long int& tokenCount )
 {
-	size_t pos = 0;
-	bool isAcceptable = true;
-	long int resultLongInt = 0;
-
-	try
+	struct retValues
 	{
-		resultLongInt = std::stol( inputStr, &pos, 10 );
+		bool _isAcceptable;
+		std::vector< std::string > _foundedTokens;
+	};
 
-		if ( pos != inputStr.length( ) )
+	bool isAcceptable = true;
+	std::vector< std::string > foundedTokens;
+	foundedTokens.reserve( tokenCount );
+
+	char* ptr2FirstChar = &inputStr[0];
+	char* ptr2NextToken = strtok( ptr2FirstChar,   "	 " );
+
+	while ( ptr2NextToken )
+	{
+		foundedTokens.push_back( ptr2NextToken );
+	    std::cout << "Token: " << ptr2NextToken << " --- count: " << foundedTokens.size( ) << std::endl;
+	    ptr2NextToken = strtok( NULL, " 	" );
+	}
+
+	if ( foundedTokens.size( ) != tokenCount )
+	{
+		isAcceptable = false;
+		std::cout << "1st isAcceptable: " << isAcceptable << std::endl;
+	}
+	std::cout << "2nd isAcceptable: " << isAcceptable << std::endl;
+	std::cout << "Back: " << foundedTokens.back( ) << std::endl;
+	for ( std::string str : foundedTokens ) { std::cout << "Elements: " << str << ", "; }
+	std::cout << std::endl;
+
+	return retValues { isAcceptable, foundedTokens };
+}
+
+inline auto Util::isLongInt( std::string& inputStr, const unsigned long int& tokenCount,
+		const std::vector<unsigned long>& specificTokensIndices, const long int minValue, const long int maxValue )
+{
+	struct isLongInt_retVals
+	{
+		bool _isAcceptable;
+		std::vector<long int> _resultLongInts;
+	};
+
+	bool isAcceptable = true;
+	std::vector<long int> resultLongInts( tokenCount );
+
+	auto tokenize_retValues = tokenize( inputStr, tokenCount );
+
+	if ( !tokenize_retValues._isAcceptable )
+	{
+		isAcceptable = false;
+
+		return isLongInt_retVals { isAcceptable, resultLongInts };
+	}
+
+	size_t pos = 0;
+	unsigned long int j = 0;
+
+	for ( unsigned long int i = 0; i < tokenize_retValues._foundedTokens.size( ); ++i )
+	{
+		isAcceptable = true;
+
+		if ( !specificTokensIndices.empty( ) )
+		{
+			if ( j < specificTokensIndices.size( ) )
+			{
+				i = specificTokensIndices[j];
+			}
+			else
+			{
+				break;
+			}
+			++j;
+		}
+
+		try
+		{
+			resultLongInts[i] = std::stol( tokenize_retValues._foundedTokens[i], &pos, 10 );
+
+			if ( pos != tokenize_retValues._foundedTokens[i].length( ) )
+			{
+				isAcceptable = false;
+			}
+			if ( isAcceptable )
+			{
+				isAcceptable = ( (resultLongInts[i] > maxValue || resultLongInts[i] < minValue) ) ? false : true;
+			}
+		}
+		catch( const std::invalid_argument& ia )
 		{
 			isAcceptable = false;
 		}
-		if ( isAcceptable )
+		catch ( const std::out_of_range& oor )
 		{
-			isAcceptable = ( (resultLongInt > maxValue || resultLongInt < minValue) ) ? false : true;
+			isAcceptable = false;
+		}
+		catch ( const std::exception& e )
+		{
+			isAcceptable = false;
+		}
+		catch ( ... )
+		{
+			isAcceptable = false;
+		}
+
+		if ( !isAcceptable )
+		{
+			break;
 		}
 	}
-	catch( const std::invalid_argument& ia )
-	{
-		isAcceptable = false;
-	}
-	catch ( const std::out_of_range& oor )
-	{
-		isAcceptable = false;
-	}
-	catch ( const std::exception& e )
-	{
-		isAcceptable = false;
-	}
-	catch ( ... )
-	{
-		isAcceptable = false;
-	}
 
-	struct retVals
-	{
-		bool _isAcceptable;
-		long int _resultLongInt;
-	};
-
-	return retVals { isAcceptable, resultLongInt };
+	return isLongInt_retVals { isAcceptable, resultLongInts };
 }
 
 inline CharMatrix::CharMatrix( )
@@ -193,20 +268,27 @@ inline unsigned long int CharMatrix::getNumOfInputLines( )
 {
 	constexpr long int MAX_NUM_OF_INPUT_LINES = 1000000;
 	constexpr long int MIN_NUM_OF_INPUT_LINES = 0;
+	constexpr unsigned long int REQUIRED_TOKENS_COUNT = 1;
+	const std::vector<unsigned long> SPECIFIC_TOKENS_INDICES;
+
 	std::string str_numOfInputLines;
+	std::vector<long int> li_numOfInputLines;
+	li_numOfInputLines.reserve( REQUIRED_TOKENS_COUNT );
+
 	bool isAcceptable = true;
-	long int li_numOfInputLines = 0;
 
 	do
 	{
 		std::getline( std::cin, str_numOfInputLines );
-		auto retValues = Util::isLongInt( str_numOfInputLines, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
+		auto retValues = Util::isLongInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES,
+												MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
 		isAcceptable = retValues._isAcceptable;
-		li_numOfInputLines = retValues._resultLongInt;
+		li_numOfInputLines = retValues._resultLongInts;
 
 	} while ( !isAcceptable );
 
-	return ( unsigned long int )li_numOfInputLines;
+	std::cout << "getNum...: " << "isAcceptable: " << isAcceptable << " li_numOfInputLines: " << li_numOfInputLines[0] << std::endl;
+	return ( unsigned long int )li_numOfInputLines[0];
 }
 
 inline auto CharMatrix::getCoords( )
@@ -214,23 +296,57 @@ inline auto CharMatrix::getCoords( )
 	const unsigned long int uli_numOfInputLines = CharMatrix::getNumOfInputLines( );
 	auto uniquePtr2Matrix = CharMatrix::initialize( );
 
-	size_t pos = 0;
-	bool isAcceptable = true;
-	std::string str_coord;
-	long int coordArr[4] { 0, 0, 0, 0 };
+	constexpr unsigned long int REQUIRED_TOKENS_COUNT = 4;
+	const std::vector<unsigned long> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
+	const std::vector<unsigned long> SPECIFIC_TOKENS_INDICES_FOR_X {0, 2};
+
 	const long int MAX_ALLOWED_Y = uniquePtr2Matrix->getY_DIM( ) - 1;
 	const long int MAX_ALLOWED_X = uniquePtr2Matrix->getX_DIM( ) - 1;
+	constexpr long int MIN_ALLOWED_Y = 0;
+	constexpr long int MIN_ALLOWED_X = 0;
+
+	std::string str_userEnteredCoords;
+	std::string str_userEnteredCoords_dup;
+	std::vector<long int> li_userEnteredCoords;
+	li_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
+
+	bool isAcceptable = true;
+	long int coordArr[4];
 
 	for ( unsigned long int i = 0; i < uli_numOfInputLines; ++i )
 	{
 		do
 		{
-			isAcceptable = true;
+			std::cout << "Now!" << std::endl;
+			std::getline( std::cin, str_userEnteredCoords );
+			str_userEnteredCoords_dup = str_userEnteredCoords;
+			auto retValues = Util::isLongInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES_FOR_Y,
+													MIN_ALLOWED_Y, MAX_ALLOWED_Y );
+			isAcceptable = retValues._isAcceptable;
+			li_userEnteredCoords = retValues._resultLongInts;
+			std::cout << "isAcceptable: " << isAcceptable << " coords: " <<
+								li_userEnteredCoords[0] << li_userEnteredCoords[1] << li_userEnteredCoords[2] << li_userEnteredCoords[3] << std::endl;
 
-			std::cin >> coordArr[0] >> coordArr[1] >> coordArr[2] >> coordArr[3];
+			if ( isAcceptable )
+			{
+				coordArr[1] = li_userEnteredCoords[1];
+				coordArr[3] = li_userEnteredCoords[3];
 
-			isAcceptable = ( coordArr[0] > MAX_ALLOWED_X || coordArr[2] > MAX_ALLOWED_X ||
-					coordArr[1] > MAX_ALLOWED_Y || coordArr[3] > MAX_ALLOWED_Y ) ? false : true ;
+				std::cout << "str: " << str_userEnteredCoords << std::endl;
+
+				retValues = Util::isLongInt( str_userEnteredCoords_dup, REQUIRED_TOKENS_COUNT, SPECIFIC_TOKENS_INDICES_FOR_X,
+													MIN_ALLOWED_X, MAX_ALLOWED_X );
+				isAcceptable = retValues._isAcceptable;
+				li_userEnteredCoords = retValues._resultLongInts;
+				std::cout << "isAcceptable: " << isAcceptable << " coords: " <<
+								li_userEnteredCoords[0] << li_userEnteredCoords[1] << li_userEnteredCoords[2] << li_userEnteredCoords[3] << std::endl;
+
+				if ( isAcceptable )
+				{
+					coordArr[0] = li_userEnteredCoords[0];
+					coordArr[2] = li_userEnteredCoords[2];
+				}
+			}
 
 		} while ( !isAcceptable );
 
