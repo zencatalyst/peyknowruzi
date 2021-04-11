@@ -43,7 +43,7 @@ class Util
 {
 public:
 	inline static bool tokenize( std::string& inputStr, const unsigned int& tokenCount,
-														std::vector< std::string >& foundedTokens );
+										std::vector< std::string >& foundedTokens );
 
 	inline static bool isUInt( std::string& inputStr, const unsigned int& tokenCount, std::vector<unsigned int>& result_Uints,
 											const std::vector<unsigned int>& specificTokensIndices,
@@ -266,7 +266,7 @@ inline unsigned int CharMatrix::getNumOfInputLines( )
 	{
 		std::getline( std::cin, str_numOfInputLines );
 		isAcceptable = Util::isUInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, uint_numOfInputLines,
-												SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
+									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
 
 	} while ( !isAcceptable );
 
@@ -303,7 +303,7 @@ inline auto CharMatrix::getCoords( )
 			str_userEnteredCoords_dup = str_userEnteredCoords;
 
 			isAcceptable = Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
-															SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y );
+											SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y );
 
 			if ( isAcceptable )
 			{
@@ -311,7 +311,7 @@ inline auto CharMatrix::getCoords( )
 				coordArr[3] = uint_userEnteredCoords[3];
 
 				isAcceptable = Util::isUInt( str_userEnteredCoords_dup, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
-															SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X );
+											SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X );
 
 				if ( isAcceptable )
 				{
