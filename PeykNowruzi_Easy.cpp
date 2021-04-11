@@ -276,8 +276,8 @@ inline auto CharMatrix::getCoords( )
 {
 	auto uniquePtr2Matrix = CharMatrix::initialize( );
 	const unsigned int uint_numOfInputLines = CharMatrix::getNumOfInputLines(
-											uniquePtr2Matrix->getY_DIM( ),
-											uniquePtr2Matrix->getX_DIM( ) );
+										uniquePtr2Matrix->getY_DIM( ),
+										uniquePtr2Matrix->getX_DIM( ) );
 
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 4;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
