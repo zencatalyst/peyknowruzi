@@ -60,13 +60,17 @@ inline bool Util::tokenize( std::string& inputStr, const unsigned int& tokenCoun
 {
 	bool isAcceptable = true;
 
+	std::string spaceChar(" ");
+	std::string tabChar("	");
+	std::string delimiter = tabChar + spaceChar;
+
 	char* ptr2FirstChar = &inputStr[0];
-	char* ptr2NextToken = strtok( ptr2FirstChar,   "	 " );
+	char* ptr2NextToken = strtok( ptr2FirstChar, delimiter.c_str( ) );
 
 	while ( ptr2NextToken )
 	{
 		foundedTokens.push_back( ptr2NextToken );
-	    ptr2NextToken = strtok( NULL, " 	" );
+	    ptr2NextToken = strtok( NULL, delimiter.c_str( ) );
 	}
 
 	isAcceptable = ( foundedTokens.size( ) != tokenCount ) ? false : true;
