@@ -2,7 +2,6 @@
 #include "CharMatrix.h"
 
 
-
 inline CharMatrix::CharMatrix( )
 	:_Y_DIM( 20 ), _X_DIM( 20 ), _characterMatrix( 20, std::vector<char>( 20, ' ' ) )
 {
@@ -143,7 +142,7 @@ inline auto CharMatrix::getCoords( )
 	uint_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
 
 	bool isAcceptable = true;
-	unsigned int coordArr[4];
+	unsigned int coordArr[REQUIRED_TOKENS_COUNT];
 
 	for ( unsigned int i = 0; i < uint_numOfInputLines; ++i )
 	{
