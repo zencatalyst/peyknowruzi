@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <vector>
 #include <climits>
 #include <cstring>
