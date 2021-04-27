@@ -2,29 +2,17 @@
 #include "Util.h"
 
 
-inline bool Util::tokenize( std::string& inputStr, const unsigned int& tokenCount, std::vector< std::string >& foundedTokens )
+inline bool Util::tokenize( const char (&inputStr)[169], const unsigned int& tokenCount, std::vector< std::string >& foundedTokens )
 {
-	bool isAcceptable = true;
+	std::istringstream iss( inputStr );
 
-	std::string spaceChar(" ");
-	std::string tabChar("	");
-	std::string delimiter = tabChar + spaceChar;
+	foundedTokens = std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) );
+	foundedTokens.shrink_to_fit( );
 
-	char* ptr2FirstChar = &inputStr[0];
-	char* ptr2NextToken = strtok( ptr2FirstChar, delimiter.c_str( ) );
-
-	while ( ptr2NextToken )
-	{
-		foundedTokens.push_back( ptr2NextToken );
-	    ptr2NextToken = strtok( NULL, delimiter.c_str( ) );
-	}
-
-	isAcceptable = ( foundedTokens.size( ) == tokenCount ) ? true : false;
-
-	return isAcceptable;
+	return ( foundedTokens.size( ) == tokenCount ) ? true : false;
 }
 
-bool Util::isUInt( std::string& inputStr, const unsigned int& tokenCount, std::vector<unsigned int>& result_Uints,
+bool Util::isUInt( const char (&inputStr)[169], const unsigned int& tokenCount, std::vector<unsigned int>& result_Uints,
 				const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	bool isAcceptable = ( minValue < 0 || maxValue < 0 ) ? false : true;
@@ -32,7 +20,6 @@ bool Util::isUInt( std::string& inputStr, const unsigned int& tokenCount, std::v
 	if ( !isAcceptable ) { return isAcceptable; }
 
 	std::vector< std::string > foundedTokens;
-	foundedTokens.reserve( tokenCount );
 
 	isAcceptable = tokenize( inputStr, tokenCount, foundedTokens );
 

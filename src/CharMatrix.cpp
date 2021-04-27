@@ -103,7 +103,8 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 1;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES;
 
-	std::string str_numOfInputLines;
+	constexpr std::streamsize streamSize = 169;
+	char str_numOfInputLines[ streamSize ] { };
 	std::vector<unsigned int> uint_numOfInputLines;
 	uint_numOfInputLines.reserve( REQUIRED_TOKENS_COUNT );
 	
@@ -111,7 +112,10 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 
 	do
 	{
-		std::getline( std::cin, str_numOfInputLines );
+		std::cin.putback( '\n' );
+		std::cin.clear( );
+		std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
+		std::cin.getline( str_numOfInputLines, streamSize );
 		isAcceptable = Util::isUInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, uint_numOfInputLines,
 									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
 
@@ -136,8 +140,8 @@ inline auto CharMatrix::getCoords( )
 	constexpr unsigned int MIN_ALLOWED_Y = 0;
 	constexpr unsigned int MIN_ALLOWED_X = 0;
 
-	std::string str_userEnteredCoords;
-	std::string str_userEnteredCoords_dup;
+	constexpr std::streamsize streamSize = 169;
+	char str_userEnteredCoords[ streamSize ] { };
 	std::vector<unsigned int> uint_userEnteredCoords;
 	uint_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
 
@@ -148,8 +152,10 @@ inline auto CharMatrix::getCoords( )
 	{
 		do
 		{
-			std::getline( std::cin, str_userEnteredCoords );
-			str_userEnteredCoords_dup = str_userEnteredCoords;
+			std::cin.putback( '\n' );
+			std::cin.clear( );
+			std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
+			std::cin.getline( str_userEnteredCoords, streamSize );
 
 			isAcceptable = Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
 											SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y );
@@ -159,7 +165,7 @@ inline auto CharMatrix::getCoords( )
 				coordArr[1] = uint_userEnteredCoords[1];
 				coordArr[3] = uint_userEnteredCoords[3];
 
-				isAcceptable = Util::isUInt( str_userEnteredCoords_dup, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
+				isAcceptable = Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
 											SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X );
 
 				if ( isAcceptable )
