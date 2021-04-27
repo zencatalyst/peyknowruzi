@@ -19,7 +19,7 @@ inline bool Util::tokenize( std::string& inputStr, const unsigned int& tokenCoun
 	    ptr2NextToken = strtok( NULL, delimiter.c_str( ) );
 	}
 
-	isAcceptable = ( foundedTokens.size( ) != tokenCount ) ? false : true;
+	isAcceptable = ( foundedTokens.size( ) == tokenCount ) ? true : false;
 
 	return isAcceptable;
 }
@@ -87,10 +87,6 @@ bool Util::isUInt( std::string& inputStr, const unsigned int& tokenCount, std::v
 			isAcceptable = false;
 		}
 		catch ( const std::exception& e )
-		{
-			isAcceptable = false;
-		}
-		catch ( ... )
 		{
 			isAcceptable = false;
 		}

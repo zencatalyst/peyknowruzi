@@ -142,7 +142,7 @@ inline auto CharMatrix::getCoords( )
 	uint_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
 
 	bool isAcceptable = true;
-	unsigned int coordArr[REQUIRED_TOKENS_COUNT];
+	unsigned int coordArr[REQUIRED_TOKENS_COUNT] { };
 
 	for ( unsigned int i = 0; i < uint_numOfInputLines; ++i )
 	{
