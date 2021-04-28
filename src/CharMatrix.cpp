@@ -1,4 +1,15 @@
 
+#define PN_DEBUG 0
+
+#if PN_DEBUG == 1
+#define LOG(x) std::cout << x << std::endl
+#define WAIT std::cin.get( )
+#else
+#define LOG(x)
+#define WAIT
+#endif
+
+
 #include "CharMatrix.h"
 
 
@@ -112,10 +123,8 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 
 	do
 	{
-		std::cin.putback( '\n' );
-		std::cin.clear( );
-		std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
-		std::cin.getline( str_numOfInputLines, streamSize );
+		Util::getCharInput( str_numOfInputLines, streamSize );
+		
 		isAcceptable = Util::isUInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, uint_numOfInputLines,
 									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
 
@@ -152,10 +161,7 @@ inline auto CharMatrix::getCoords( )
 	{
 		do
 		{
-			std::cin.putback( '\n' );
-			std::cin.clear( );
-			std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
-			std::cin.getline( str_userEnteredCoords, streamSize );
+			Util::getCharInput( str_userEnteredCoords, streamSize );
 
 			isAcceptable = Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
 											SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y );
@@ -205,4 +211,7 @@ void CharMatrix::writeToOutput( )
 			std::cout << characterMatrix[row][col];
 		}
 	}
+
+	LOG( "\nFinished." );
+	WAIT;
 }

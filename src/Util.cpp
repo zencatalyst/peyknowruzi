@@ -86,3 +86,11 @@ bool Util::isUInt( const char (&inputStr)[169], const unsigned int& tokenCount, 
 
 	return isAcceptable;
 }
+
+void Util::getCharInput( char arr[], const std::streamsize streamSize )
+{
+	std::cin.putback( '\n' );
+	std::cin.clear( );
+	std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
+	std::cin.getline( arr, streamSize );
+}
