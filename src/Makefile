@@ -1,13 +1,13 @@
 CC=g++
-CFLAGS=-std=c++17 -O3 -Wextra
+CFLAGS=-std=c++17 -O3 -Wextra -Wall -Wpedantic -flto
 
 all: PeykNowruzi
 
-PeykNowruzi: PeykNowruzi_Easy.o Util.o CharMatrix.o
-	$(CC) PeykNowruzi_Easy.o Util.o CharMatrix.o -o PeykNowruzi
+PeykNowruzi: PeykNowruzi.o Util.o CharMatrix.o
+	$(CC) PeykNowruzi.o Util.o CharMatrix.o -o runPeykNowruzi
 
-PeykNowruzi_Easy.o: PeykNowruzi_Easy.cpp
-	$(CC) $(CFLAGS) PeykNowruzi_Easy.cpp
+PeykNowruzi.o: PeykNowruzi.cpp
+	$(CC) $(CFLAGS) PeykNowruzi.cpp
 
 Util.o: Util.cpp
 	$(CC) $(CFLAGS) Util.cpp
