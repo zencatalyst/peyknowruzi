@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-std=c++17 -O3 -Wextra -Wall -Wpedantic -flto
+CFLAGS=-std=c++17 -Wall -Wextra -Wpedantic -Wshadow -O3 -flto
 
 all: PeykNowruzi
 

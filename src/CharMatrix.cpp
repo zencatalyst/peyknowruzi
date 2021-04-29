@@ -95,13 +95,11 @@ inline auto CharMatrix::initialize( )
 	constexpr unsigned int X_AXIS_LENGTH = 168;
 	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
 
-	const unsigned int& Y_DIM = up2Matrix->getY_DIM( );
-	const unsigned int& X_DIM = up2Matrix->getX_DIM( );
 	std::vector< std::vector<char> >& characterMatrix = up2Matrix->getCharacterMatrix( );
 
-	for ( unsigned int row = 0; row < Y_DIM; ++row )
+	for ( unsigned int row = 0; row < Y_AXIS_LENGTH; ++row )
 	{
-		characterMatrix[row][X_DIM - 1] = '\n';
+		characterMatrix[row][X_AXIS_LENGTH - 1] = '\n';
 	}
 
 	return up2Matrix;
@@ -127,7 +125,6 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 		
 		isAcceptable = Util::isUInt( str_numOfInputLines, REQUIRED_TOKENS_COUNT, uint_numOfInputLines,
 									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
-
 	} while ( !isAcceptable );
 
 	return uint_numOfInputLines[0];

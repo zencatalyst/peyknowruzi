@@ -28,7 +28,6 @@ bool Util::isUInt( const char (&inputStr)[169], const unsigned int& tokenCount, 
 		return isAcceptable;
 	}
 
-	size_t pos = 0;
 	unsigned int j = 0;
 
 	for ( unsigned int i = 0; i < foundedTokens.size( ); ++i )
@@ -50,6 +49,7 @@ bool Util::isUInt( const char (&inputStr)[169], const unsigned int& tokenCount, 
 
 		try
 		{
+			size_t pos = 0;
 			int result_Int = std::stoi( foundedTokens[i], &pos, 10 );
 
 			if ( pos != foundedTokens[i].length( ) )
