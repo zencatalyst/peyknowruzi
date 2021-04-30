@@ -14,7 +14,7 @@
 
 
 inline CharMatrix::CharMatrix( )
-	:_Y_DIM( 20 ), _X_DIM( 20 ), _characterMatrix( 20, std::vector<char>( 20, ' ' ) )
+	:_Y_DIM( 20 ), _X_DIM( 20 ), _characterMatrix( _Y_DIM, std::vector<char>( _X_DIM, ' ' ) )
 {
 }
 
@@ -62,7 +62,7 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( )
 	return _characterMatrix;
 }
 
-inline char CharMatrix::findCharType( const unsigned int(&coordArr)[4] )
+inline char CharMatrix::findCharType( const std::vector<unsigned int>& coordArr )
 {
 	if ( abs(coordArr[0] - coordArr[2]) == 1 && abs(coordArr[1] - coordArr[3]) == 1 &&
 		((coordArr[0] < coordArr[2] && coordArr[1] > coordArr[3]) || (coordArr[0] > coordArr[2] && coordArr[1] < coordArr[3])) )
@@ -133,9 +133,8 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 inline auto CharMatrix::getCoords( )
 {
 	auto uniquePtr2Matrix = CharMatrix::initialize( );
-	const unsigned int uint_numOfInputLines = CharMatrix::getNumOfInputLines(
-										uniquePtr2Matrix->getY_DIM( ),
-										uniquePtr2Matrix->getX_DIM( ) );
+	const unsigned int numOfInputLines = CharMatrix::getNumOfInputLines( uniquePtr2Matrix->getY_DIM( ), 
+																		 uniquePtr2Matrix->getX_DIM( ) );
 
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 4;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
@@ -151,42 +150,28 @@ inline auto CharMatrix::getCoords( )
 	std::vector<unsigned int> uint_userEnteredCoords;
 	uint_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
 
-	bool isAcceptable = true;
-	unsigned int coordArr[REQUIRED_TOKENS_COUNT] { };
-
-	for ( unsigned int i = 0; i < uint_numOfInputLines; ++i )
+	for ( unsigned int i = 0; i < numOfInputLines; ++i )
 	{
+		bool isAcceptable = false;
+
 		do
 		{
 			Util::getCharInput( str_userEnteredCoords, streamSize );
 
-			isAcceptable = Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
-											SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y );
-
-			if ( isAcceptable )
-			{
-				coordArr[1] = uint_userEnteredCoords[1];
-				coordArr[3] = uint_userEnteredCoords[3];
-
-				isAcceptable = Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
-											SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X );
-
-				if ( isAcceptable )
-				{
-					coordArr[0] = uint_userEnteredCoords[0];
-					coordArr[2] = uint_userEnteredCoords[2];
-				}
-			}
+			isAcceptable = ( Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
+									SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y ) &&
+				 			 Util::isUInt( str_userEnteredCoords, REQUIRED_TOKENS_COUNT, uint_userEnteredCoords,
+									SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false;
 
 		} while ( !isAcceptable );
 
-		const char ch = CharMatrix::findCharType( coordArr );
-		std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
+		const char ch = CharMatrix::findCharType( uint_userEnteredCoords );
 		
 		if ( CHAR_SET.count( ch ) )
 		{
-			characterMatrix[coordArr[1]][coordArr[0]] = ch;
-			characterMatrix[coordArr[3]][coordArr[2]] = ch;
+			std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
+			characterMatrix[uint_userEnteredCoords[1]][uint_userEnteredCoords[0]] = ch;
+			characterMatrix[uint_userEnteredCoords[3]][uint_userEnteredCoords[2]] = ch;
 		}
 	}
 

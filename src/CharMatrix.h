@@ -23,7 +23,7 @@ public:
 	inline const unsigned int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( );
 
-	inline static char findCharType( const unsigned int(&coordArr)[4] );
+	inline static char findCharType( const std::vector<unsigned int>& coordArr );
 	inline static auto initialize( );
 	inline static unsigned int getNumOfInputLines( const unsigned int& Y_DIM, const unsigned int& X_DIM );
 	inline static auto getCoords( );
