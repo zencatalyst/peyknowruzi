@@ -8,7 +8,7 @@ This program can draw your desired shapes using four characters ('/', '\\', '|',
 
 
 How to use the program:
-- Run the runPeykNowruzi_Easy.exe file
+- Run the runPeykNowruzi.exe file
 - On the first line enter half of the number n of characters you want to be printed (that is to say e.g. if you want to draw n characters then you have to enter n/2).
 - Now you will need to give n/2 lines of input to the program each one containing the initial coords (x1, y1) of the first character
 and the final coords (x2, y2) of the second character.
