@@ -93,6 +93,11 @@ inline auto CharMatrix::initialize( )
 	//constexpr char FILL_CHARACTER = '-';
 	constexpr unsigned int Y_AXIS_LENGTH = 20;
 	constexpr unsigned int X_AXIS_LENGTH = 168;
+
+	constexpr int MAX_NUM_OF_INPUT_LINES = ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 ;
+	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= INT_MAX
+					, "(Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
+
 	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
 
 	std::vector< std::vector<char> >& characterMatrix = up2Matrix->getCharacterMatrix( );
@@ -109,6 +114,10 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 {
 	const int MAX_NUM_OF_INPUT_LINES = ( Y_DIM * X_DIM ) / 2 ;
 	constexpr int MIN_NUM_OF_INPUT_LINES = 0;
+
+	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= INT_MAX
+					, "minValue and/or maxValue can not be greater than INT_MAX and less than 0" );
+
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 1;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES;
 

@@ -2,38 +2,29 @@
 #include "Util.h"
 
 
-inline bool Util::tokenize( const char (&inputStr)[169], const unsigned int& tokenCount, std::vector< std::string >& foundedTokens )
+inline bool Util::tokenize( const char (&inputStr)[169], const unsigned int& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	std::istringstream iss( inputStr );
 
-	foundedTokens = std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) );
-	foundedTokens.shrink_to_fit( );
+	foundTokens = std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) );
+	foundTokens.shrink_to_fit( );
 
-	return ( foundedTokens.size( ) == tokenCount ) ? true : false;
+	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-bool Util::isUInt( const char (&inputStr)[169], const unsigned int& tokenCount, std::vector<unsigned int>& result_Uints,
+bool Util::isUInt( const char (&inputStr)[169], const unsigned int& expectedTokenCount, std::vector<unsigned int>& result_Uints,
 				const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
 {
-	bool isAcceptable = ( minValue < 0 || maxValue < 0 ) ? false : true;
+	std::vector< std::string > foundTokens;
+
+	bool isAcceptable = tokenize( inputStr, expectedTokenCount, foundTokens );
 
 	if ( !isAcceptable ) { return isAcceptable; }
 
-	std::vector< std::string > foundedTokens;
-
-	isAcceptable = tokenize( inputStr, tokenCount, foundedTokens );
-
-	if ( !isAcceptable )
-	{
-		return isAcceptable;
-	}
-
 	unsigned int j = 0;
 
-	for ( unsigned int i = 0; i < foundedTokens.size( ); ++i )
+	for ( unsigned int i = 0; i < foundTokens.size( ); ++i )
 	{
-		isAcceptable = true;
-
 		if ( !specificTokensIndices.empty( ) )
 		{
 			if ( j < specificTokensIndices.size( ) )
@@ -50,19 +41,15 @@ bool Util::isUInt( const char (&inputStr)[169], const unsigned int& tokenCount, 
 		try
 		{
 			size_t pos = 0;
-			int result_Int = std::stoi( foundedTokens[i], &pos, 10 );
+			int result_Int = std::stoi( foundTokens[i], &pos, 10 );
 
-			if ( pos != foundedTokens[i].length( ) )
-			{
-				isAcceptable = false;
-			}
-			if ( isAcceptable )
-			{
-				isAcceptable = ( (result_Int > maxValue || result_Int < minValue) ) ? false : true;
-			}
-			if ( isAcceptable )
+			if ( pos == foundTokens[i].length( ) && (result_Int <= maxValue && result_Int >= minValue) )
 			{
 				result_Uints[i] = result_Int;
+			}
+			else
+			{
+				isAcceptable = false;
 			}
 		}
 		catch( const std::invalid_argument& ia )
