@@ -30,12 +30,12 @@ bool Util::isUInt( const char (&inputStr)[169], const unsigned int& expectedToke
 			if ( j < specificTokensIndices.size( ) )
 			{
 				i = specificTokensIndices[j];
+				++j;
 			}
 			else
 			{
 				break;
 			}
-			++j;
 		}
 
 		try
