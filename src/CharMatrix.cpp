@@ -2,7 +2,7 @@
 #define PN_DEBUG 0
 
 #if PN_DEBUG == 1
-#define LOG(x) std::cout << x << std::endl
+#define LOG(x) std::cout << (x) << std::endl
 #define WAIT std::cin.get( )
 #else
 #define LOG(x)
