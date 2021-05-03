@@ -7,7 +7,7 @@
 
 int main( )
 {
-	CharMatrix::writeToOutput( );
+	CharMatrix::launch( );
 
 	return 0;
 }

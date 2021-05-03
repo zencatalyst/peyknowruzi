@@ -24,10 +24,8 @@ inline CharMatrix::CharMatrix( const unsigned int& Y_DIM, const unsigned int& X_
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
-	:_Y_DIM( rhs._Y_DIM ), _X_DIM( rhs._X_DIM )
+	:_Y_DIM( rhs._Y_DIM ), _X_DIM( rhs._X_DIM ), _characterMatrix( std::move( rhs._characterMatrix ) )
 {
-	_characterMatrix = std::move( rhs._characterMatrix );
-	
 	rhs._Y_DIM = 0;
 	rhs._X_DIM = 0;
 }
@@ -95,28 +93,29 @@ inline auto CharMatrix::initialize( )
 	constexpr unsigned int X_AXIS_LENGTH = 168;
 
 	constexpr int MAX_NUM_OF_INPUT_LINES = ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 ;
+
 	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= INT_MAX
 					, "(Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
 
-	std::unique_ptr<CharMatrix> up2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
+	std::unique_ptr<CharMatrix> uniquePtr2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
 
-	std::vector< std::vector<char> >& characterMatrix = up2Matrix->getCharacterMatrix( );
+	std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
 
 	for ( unsigned int row = 0; row < Y_AXIS_LENGTH; ++row )
 	{
 		characterMatrix[row][X_AXIS_LENGTH - 1] = '\n';
 	}
 
-	return up2Matrix;
+	return uniquePtr2Matrix;
 }
 
-inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, const unsigned int& X_DIM )
+inline unsigned int CharMatrix::getNumOfInputLines( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix )
 {
-	const int MAX_NUM_OF_INPUT_LINES = ( Y_DIM * X_DIM ) / 2 ;
+	const int MAX_NUM_OF_INPUT_LINES = ( uniquePtr2Matrix->_Y_DIM * uniquePtr2Matrix->_X_DIM ) / 2 ;
 	constexpr int MIN_NUM_OF_INPUT_LINES = 0;
 
 	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= INT_MAX
-					, "minValue and/or maxValue can not be greater than INT_MAX and less than 0" );
+					, "MIN_NUM_OF_INPUT_LINES can not be greater than INT_MAX or less than 0" );
 
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 1;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES;
@@ -139,11 +138,9 @@ inline unsigned int CharMatrix::getNumOfInputLines( const unsigned int& Y_DIM, c
 	return uint_numOfInputLines[0];
 }
 
-inline auto CharMatrix::getCoords( )
+inline void CharMatrix::getCoords( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix )
 {
-	auto uniquePtr2Matrix = CharMatrix::initialize( );
-	const unsigned int numOfInputLines = CharMatrix::getNumOfInputLines( uniquePtr2Matrix->getY_DIM( ), 
-																		 uniquePtr2Matrix->getX_DIM( ) );
+	const unsigned int numOfInputLines = CharMatrix::getNumOfInputLines( uniquePtr2Matrix );
 
 	constexpr unsigned int REQUIRED_TOKENS_COUNT = 4;
 	const std::vector<unsigned int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
@@ -183,14 +180,10 @@ inline auto CharMatrix::getCoords( )
 			characterMatrix[uint_userEnteredCoords[3]][uint_userEnteredCoords[2]] = ch;
 		}
 	}
-
-	return uniquePtr2Matrix;
 }
 
-void CharMatrix::writeToOutput( )
+inline void CharMatrix::writeToOutput( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix )
 {
-	auto uniquePtr2Matrix = CharMatrix::getCoords( );
-
 	const unsigned int& Y_DIM = uniquePtr2Matrix->getY_DIM( );
 	const unsigned int& X_DIM = uniquePtr2Matrix->getX_DIM( );
 	const std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
@@ -205,4 +198,12 @@ void CharMatrix::writeToOutput( )
 
 	LOG( "\nFinished." );
 	WAIT;
+}
+
+void CharMatrix::launch( )
+{
+	const std::unique_ptr<CharMatrix> uniquePtr2Matrix = CharMatrix::initialize( );
+
+	CharMatrix::getCoords( uniquePtr2Matrix );
+	CharMatrix::writeToOutput( uniquePtr2Matrix );
 }

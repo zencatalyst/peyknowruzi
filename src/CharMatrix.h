@@ -25,9 +25,10 @@ public:
 
 	inline static char findCharType( const std::vector<unsigned int>& coordArr );
 	inline static auto initialize( );
-	inline static unsigned int getNumOfInputLines( const unsigned int& Y_DIM, const unsigned int& X_DIM );
-	inline static auto getCoords( );
-	static void writeToOutput( );
+	inline static unsigned int getNumOfInputLines( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix );
+	inline static void getCoords( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix );
+	inline static void writeToOutput( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix );
+	static void launch( );
 
 private:
 	unsigned int _Y_DIM;
