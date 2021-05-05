@@ -12,8 +12,8 @@ inline bool Util::tokenize( const char (&inputStr)[169], const unsigned int& exp
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-bool Util::isUInt( const char (&inputStr)[169], const unsigned int& expectedTokenCount, std::vector<unsigned int>& result_Uints,
-				const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
+bool Util::isUInt( const char (&inputStr)[169], std::vector<unsigned int>& result_Uints, const unsigned int& expectedTokenCount,
+				   const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
 

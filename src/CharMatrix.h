@@ -22,12 +22,16 @@ public:
 	inline const unsigned int& getY_DIM( ) const;
 	inline const unsigned int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( );
+	inline void setCharacterMatrix( const std::vector<unsigned int>& coordsOfChar );
+	inline bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[169],
+											std::vector<unsigned int>& uint_userEnteredCoords );
 
-	inline static char findCharType( const std::vector<unsigned int>& coordArr );
+	inline unsigned int getNumOfInputLines( );
+	inline void getCoords( );
+	inline void writeToOutput( );
+
+	inline static char findCharType( const std::vector<unsigned int>& coordsOfChar );
 	inline static auto initialize( );
-	inline static unsigned int getNumOfInputLines( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix );
-	inline static void getCoords( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix );
-	inline static void writeToOutput( const std::unique_ptr<CharMatrix>& uniquePtr2Matrix );
 	static void launch( );
 
 private:
