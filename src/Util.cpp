@@ -31,20 +31,11 @@ inline unsigned int Util::isUInt( const std::string& token, const int& minValue,
 			result_Int = 0;
 		}
 	}
-	catch( const std::invalid_argument& ia )
-	{
-		is_a_valid_UInt = false;
-	}
-	catch ( const std::out_of_range& oor )
-	{
-		is_a_valid_UInt = false;
-	}
-	catch ( const std::exception& e )
-	{
-		is_a_valid_UInt = false;
-	}
+	catch ( const std::invalid_argument& ia ) { is_a_valid_UInt = false; }
+	catch ( const std::out_of_range& oor ) { is_a_valid_UInt = false; }
+	catch ( const std::exception& e ) { is_a_valid_UInt = false; }
 
-	return result_Int;
+	return static_cast<unsigned int>(result_Int);
 }
 
 bool Util::convert_str_to_valid_UInts( const char (&inputStr)[169], std::vector<unsigned int>& result_Uints, const unsigned int& expectedTokenCount,
