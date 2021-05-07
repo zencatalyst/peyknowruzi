@@ -82,9 +82,9 @@ inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredC
 	constexpr unsigned int MIN_ALLOWED_Y = 0;
 	constexpr unsigned int MIN_ALLOWED_X = 0;
 
-	const bool isValid = ( Util::isUInt( str_userEnteredCoords, uint_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+	const bool isValid = ( Util::convert_str_to_valid_UInts( str_userEnteredCoords, uint_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y ) &&
-						   Util::isUInt( str_userEnteredCoords, uint_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+						   Util::convert_str_to_valid_UInts( str_userEnteredCoords, uint_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false;
 
 	return isValid;
@@ -157,15 +157,15 @@ inline unsigned int CharMatrix::getNumOfInputLines( )
 	std::vector<unsigned int> uint_numOfInputLines;
 	uint_numOfInputLines.reserve( REQUIRED_TOKENS_COUNT );
 	
-	bool isAcceptable = false;
+	bool isValid = false;
 
 	do
 	{
 		Util::getCharInput( str_numOfInputLines, streamSize );
 		
-		isAcceptable = Util::isUInt( str_numOfInputLines, uint_numOfInputLines, REQUIRED_TOKENS_COUNT,
+		isValid = Util::convert_str_to_valid_UInts( str_numOfInputLines, uint_numOfInputLines, REQUIRED_TOKENS_COUNT,
 									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
-	} while ( !isAcceptable );
+	} while ( !isValid );
 
 	return uint_numOfInputLines[0];
 }

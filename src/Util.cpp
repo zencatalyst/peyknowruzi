@@ -12,8 +12,43 @@ inline bool Util::tokenize( const char (&inputStr)[169], const unsigned int& exp
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-bool Util::isUInt( const char (&inputStr)[169], std::vector<unsigned int>& result_Uints, const unsigned int& expectedTokenCount,
-				   const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
+inline unsigned int Util::isUInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_UInt )
+{
+	int result_Int = 0;
+	size_t pos = 0;
+
+	try
+	{
+		result_Int = std::stoi( token, &pos, 10 );
+
+		if ( pos == token.length( ) && (result_Int <= maxValue && result_Int >= minValue) )
+		{
+			is_a_valid_UInt = true;
+		}
+		else
+		{
+			is_a_valid_UInt = false;
+			result_Int = 0;
+		}
+	}
+	catch( const std::invalid_argument& ia )
+	{
+		is_a_valid_UInt = false;
+	}
+	catch ( const std::out_of_range& oor )
+	{
+		is_a_valid_UInt = false;
+	}
+	catch ( const std::exception& e )
+	{
+		is_a_valid_UInt = false;
+	}
+
+	return result_Int;
+}
+
+bool Util::convert_str_to_valid_UInts( const char (&inputStr)[169], std::vector<unsigned int>& result_Uints, const unsigned int& expectedTokenCount,
+				   					   const std::vector<unsigned int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
 
@@ -38,37 +73,10 @@ bool Util::isUInt( const char (&inputStr)[169], std::vector<unsigned int>& resul
 			}
 		}
 
-		try
-		{
-			size_t pos = 0;
-			int result_Int = std::stoi( foundTokens[i], &pos, 10 );
+		unsigned int tempUInt = isUInt( foundTokens[i], minValue, maxValue, isAcceptable );
 
-			if ( pos == foundTokens[i].length( ) && (result_Int <= maxValue && result_Int >= minValue) )
-			{
-				result_Uints[i] = result_Int;
-			}
-			else
-			{
-				isAcceptable = false;
-			}
-		}
-		catch( const std::invalid_argument& ia )
-		{
-			isAcceptable = false;
-		}
-		catch ( const std::out_of_range& oor )
-		{
-			isAcceptable = false;
-		}
-		catch ( const std::exception& e )
-		{
-			isAcceptable = false;
-		}
-
-		if ( !isAcceptable )
-		{
-			break;
-		}
+		if ( !isAcceptable ) { break; }
+		else { result_Uints[i] = tempUInt; }
 	}
 
 	return isAcceptable;
