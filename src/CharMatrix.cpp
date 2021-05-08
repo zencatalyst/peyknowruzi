@@ -71,7 +71,7 @@ inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar
 	}
 }
 
-inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[169], std::vector<int>& uint_userEnteredCoords )
+inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[169], std::vector<int>& int_userEnteredCoords )
 {
 	constexpr size_t REQUIRED_TOKENS_COUNT = 4;
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
@@ -82,9 +82,9 @@ inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredC
 	constexpr int MIN_ALLOWED_Y = 0;
 	constexpr int MIN_ALLOWED_X = 0;
 
-	const bool isValid = ( Util::convert_str_to_valid_ints( str_userEnteredCoords, uint_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+	const bool isValid = ( Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y ) &&
-						   Util::convert_str_to_valid_ints( str_userEnteredCoords, uint_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+						   Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false;
 
 	return isValid;
