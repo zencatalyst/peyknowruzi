@@ -8,11 +8,15 @@
 #include <unordered_set>
 
 
+static constexpr int DEFAULT_X_DIM { 20 };
+static constexpr int DEFAULT_Y_DIM { 20 };
+static constexpr char DEFAULT_FILL_CHARACTER { ' ' };
+
 class CharMatrix
 {
 public:
 	inline CharMatrix( );
-	inline CharMatrix( const int& Y_DIM, const int& X_DIM, const char FILL_CHARACTER = ' ' );
+	inline CharMatrix( const int& Y_DIM, const int& X_DIM, const char FILL_CHARACTER = DEFAULT_FILL_CHARACTER );
 	inline ~CharMatrix( ) = default;
 	inline CharMatrix( const CharMatrix& ) = delete;
 	inline CharMatrix& operator=( const CharMatrix& ) = delete;

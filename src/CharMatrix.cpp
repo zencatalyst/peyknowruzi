@@ -14,7 +14,7 @@
 
 
 inline CharMatrix::CharMatrix( )
-	:_Y_DIM( 20 ), _X_DIM( 20 ), _characterMatrix( _Y_DIM, std::vector<char>( _X_DIM, ' ' ) )
+	:_Y_DIM( DEFAULT_Y_DIM ), _X_DIM( DEFAULT_X_DIM ), _characterMatrix( DEFAULT_Y_DIM, std::vector<char>( DEFAULT_X_DIM, DEFAULT_FILL_CHARACTER ) )
 {
 }
 
