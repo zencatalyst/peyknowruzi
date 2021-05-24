@@ -55,12 +55,12 @@ inline const int& CharMatrix::getX_DIM( ) const
 	return _X_DIM;
 }
 
-inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( )
+inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 {
 	return _characterMatrix;
 }
 
-inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar )
+inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar ) const
 {
 	const char ch = CharMatrix::findCharType( coordsOfChar );
 
@@ -71,7 +71,7 @@ inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar
 	}
 }
 
-inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[169], std::vector<int>& int_userEnteredCoords )
+inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[169], std::vector<int>& int_userEnteredCoords ) const
 {
 	constexpr size_t REQUIRED_TOKENS_COUNT = 4;
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
@@ -129,7 +129,7 @@ inline auto CharMatrix::initialize( )
 	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= INT_MAX
 					, "(Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
 
-	std::unique_ptr<CharMatrix> uniquePtr2Matrix = std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
+	std::unique_ptr<const CharMatrix> uniquePtr2Matrix = std::make_unique<const CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
 
 	std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
 
@@ -141,7 +141,7 @@ inline auto CharMatrix::initialize( )
 	return uniquePtr2Matrix;
 }
 
-inline int CharMatrix::getNumOfInputLines( )
+inline int CharMatrix::getNumOfInputLines( ) const
 {
 	const int MAX_NUM_OF_INPUT_LINES = ( getY_DIM( ) * getX_DIM( ) ) / 2 ;
 	constexpr int MIN_NUM_OF_INPUT_LINES = 0;
@@ -170,7 +170,7 @@ inline int CharMatrix::getNumOfInputLines( )
 	return int_numOfInputLines[0];
 }
 
-inline void CharMatrix::getCoords( )
+inline void CharMatrix::getCoords( ) const
 {
 	const int numOfInputLines = getNumOfInputLines( );
 
@@ -197,7 +197,7 @@ inline void CharMatrix::getCoords( )
 	}
 }
 
-inline void CharMatrix::writeToOutput( )
+inline void CharMatrix::writeToOutput( ) const
 {
 	const int& Y_DIM = getY_DIM( );
 	const int& X_DIM = getX_DIM( );
@@ -217,7 +217,7 @@ inline void CharMatrix::writeToOutput( )
 
 void CharMatrix::launch( )
 {
-	const std::unique_ptr<CharMatrix> uniquePtr2Matrix = CharMatrix::initialize( );
+	const std::unique_ptr<const CharMatrix> uniquePtr2Matrix = CharMatrix::initialize( );
 
 	uniquePtr2Matrix->getCoords( );
 	uniquePtr2Matrix->writeToOutput( );

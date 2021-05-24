@@ -21,14 +21,14 @@ public:
 
 	inline const int& getY_DIM( ) const;
 	inline const int& getX_DIM( ) const;
-	inline std::vector< std::vector<char> >& getCharacterMatrix( );
-	inline void setCharacterMatrix( const std::vector<int>& coordsOfChar );
+	inline std::vector< std::vector<char> >& getCharacterMatrix( ) const;
+	inline void setCharacterMatrix( const std::vector<int>& coordsOfChar ) const;
 	inline bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[169],
-											std::vector<int>& int_userEnteredCoords );
+											std::vector<int>& int_userEnteredCoords ) const;
 
-	inline int getNumOfInputLines( );
-	inline void getCoords( );
-	inline void writeToOutput( );
+	inline int getNumOfInputLines( ) const;
+	inline void getCoords( ) const;
+	inline void writeToOutput( ) const;
 
 	inline static char findCharType( const std::vector<int>& coordsOfChar );
 	inline static auto initialize( );
@@ -37,6 +37,6 @@ public:
 private:
 	int _Y_DIM;
 	int _X_DIM;
-	std::vector< std::vector<char> > _characterMatrix;
+	mutable std::vector< std::vector<char> > _characterMatrix;
 	inline static const std::unordered_set<char> CHAR_SET { '/', '\\', '|', '-' };
 };
