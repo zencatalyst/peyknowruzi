@@ -62,7 +62,7 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 
 inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar ) const
 {
-	const char ch = CharMatrix::findCharType( coordsOfChar );
+	const char ch { CharMatrix::findCharType( coordsOfChar ) };
 
 	if ( CHAR_SET.count( ch ) )
 	{
@@ -73,19 +73,19 @@ inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar
 
 inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], std::vector<int>& int_userEnteredCoords ) const
 {
-	constexpr size_t REQUIRED_TOKENS_COUNT = 4;
+	constexpr size_t REQUIRED_TOKENS_COUNT { 4 };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_X {0, 2};
 
-	const int MAX_ALLOWED_Y = getY_DIM( ) - 1;
-	const int MAX_ALLOWED_X = getX_DIM( ) - 1;
-	constexpr int MIN_ALLOWED_Y = 0;
-	constexpr int MIN_ALLOWED_X = 0;
+	const int MAX_ALLOWED_Y { getY_DIM( ) - 1 };
+	const int MAX_ALLOWED_X { getX_DIM( ) - 1 };
+	constexpr int MIN_ALLOWED_Y { 0 };
+	constexpr int MIN_ALLOWED_X { 0 };
 
-	const bool isValid = ( Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+	const bool isValid { Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y ) &&
 						   Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
-							SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false;
+							SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ? true : false };
 
 	return isValid;
 }
@@ -121,17 +121,17 @@ inline char CharMatrix::findCharType( const std::vector<int>& coordsOfChar )
 inline auto CharMatrix::initialize( )
 {
 	//constexpr char FILL_CHARACTER = '-';
-	constexpr int Y_AXIS_LENGTH = 20;
-	constexpr int X_AXIS_LENGTH = 168;
+	constexpr int Y_AXIS_LENGTH { 20 };
+	constexpr int X_AXIS_LENGTH { 168 };
 
-	constexpr int MAX_NUM_OF_INPUT_LINES = ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 ;
+	constexpr int MAX_NUM_OF_INPUT_LINES { ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 };
 
 	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= INT_MAX
 					, "(Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
 
-	std::unique_ptr<const CharMatrix> uniquePtr2Matrix = std::make_unique<const CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ );
+	std::unique_ptr<const CharMatrix> uniquePtr2Matrix { std::make_unique<const CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ ) };
 
-	std::vector< std::vector<char> >& characterMatrix = uniquePtr2Matrix->getCharacterMatrix( );
+	std::vector< std::vector<char> >& characterMatrix { uniquePtr2Matrix->getCharacterMatrix( ) };
 
 	for ( int row = 0; row < Y_AXIS_LENGTH; ++row )
 	{
@@ -143,28 +143,28 @@ inline auto CharMatrix::initialize( )
 
 inline int CharMatrix::getNumOfInputLines( ) const
 {
-	const int MAX_NUM_OF_INPUT_LINES = ( getY_DIM( ) * getX_DIM( ) ) / 2 ;
-	constexpr int MIN_NUM_OF_INPUT_LINES = 0;
+	const int MAX_NUM_OF_INPUT_LINES { ( getY_DIM( ) * getX_DIM( ) ) / 2 };
+	constexpr int MIN_NUM_OF_INPUT_LINES { 0 };
 
 	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= INT_MAX
 					, "MIN_NUM_OF_INPUT_LINES can not be greater than INT_MAX or less than 0" );
 
-	constexpr size_t REQUIRED_TOKENS_COUNT = 1;
+	constexpr size_t REQUIRED_TOKENS_COUNT { 1 };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES;
 
-	constexpr std::streamsize streamSize = DEFAULT_BUFFER_SIZE;
+	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	char str_numOfInputLines[ streamSize ] { };
 	std::vector<int> int_numOfInputLines;
 	int_numOfInputLines.reserve( REQUIRED_TOKENS_COUNT );
 	
-	bool isValid = false;
+	bool isValid { false };
 
 	do
 	{
 		Util::getCharInput( str_numOfInputLines, streamSize );
 		
-		isValid = Util::convert_str_to_valid_ints( str_numOfInputLines, int_numOfInputLines, REQUIRED_TOKENS_COUNT,
-									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES );
+		isValid = { Util::convert_str_to_valid_ints( str_numOfInputLines, int_numOfInputLines, REQUIRED_TOKENS_COUNT,
+									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES ) };
 	} while ( !isValid );
 
 	return int_numOfInputLines[0];
@@ -172,24 +172,24 @@ inline int CharMatrix::getNumOfInputLines( ) const
 
 inline void CharMatrix::getCoords( ) const
 {
-	const int numOfInputLines = getNumOfInputLines( );
+	const int numOfInputLines { getNumOfInputLines( ) };
 
-	constexpr std::streamsize streamSize = DEFAULT_BUFFER_SIZE;
+	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	char str_userEnteredCoords[ streamSize ] { };
 
-	constexpr size_t REQUIRED_TOKENS_COUNT = 4;
+	constexpr size_t REQUIRED_TOKENS_COUNT { 4 };
 	std::vector<int> int_userEnteredCoords;
 	int_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
 
 	for ( int i = 0; i < numOfInputLines; ++i )
 	{
-		bool isAcceptable = false;
+		bool isAcceptable { false };
 
 		do
 		{
 			Util::getCharInput( str_userEnteredCoords, streamSize );
 
-			isAcceptable = validateUserEnteredCoords( str_userEnteredCoords, int_userEnteredCoords );
+			isAcceptable = { validateUserEnteredCoords( str_userEnteredCoords, int_userEnteredCoords ) };
 
 		} while ( !isAcceptable );
 
@@ -199,9 +199,9 @@ inline void CharMatrix::getCoords( ) const
 
 inline void CharMatrix::writeToOutput( ) const
 {
-	const int& Y_DIM = getY_DIM( );
-	const int& X_DIM = getX_DIM( );
-	const std::vector< std::vector<char> >& characterMatrix = getCharacterMatrix( );
+	const int& Y_DIM { getY_DIM( ) };
+	const int& X_DIM { getX_DIM( ) };
+	const std::vector< std::vector<char> >& characterMatrix { getCharacterMatrix( ) };
 
 	for ( int row = 0; row < Y_DIM; ++row )
 	{
@@ -217,7 +217,7 @@ inline void CharMatrix::writeToOutput( ) const
 
 void CharMatrix::launch( )
 {
-	const std::unique_ptr<const CharMatrix> uniquePtr2Matrix = CharMatrix::initialize( );
+	const std::unique_ptr<const CharMatrix> uniquePtr2Matrix { CharMatrix::initialize( ) };
 
 	uniquePtr2Matrix->getCoords( );
 	uniquePtr2Matrix->writeToOutput( );

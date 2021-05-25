@@ -2,11 +2,11 @@
 #include "Util.h"
 
 
-inline bool Util::tokenize( const char (&inputStr)[DEFAULT_BUFFER_SIZE], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
+inline bool Util::tokenize( const char inputStr[], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	std::istringstream iss( inputStr );
 
-	foundTokens = std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) );
+	foundTokens = { std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) ) };
 	foundTokens.shrink_to_fit( );
 
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
@@ -14,8 +14,8 @@ inline bool Util::tokenize( const char (&inputStr)[DEFAULT_BUFFER_SIZE], const s
 
 inline int Util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
 {
-	int result_int = 0;
-	size_t pos = 0;
+	int result_int { 0 };
+	size_t pos { 0 };
 
 	try
 	{
@@ -38,16 +38,16 @@ inline int Util::isInt( const std::string& token, const int& minValue, const int
 	return result_int;
 }
 
-bool Util::convert_str_to_valid_ints( const char (&inputStr)[DEFAULT_BUFFER_SIZE], std::vector<int>& result_ints, const size_t& expectedTokenCount,
+bool Util::convert_str_to_valid_ints( const char inputStr[], std::vector<int>& result_ints, const size_t& expectedTokenCount,
 				   					   const std::vector<int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
 
-	bool isAcceptable = tokenize( inputStr, expectedTokenCount, foundTokens );
+	bool isAcceptable { tokenize( inputStr, expectedTokenCount, foundTokens ) };
 
 	if ( !isAcceptable ) { return isAcceptable; }
 
-	size_t j = 0;
+	size_t j { 0 };
 
 	for ( size_t i = 0; i < foundTokens.size( ); ++i )
 	{
@@ -64,7 +64,7 @@ bool Util::convert_str_to_valid_ints( const char (&inputStr)[DEFAULT_BUFFER_SIZE
 			}
 		}
 
-		int tempInt = isInt( foundTokens[i], minValue, maxValue, isAcceptable );
+		int tempInt { isInt( foundTokens[i], minValue, maxValue, isAcceptable ) };
 
 		if ( !isAcceptable ) { break; }
 		else { result_ints[i] = tempInt; }

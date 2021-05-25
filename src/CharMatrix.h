@@ -11,6 +11,7 @@
 static constexpr int DEFAULT_X_DIM { 20 };
 static constexpr int DEFAULT_Y_DIM { 20 };
 static constexpr char DEFAULT_FILL_CHARACTER { ' ' };
+static constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
 
 class CharMatrix
 {
