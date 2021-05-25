@@ -27,7 +27,7 @@ public:
 	inline const int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( ) const;
 	inline void setCharacterMatrix( const std::vector<int>& coordsOfChar ) const;
-	inline bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[169],
+	inline bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE],
 											std::vector<int>& int_userEnteredCoords ) const;
 
 	inline int getNumOfInputLines( ) const;

@@ -2,7 +2,7 @@
 #include "Util.h"
 
 
-inline bool Util::tokenize( const char (&inputStr)[169], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
+inline bool Util::tokenize( const char (&inputStr)[DEFAULT_BUFFER_SIZE], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	std::istringstream iss( inputStr );
 
@@ -38,7 +38,7 @@ inline int Util::isInt( const std::string& token, const int& minValue, const int
 	return result_int;
 }
 
-bool Util::convert_str_to_valid_ints( const char (&inputStr)[169], std::vector<int>& result_ints, const size_t& expectedTokenCount,
+bool Util::convert_str_to_valid_ints( const char (&inputStr)[DEFAULT_BUFFER_SIZE], std::vector<int>& result_ints, const size_t& expectedTokenCount,
 				   					   const std::vector<int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
