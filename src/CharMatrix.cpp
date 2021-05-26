@@ -60,7 +60,7 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 	return _characterMatrix;
 }
 
-inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar ) const
+inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const
 {
 	const char ch { CharMatrix::findCharType( coordsOfChar ) };
 
@@ -71,7 +71,7 @@ inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar
 	}
 }
 
-inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], std::vector<int>& int_userEnteredCoords ) const
+inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const
 {
 	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y { 1, 3 };
@@ -90,7 +90,7 @@ inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredC
 	return isValid;
 }
 
-inline char CharMatrix::findCharType( const std::vector<int>& coordsOfChar )
+inline char CharMatrix::findCharType( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] )
 {
 	if ( abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
 		((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
@@ -120,7 +120,7 @@ inline char CharMatrix::findCharType( const std::vector<int>& coordsOfChar )
 
 inline auto CharMatrix::initialize( )
 {
-	//constexpr char FILL_CHARACTER = '-';
+	// constexpr char FILL_CHARACTER = '-';
 	constexpr int Y_AXIS_LENGTH { 20 };
 	constexpr int X_AXIS_LENGTH { 168 };
 
@@ -154,8 +154,7 @@ inline int CharMatrix::getNumOfInputLines( ) const
 
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	char str_numOfInputLines[ streamSize ] { };
-	std::vector<int> int_numOfInputLines;
-	int_numOfInputLines.reserve( REQUIRED_TOKENS_COUNT );
+	int int_numOfInputLines[ REQUIRED_TOKENS_COUNT ] { };
 	
 	bool isValid { false };
 
@@ -178,8 +177,7 @@ inline void CharMatrix::getCoords( ) const
 	char str_userEnteredCoords[ streamSize ] { };
 
 	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
-	std::vector<int> int_userEnteredCoords;
-	int_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
+	int int_userEnteredCoords[ REQUIRED_TOKENS_COUNT ] { };
 
 	for ( int i = 0; i < numOfInputLines; ++i )
 	{

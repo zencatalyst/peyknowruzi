@@ -25,15 +25,15 @@ public:
 	inline const int& getY_DIM( ) const;
 	inline const int& getX_DIM( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( ) const;
-	inline void setCharacterMatrix( const std::vector<int>& coordsOfChar ) const;
+	inline void setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const;
 	inline bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE],
-											std::vector<int>& int_userEnteredCoords ) const;
+											int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const;
 
 	inline int getNumOfInputLines( ) const;
 	inline void getCoords( ) const;
 	inline void writeToOutput( ) const;
 
-	inline static char findCharType( const std::vector<int>& coordsOfChar );
+	inline static char findCharType( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] );
 	inline static auto initialize( );
 	static void launch( );
 

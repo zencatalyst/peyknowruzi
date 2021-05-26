@@ -38,7 +38,7 @@ inline int Util::isInt( const std::string& token, const int& minValue, const int
 	return result_int;
 }
 
-bool Util::convert_str_to_valid_ints( const char inputStr[], std::vector<int>& result_ints, const size_t& expectedTokenCount,
+bool Util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const size_t& expectedTokenCount,
 				   					   const std::vector<int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
