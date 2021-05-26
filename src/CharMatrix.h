@@ -12,6 +12,7 @@ static constexpr int DEFAULT_X_DIM { 20 };
 static constexpr int DEFAULT_Y_DIM { 20 };
 static constexpr char DEFAULT_FILL_CHARACTER { ' ' };
 static constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
+static constexpr size_t CARTESIAN_COMPONENTS_COUNT { 4 };
 
 class CharMatrix
 {

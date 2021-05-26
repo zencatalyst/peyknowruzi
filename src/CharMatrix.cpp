@@ -73,9 +73,9 @@ inline void CharMatrix::setCharacterMatrix( const std::vector<int>& coordsOfChar
 
 inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], std::vector<int>& int_userEnteredCoords ) const
 {
-	constexpr size_t REQUIRED_TOKENS_COUNT { 4 };
-	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y {1, 3};
-	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_X {0, 2};
+	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
+	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y { 1, 3 };
+	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_X { 0, 2 };
 
 	const int MAX_ALLOWED_Y { getY_DIM( ) - 1 };
 	const int MAX_ALLOWED_X { getX_DIM( ) - 1 };
@@ -177,7 +177,7 @@ inline void CharMatrix::getCoords( ) const
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	char str_userEnteredCoords[ streamSize ] { };
 
-	constexpr size_t REQUIRED_TOKENS_COUNT { 4 };
+	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 	std::vector<int> int_userEnteredCoords;
 	int_userEnteredCoords.reserve( REQUIRED_TOKENS_COUNT );
 
