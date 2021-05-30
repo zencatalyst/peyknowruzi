@@ -16,6 +16,7 @@
 
 class Invalid_Fill_Character_Exception : public std::exception
 {
+public:
 	virtual const char* what( ) const throw( )
 	{
 		size_t elementCount { };
@@ -30,29 +31,30 @@ class Invalid_Fill_Character_Exception : public std::exception
 			else { ss << "'" << *it << "', "; }
 		}
 
-		const std::string TEMP_MSG_STRING { ss.str( ) };
+		const std::string tempMsgStr { ss.str( ) };
 
-		char* INVALID_FILL_CHARACTER_EXCEPTION_MSG = new char[ TEMP_MSG_STRING.length( ) + 1 ];
-		std::strcpy( INVALID_FILL_CHARACTER_EXCEPTION_MSG, TEMP_MSG_STRING.c_str( ) );
+		char* Invalid_Fill_Character_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
+		std::strcpy( Invalid_Fill_Character_Exception_Msg, tempMsgStr.c_str( ) );
 
-		return INVALID_FILL_CHARACTER_EXCEPTION_MSG;
+		return Invalid_Fill_Character_Exception_Msg;
 	}
 
 } Invalid_Fill_Char_Exc;
 
 class Invalid_Y_Axis_Len_Exception : public std::exception
 {
+public:
 	virtual const char* what( ) const throw( )
 	{
 		std::stringstream ss;
 
 		ss << "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than " <<
-				MAX_ALLOWED_Y_DIM << " and lesser than " << MIN_ALLOWED_Y_DIM << ".";
+				MAX_ALLOWED_Y_AXIS_LEN << " and lesser than " << MIN_ALLOWED_Y_AXIS_LEN << ".";
 
-		const std::string TEMP_MSG_STRING { ss.str( ) };
+		const std::string tempMsgStr { ss.str( ) };
 
-		char* Invalid_Y_Axis_Len_Exception_Msg = new char[ TEMP_MSG_STRING.length( ) + 1 ];
-		std::strcpy( Invalid_Y_Axis_Len_Exception_Msg, TEMP_MSG_STRING.c_str( ) );
+		char* Invalid_Y_Axis_Len_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
+		std::strcpy( Invalid_Y_Axis_Len_Exception_Msg, tempMsgStr.c_str( ) );
 
 		return Invalid_Y_Axis_Len_Exception_Msg;
 	}
@@ -61,17 +63,18 @@ class Invalid_Y_Axis_Len_Exception : public std::exception
 
 class Invalid_X_Axis_Len_Exception : public std::exception
 {
+public:
 	virtual const char* what( ) const throw( )
 	{
 		std::stringstream ss;
 
 		ss << "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than " <<
-				MAX_ALLOWED_X_DIM << " and lesser than " << MIN_ALLOWED_X_DIM << ".";
+				MAX_ALLOWED_X_AXIS_LEN << " and lesser than " << MIN_ALLOWED_X_AXIS_LEN << ".";
 
-		const std::string TEMP_MSG_STRING { ss.str( ) };
+		const std::string tempMsgStr { ss.str( ) };
 
-		char* Invalid_X_Axis_Len_Exception_Msg = new char[ TEMP_MSG_STRING.length( ) + 1 ];
-		std::strcpy( Invalid_X_Axis_Len_Exception_Msg, TEMP_MSG_STRING.c_str( ) );
+		char* Invalid_X_Axis_Len_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
+		std::strcpy( Invalid_X_Axis_Len_Exception_Msg, tempMsgStr.c_str( ) );
 
 		return Invalid_X_Axis_Len_Exception_Msg;
 	}
@@ -80,23 +83,23 @@ class Invalid_X_Axis_Len_Exception : public std::exception
 
 
 inline CharMatrix::CharMatrix( )
-	:_Y_DIM( DEFAULT_Y_DIM ), _X_DIM( DEFAULT_X_DIM ), _fillCharacter( DEFAULT_FILL_CHARACTER ),
-	_characterMatrix( DEFAULT_Y_DIM, std::vector<char>( DEFAULT_X_DIM, DEFAULT_FILL_CHARACTER ) )
+	:_Y_AxisLen( DEFAULT_Y_AXIS_LEN ), _X_AxisLen( DEFAULT_X_AXIS_LEN ), _fillCharacter( DEFAULT_FILL_CHARACTER ),
+	_characterMatrix( DEFAULT_Y_AXIS_LEN, std::vector<char>( DEFAULT_X_AXIS_LEN, DEFAULT_FILL_CHARACTER ) )
 {
 }
 
-inline CharMatrix::CharMatrix( const int& Y_DIM, const int& X_DIM, const char fillCharacter )
-	: _Y_DIM( Y_DIM ), _X_DIM( X_DIM ), _fillCharacter( fillCharacter ),
-	_characterMatrix( Y_DIM, std::vector<char>( X_DIM, fillCharacter ) )
+inline CharMatrix::CharMatrix( const int& Y_AxisLen, const int& X_AxisLen, const char fillCharacter )
+	: _Y_AxisLen( Y_AxisLen ), _X_AxisLen( X_AxisLen ), _fillCharacter( fillCharacter ),
+	_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
 {
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
-	:_Y_DIM( rhs._Y_DIM ), _X_DIM( rhs._X_DIM ), _fillCharacter( rhs._fillCharacter ),
+	:_Y_AxisLen( rhs._Y_AxisLen ), _X_AxisLen( rhs._X_AxisLen ), _fillCharacter( rhs._fillCharacter ),
 	_characterMatrix( std::move( rhs._characterMatrix ) )
 {
-	rhs._Y_DIM = 0;
-	rhs._X_DIM = 0;
+	rhs._Y_AxisLen = 0;
+	rhs._X_AxisLen = 0;
 	rhs._fillCharacter = 0;
 }
 
@@ -105,26 +108,26 @@ inline CharMatrix& CharMatrix::operator=( CharMatrix&& rhs ) noexcept
 	if ( this != &rhs )
 	{
 		_characterMatrix = std::move( rhs._characterMatrix );
-		_Y_DIM = rhs._Y_DIM;
-		_X_DIM = rhs._X_DIM;
+		_Y_AxisLen = rhs._Y_AxisLen;
+		_X_AxisLen = rhs._X_AxisLen;
 		_fillCharacter = rhs._fillCharacter;
 
-		rhs._Y_DIM = 0;
-		rhs._X_DIM = 0;
+		rhs._Y_AxisLen = 0;
+		rhs._X_AxisLen = 0;
 		rhs._fillCharacter = 0;
 	}
 
 	return *this;
 }
 
-inline const int& CharMatrix::getY_DIM( ) const
+inline const int& CharMatrix::getY_AxisLen( ) const
 {
-	return _Y_DIM;
+	return _Y_AxisLen;
 }
 
-inline const int& CharMatrix::getX_DIM( ) const
+inline const int& CharMatrix::getX_AxisLen( ) const
 {
-	return _X_DIM;
+	return _X_AxisLen;
 }
 
 inline const char& CharMatrix::getFillCharacter( ) const
@@ -137,49 +140,49 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 	return _characterMatrix;
 }
 
-inline void CharMatrix::setY_DIM( const int& Y_DIM )
+inline void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 {
-	if ( Y_DIM == getY_DIM( ) ) { return; }
+	if ( Y_AxisLen == getY_AxisLen( ) ) { return; }
 
-	if ( Y_DIM > MAX_ALLOWED_Y_DIM || Y_DIM < MIN_ALLOWED_Y_DIM )
+	if ( Y_AxisLen > MAX_ALLOWED_Y_AXIS_LEN || Y_AxisLen < MIN_ALLOWED_Y_AXIS_LEN )
 	{
 		try
 		{
 			throw Invalid_Y_Axis_Len_Exc;
 		}
-		catch ( const std::exception& e )
+		catch ( const Invalid_Y_Axis_Len_Exception& e )
 		{
 			LOG( e.what( ) );
 			return;
 		}
 	}
 
-	getCharacterMatrix( ).resize( Y_DIM, std::vector<char>( getX_DIM( ), getFillCharacter( ) ) );
+	getCharacterMatrix( ).resize( Y_AxisLen, std::vector<char>( getX_AxisLen( ), getFillCharacter( ) ) );
 
-	if ( Y_DIM > getY_DIM( ) )
+	if ( Y_AxisLen > getY_AxisLen( ) )
 	{
-		for ( int i = getY_DIM( ); i < Y_DIM; ++i )
+		for ( int i = getY_AxisLen( ); i < Y_AxisLen; ++i )
 		{
 			auto& row = getCharacterMatrix( )[i];
 
-			row[ getX_DIM( ) - 1 ] = '\n';
+			row[ getX_AxisLen( ) - 1 ] = '\n';
 		}
 	}
 
-	_Y_DIM = { Y_DIM };
+	_Y_AxisLen = { Y_AxisLen };
 }
 
-inline void CharMatrix::setX_DIM( const int& X_DIM )
+inline void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 {
-	if ( X_DIM == getX_DIM( ) ) { return; }
+	if ( X_AxisLen == getX_AxisLen( ) ) { return; }
 
-	if ( X_DIM > MAX_ALLOWED_X_DIM || X_DIM < MIN_ALLOWED_X_DIM )
+	if ( X_AxisLen > MAX_ALLOWED_X_AXIS_LEN || X_AxisLen < MIN_ALLOWED_X_AXIS_LEN )
 	{
 		try
 		{
 			throw Invalid_X_Axis_Len_Exc;
 		}
-		catch ( const std::exception& e )
+		catch ( const Invalid_X_Axis_Len_Exception& e )
 		{
 			LOG( e.what( ) );
 			return;
@@ -190,15 +193,15 @@ inline void CharMatrix::setX_DIM( const int& X_DIM )
 	{
 		auto& row = *it;
 
-		row.resize( X_DIM, getFillCharacter( ) );
-		row[X_DIM - 1] = '\n';
-		if ( X_DIM > getX_DIM( ) )
+		row.resize( X_AxisLen, getFillCharacter( ) );
+		row[X_AxisLen - 1] = '\n';
+		if ( X_AxisLen > getX_AxisLen( ) )
 		{
-			row[ getX_DIM( ) - 1 ] = getFillCharacter( );
+			row[ getX_AxisLen( ) - 1 ] = getFillCharacter( );
 		}
 	}
 
-	_X_DIM = { X_DIM };
+	_X_AxisLen = { X_AxisLen };
 }
 
 inline void CharMatrix::setFillCharacter( const char& fillCharacter )
@@ -211,16 +214,16 @@ inline void CharMatrix::setFillCharacter( const char& fillCharacter )
 		{
 			throw Invalid_Fill_Char_Exc;
 		}
-		catch ( const std::exception& e )
+		catch ( const Invalid_Fill_Character_Exception& e )
 		{
 			LOG( e.what( ) );
 			return;
 		}
 	}
 
-	for ( int row = 0; row < getY_DIM( ); ++row )
+	for ( int row = 0; row < getY_AxisLen( ); ++row )
 	{
-		for ( int column = 0; column < getX_DIM( ) - 1; ++column )
+		for ( int column = 0; column < getX_AxisLen( ) - 1; ++column )
 		{
 			if ( _characterMatrix[row][column] == getFillCharacter( ) )
 			{
@@ -249,8 +252,8 @@ inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredC
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y { 1, 3 };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_X { 0, 2 };
 
-	const int MAX_ALLOWED_Y { getY_DIM( ) - 1 };
-	const int MAX_ALLOWED_X { getX_DIM( ) - 1 };
+	const int MAX_ALLOWED_Y { getY_AxisLen( ) - 1 };
+	const int MAX_ALLOWED_X { getX_AxisLen( ) - 1 };
 	constexpr int MIN_ALLOWED_Y { 0 };
 	constexpr int MIN_ALLOWED_X { 0 };
 
@@ -315,7 +318,7 @@ inline auto CharMatrix::initialize( )
 
 inline int CharMatrix::getNumOfInputLines( ) const
 {
-	const int MAX_NUM_OF_INPUT_LINES { ( getY_DIM( ) * getX_DIM( ) ) / 2 };
+	const int MAX_NUM_OF_INPUT_LINES { ( getY_AxisLen( ) * getX_AxisLen( ) ) / 2 };
 	constexpr int MIN_NUM_OF_INPUT_LINES { 0 };
 
 	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= INT_MAX
@@ -369,13 +372,13 @@ inline void CharMatrix::getCoords( ) const
 
 inline void CharMatrix::writeToOutput( ) const
 {
-	const int& Y_DIM { getY_DIM( ) };
-	const int& X_DIM { getX_DIM( ) };
+	const int& Y_AxisLen { getY_AxisLen( ) };
+	const int& X_AxisLen { getX_AxisLen( ) };
 	const std::vector< std::vector<char> >& characterMatrix { getCharacterMatrix( ) };
 
-	for ( int row = 0; row < Y_DIM; ++row )
+	for ( int row = 0; row < Y_AxisLen; ++row )
 	{
-		for ( int col = 0; col < X_DIM; ++col )
+		for ( int col = 0; col < X_AxisLen; ++col )
 		{
 			std::cout << characterMatrix[row][col];
 		}
