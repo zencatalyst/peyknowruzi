@@ -3,11 +3,15 @@
 
 #include <iostream>
 #include <sstream>
+
 #include <vector>
-#include <memory>
-#include <climits>
-#include <cstring>
 #include <iterator>
 #include <unordered_set>
-#include <algorithm>
+
+#include <memory>
 #include <exception>
+
+#include <climits>
+#include <cstring>
+
+#include <algorithm>
