@@ -257,9 +257,9 @@ inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredC
 	constexpr int MIN_ALLOWED_Y { 0 };
 	constexpr int MIN_ALLOWED_X { 0 };
 
-	const bool isValid { Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+	const bool isValid { util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y ) &&
-						   Util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
+						   util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
 							SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ? true : false };
 
 	return isValid;
@@ -335,9 +335,9 @@ inline int CharMatrix::getNumOfInputLines( ) const
 
 	do
 	{
-		Util::getCharInput( str_numOfInputLines, streamSize );
+		util::getCharInput( str_numOfInputLines, streamSize );
 		
-		isValid = { Util::convert_str_to_valid_ints( str_numOfInputLines, int_numOfInputLines, REQUIRED_TOKENS_COUNT,
+		isValid = { util::convert_str_to_valid_ints( str_numOfInputLines, int_numOfInputLines, REQUIRED_TOKENS_COUNT,
 									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES ) };
 	} while ( !isValid );
 
@@ -360,7 +360,7 @@ inline void CharMatrix::getCoords( ) const
 
 		do
 		{
-			Util::getCharInput( str_userEnteredCoords, streamSize );
+			util::getCharInput( str_userEnteredCoords, streamSize );
 
 			isAcceptable = { validateUserEnteredCoords( str_userEnteredCoords, int_userEnteredCoords ) };
 

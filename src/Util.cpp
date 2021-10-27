@@ -2,7 +2,7 @@
 #include "Util.h"
 
 
-inline bool Util::tokenize( const char inputStr[], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
+inline bool util::tokenize( const char inputStr[], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	std::istringstream iss( inputStr );
 
@@ -12,7 +12,7 @@ inline bool Util::tokenize( const char inputStr[], const size_t& expectedTokenCo
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-inline int Util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
+inline int util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
 {
 	int result_int { 0 };
 	size_t pos { 0 };
@@ -38,12 +38,12 @@ inline int Util::isInt( const std::string& token, const int& minValue, const int
 	return result_int;
 }
 
-bool Util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const size_t& expectedTokenCount,
+bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const size_t& expectedTokenCount,
 				   					   const std::vector<int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
 
-	bool isAcceptable { tokenize( inputStr, expectedTokenCount, foundTokens ) };
+	bool isAcceptable { util::tokenize( inputStr, expectedTokenCount, foundTokens ) };
 
 	if ( !isAcceptable ) { return isAcceptable; }
 
@@ -73,7 +73,7 @@ bool Util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], 
 	return isAcceptable;
 }
 
-void Util::getCharInput( char arr[], const std::streamsize streamSize )
+void util::getCharInput( char arr[], const std::streamsize streamSize )
 {
 	std::cin.putback( '\n' );
 	std::cin.clear( );
