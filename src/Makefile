@@ -1,19 +1,19 @@
-CC=g++
-CFLAGS=-std=c++20 -Wall -Wextra -Wpedantic -Wshadow -O3 -flto
+CXX = g++
+CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Wshadow -O3
 
 all: PeykNowruzi
 
 PeykNowruzi: PeykNowruzi.o Util.o CharMatrix.o
-	$(CC) PeykNowruzi.o Util.o CharMatrix.o -o runPeykNowruzi
+	$(CXX) PeykNowruzi.o Util.o CharMatrix.o -o runPeykNowruzi
 
 PeykNowruzi.o: PeykNowruzi.cpp
-	$(CC) $(CFLAGS) PeykNowruzi.cpp
+	$(CXX) -c $(CXXFLAGS) PeykNowruzi.cpp
 
-Util.o: Util.cpp
-	$(CC) $(CFLAGS) Util.cpp
+Util.o: Util.cpp Util.h
+	$(CXX) -c $(CXXFLAGS) Util.cpp
 
-CharMatrix.o: CharMatrix.cpp
-	$(CC) $(CFLAGS) CharMatrix.cpp
+CharMatrix.o: CharMatrix.cpp CharMatrix.h
+	$(CXX) -c $(CXXFLAGS) CharMatrix.cpp
 
 clean:
-	rm -rf *o PeykNowruzi
+	rm -f *.o runPeykNowruzi
