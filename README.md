@@ -6,7 +6,7 @@
 ## 🚀 How to use the program:
 Below you can see the instructions on how to interact with the program PeykNowruzi.
 
-- Run the runPeykNowruzi.exe file. Below is an example:
+- Run the `runPeykNowruzi.exe` file. Below is an example:
 
 ```sh
 C:\Users\joel\Desktop>runPeykNowruzi.exe
@@ -77,6 +77,25 @@ C:\Users\joel\Desktop>runPeykNowruzi.exe
 \--/
  \/
 ```
+
+## ✨ How to pass an input file to the program:
+
+An alternative and easier way to provide input data to the program is to pass an input text file containing all the required data in order to execute the program.
+So there is no need to type all of the numbers (coordinates) using the keyboard.
+
+A sample input file called `PeykNowruzi_sample-input.txt` can be found inside '_Sample Inputs_' directory.
+
+Below is an example of how you can achieve this using **<** operator:
+
+```sh
+C:\Users\joel\Desktop\magical-creations\Executables>runPeykNowruzi.exe < "C:\Users\joel\Desktop\magical-creations\Sample Inputs\PeykNowruzi_sample-input.txt"
+```
+
+**Here is a demo:**
+
+<p align="center">
+  <img width="900" align="center" src="https://user-images.githubusercontent.com/73937934/139603583-cfa63844-4bca-4675-8188-54916907886a.gif" alt="Demo of passing input file"/>
+</p>
 
 ## 🤝 Contributing
 
