@@ -296,7 +296,7 @@ inline char CharMatrix::findCharType( const int (&coordsOfChar)[CARTESIAN_COMPON
 inline auto CharMatrix::initialize( )
 {
 	// constexpr char FILL_CHARACTER = '#';
-	constexpr int Y_AXIS_LENGTH { 20 };
+	constexpr int Y_AXIS_LENGTH { 36 };
 	constexpr int X_AXIS_LENGTH { 168 };
 
 	constexpr int MAX_NUM_OF_INPUT_LINES { ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 };
