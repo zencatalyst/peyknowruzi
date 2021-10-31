@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Wshadow -O3
+CXXFLAGS = -std=c++20 -Wall -Wextra -Wpedantic -Wshadow -O3 -flto
 
 all: PeykNowruzi
 
