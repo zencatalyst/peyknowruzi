@@ -1,6 +1,8 @@
 
 #include "Util.h"
 
+using namespace peyknowruzi;
+
 
 inline bool util::tokenize( const char inputStr[], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {

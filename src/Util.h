@@ -4,6 +4,9 @@
 #include "pch.h"
 
 
+namespace peyknowruzi
+{
+
 namespace util
 {
 	inline bool tokenize( const char inputStr[], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens );
@@ -15,3 +18,5 @@ namespace util
 
 	void getCharInput( char arr[], const std::streamsize streamSize );
 };
+
+}

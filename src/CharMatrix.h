@@ -1,13 +1,17 @@
 
 #pragma once
 
-#include "Util.h"
+#include "CharMatrix_Exceptions.h"
 #include "pch.h"
 
-static constexpr int MIN_ALLOWED_Y_AXIS_LEN { 0 };
-static constexpr int MIN_ALLOWED_X_AXIS_LEN { 1 };
-static constexpr int MAX_ALLOWED_Y_AXIS_LEN { 50 };
-static constexpr int MAX_ALLOWED_X_AXIS_LEN { 168 };
+
+namespace peyknowruzi
+{
+
+inline constexpr int MIN_ALLOWED_Y_AXIS_LEN { 0 };
+inline constexpr int MIN_ALLOWED_X_AXIS_LEN { 1 };
+inline constexpr int MAX_ALLOWED_Y_AXIS_LEN { 50 };
+inline constexpr int MAX_ALLOWED_X_AXIS_LEN { 168 };
 static constexpr int DEFAULT_X_AXIS_LEN { 20 };
 static constexpr int DEFAULT_Y_AXIS_LEN { 20 };
 static constexpr char DEFAULT_FILL_CHARACTER { ' ' };
@@ -55,3 +59,5 @@ private:
 	friend class Invalid_Y_Axis_Len_Exception;
 	friend class Invalid_X_Axis_Len_Exception;
 };
+
+}

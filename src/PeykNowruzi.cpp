@@ -4,10 +4,12 @@
 
 #include "CharMatrix.h"
 
+namespace pynz = peyknowruzi;
+
 
 int main( )
 {
-	CharMatrix::launch( );
+	pynz::CharMatrix::launch( );
 
 	return 0;
 }

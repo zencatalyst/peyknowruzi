@@ -1,6 +1,6 @@
 
 #define PN_DEBUG 0
-#define GUI_MODE 0
+//#define GUI_MODE 0
 
 #if PN_DEBUG == 1
 #define LOG(x) std::cout << (x) << std::endl
@@ -12,74 +12,9 @@
 
 
 #include "CharMatrix.h"
+#include "Util.h"
 
-
-class Invalid_Fill_Character_Exception : public std::exception
-{
-public:
-	virtual const char* what( ) const throw( )
-	{
-		size_t elementCount { };
-		std::stringstream ss;
-
-		ss << "Invalid_Fill_Character_Exception: The 'fill character' is not allowed to be one of the following characters: { ";
-
-		for ( auto it = CharMatrix::CHAR_SET.cbegin( ); it != CharMatrix::CHAR_SET.cend( ); ++it )
-		{
-			++elementCount;
-			if ( elementCount == CharMatrix::CHAR_SET.size( ) ) { ss << "'" << *it << "' }"; }
-			else { ss << "'" << *it << "', "; }
-		}
-
-		const std::string tempMsgStr { ss.str( ) };
-
-		char* Invalid_Fill_Character_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
-		std::strcpy( Invalid_Fill_Character_Exception_Msg, tempMsgStr.c_str( ) );
-
-		return Invalid_Fill_Character_Exception_Msg;
-	}
-
-} Invalid_Fill_Char_Exc;
-
-class Invalid_Y_Axis_Len_Exception : public std::exception
-{
-public:
-	virtual const char* what( ) const throw( )
-	{
-		std::stringstream ss;
-
-		ss << "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than " <<
-				MAX_ALLOWED_Y_AXIS_LEN << " and lesser than " << MIN_ALLOWED_Y_AXIS_LEN << ".";
-
-		const std::string tempMsgStr { ss.str( ) };
-
-		char* Invalid_Y_Axis_Len_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
-		std::strcpy( Invalid_Y_Axis_Len_Exception_Msg, tempMsgStr.c_str( ) );
-
-		return Invalid_Y_Axis_Len_Exception_Msg;
-	}
-
-} Invalid_Y_Axis_Len_Exc;
-
-class Invalid_X_Axis_Len_Exception : public std::exception
-{
-public:
-	virtual const char* what( ) const throw( )
-	{
-		std::stringstream ss;
-
-		ss << "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than " <<
-				MAX_ALLOWED_X_AXIS_LEN << " and lesser than " << MIN_ALLOWED_X_AXIS_LEN << ".";
-
-		const std::string tempMsgStr { ss.str( ) };
-
-		char* Invalid_X_Axis_Len_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
-		std::strcpy( Invalid_X_Axis_Len_Exception_Msg, tempMsgStr.c_str( ) );
-
-		return Invalid_X_Axis_Len_Exception_Msg;
-	}
-
-} Invalid_X_Axis_Len_Exc;
+using namespace peyknowruzi;
 
 
 inline CharMatrix::CharMatrix( )
@@ -148,7 +83,8 @@ inline void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 	{
 		try
 		{
-			throw Invalid_Y_Axis_Len_Exc;
+			const Invalid_Y_Axis_Len_Exception invalid_y_axis_len_exc;
+			throw invalid_y_axis_len_exc;
 		}
 		catch ( const Invalid_Y_Axis_Len_Exception& e )
 		{
@@ -180,7 +116,8 @@ inline void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 	{
 		try
 		{
-			throw Invalid_X_Axis_Len_Exc;
+			const Invalid_X_Axis_Len_Exception invalid_x_axis_len_exc;
+			throw invalid_x_axis_len_exc;
 		}
 		catch ( const Invalid_X_Axis_Len_Exception& e )
 		{
@@ -212,7 +149,8 @@ inline void CharMatrix::setFillCharacter( const char& fillCharacter )
 	{
 		try
 		{
-			throw Invalid_Fill_Char_Exc;
+			const Invalid_Fill_Character_Exception invalid_fill_char_exc;
+			throw invalid_fill_char_exc;
 		}
 		catch ( const Invalid_Fill_Character_Exception& e )
 		{
