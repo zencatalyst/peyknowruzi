@@ -18,38 +18,38 @@ using namespace peyknowruzi;
 
 
 inline CharMatrix::CharMatrix( )
-	:_Y_AxisLen( DEFAULT_Y_AXIS_LEN ), _X_AxisLen( DEFAULT_X_AXIS_LEN ), _fillCharacter( DEFAULT_FILL_CHARACTER ),
-	_characterMatrix( DEFAULT_Y_AXIS_LEN, std::vector<char>( DEFAULT_X_AXIS_LEN, DEFAULT_FILL_CHARACTER ) )
+	:m_Y_AxisLen( DEFAULT_Y_AXIS_LEN ), m_X_AxisLen( DEFAULT_X_AXIS_LEN ), m_fillCharacter( DEFAULT_FILL_CHARACTER ),
+	m_characterMatrix( DEFAULT_Y_AXIS_LEN, std::vector<char>( DEFAULT_X_AXIS_LEN, DEFAULT_FILL_CHARACTER ) )
 {
 }
 
 inline CharMatrix::CharMatrix( const int& Y_AxisLen, const int& X_AxisLen, const char fillCharacter )
-	: _Y_AxisLen( Y_AxisLen ), _X_AxisLen( X_AxisLen ), _fillCharacter( fillCharacter ),
-	_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
+	: m_Y_AxisLen( Y_AxisLen ), m_X_AxisLen( X_AxisLen ), m_fillCharacter( fillCharacter ),
+	m_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
 {
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
-	:_Y_AxisLen( rhs._Y_AxisLen ), _X_AxisLen( rhs._X_AxisLen ), _fillCharacter( rhs._fillCharacter ),
-	_characterMatrix( std::move( rhs._characterMatrix ) )
+	:m_Y_AxisLen( rhs.m_Y_AxisLen ), m_X_AxisLen( rhs.m_X_AxisLen ), m_fillCharacter( rhs.m_fillCharacter ),
+	m_characterMatrix( std::move( rhs.m_characterMatrix ) )
 {
-	rhs._Y_AxisLen = 0;
-	rhs._X_AxisLen = 0;
-	rhs._fillCharacter = 0;
+	rhs.m_Y_AxisLen = 0;
+	rhs.m_X_AxisLen = 0;
+	rhs.m_fillCharacter = 0;
 }
 
 inline CharMatrix& CharMatrix::operator=( CharMatrix&& rhs ) noexcept
 {
 	if ( this != &rhs )
 	{
-		_characterMatrix = std::move( rhs._characterMatrix );
-		_Y_AxisLen = rhs._Y_AxisLen;
-		_X_AxisLen = rhs._X_AxisLen;
-		_fillCharacter = rhs._fillCharacter;
+		m_characterMatrix = std::move( rhs.m_characterMatrix );
+		m_Y_AxisLen = rhs.m_Y_AxisLen;
+		m_X_AxisLen = rhs.m_X_AxisLen;
+		m_fillCharacter = rhs.m_fillCharacter;
 
-		rhs._Y_AxisLen = 0;
-		rhs._X_AxisLen = 0;
-		rhs._fillCharacter = 0;
+		rhs.m_Y_AxisLen = 0;
+		rhs.m_X_AxisLen = 0;
+		rhs.m_fillCharacter = 0;
 	}
 
 	return *this;
@@ -57,22 +57,22 @@ inline CharMatrix& CharMatrix::operator=( CharMatrix&& rhs ) noexcept
 
 inline const int& CharMatrix::getY_AxisLen( ) const
 {
-	return _Y_AxisLen;
+	return m_Y_AxisLen;
 }
 
 inline const int& CharMatrix::getX_AxisLen( ) const
 {
-	return _X_AxisLen;
+	return m_X_AxisLen;
 }
 
 inline const char& CharMatrix::getFillCharacter( ) const
 {
-	return _fillCharacter;
+	return m_fillCharacter;
 }
 
 inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 {
-	return _characterMatrix;
+	return m_characterMatrix;
 }
 
 inline void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
@@ -105,7 +105,7 @@ inline void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 		}
 	}
 
-	_Y_AxisLen = { Y_AxisLen };
+	m_Y_AxisLen = { Y_AxisLen };
 }
 
 inline void CharMatrix::setX_AxisLen( const int& X_AxisLen )
@@ -138,7 +138,7 @@ inline void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 		}
 	}
 
-	_X_AxisLen = { X_AxisLen };
+	m_X_AxisLen = { X_AxisLen };
 }
 
 inline void CharMatrix::setFillCharacter( const char& fillCharacter )
@@ -163,14 +163,14 @@ inline void CharMatrix::setFillCharacter( const char& fillCharacter )
 	{
 		for ( int column = 0; column < getX_AxisLen( ) - 1; ++column )
 		{
-			if ( _characterMatrix[row][column] == getFillCharacter( ) )
+			if ( m_characterMatrix[row][column] == getFillCharacter( ) )
 			{
-				_characterMatrix[row][column] = fillCharacter;
+				m_characterMatrix[row][column] = fillCharacter;
 			}
 		}
 	}
 
-	_fillCharacter = { fillCharacter };
+	m_fillCharacter = { fillCharacter };
 }
 
 inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const
@@ -179,8 +179,8 @@ inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_
 
 	if ( CHAR_SET.count( ch ) )
 	{
-		_characterMatrix[coordsOfChar[1]][coordsOfChar[0]] = ch;
-		_characterMatrix[coordsOfChar[3]][coordsOfChar[2]] = ch;
+		m_characterMatrix[coordsOfChar[1]][coordsOfChar[0]] = ch;
+		m_characterMatrix[coordsOfChar[3]][coordsOfChar[2]] = ch;
 	}
 }
 

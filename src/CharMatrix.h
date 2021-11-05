@@ -49,10 +49,10 @@ public:
 	static void launch( );
 
 private:
-	int _Y_AxisLen;
-	int _X_AxisLen;
-	char _fillCharacter;
-	mutable std::vector< std::vector<char> > _characterMatrix;
+	int m_Y_AxisLen;
+	int m_X_AxisLen;
+	char m_fillCharacter;
+	mutable std::vector< std::vector<char> > m_characterMatrix;
 	inline static const std::unordered_set<char> CHAR_SET { '/', '\\', '|', '-' };
 
 	friend class Invalid_Fill_Character_Exception;
