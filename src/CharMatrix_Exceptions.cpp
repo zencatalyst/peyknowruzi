@@ -7,52 +7,55 @@ using namespace peyknowruzi;
 
 const char* Invalid_Fill_Character_Exception::what( ) const throw( )
 {
-	size_t elementCount { };
-	std::stringstream ss;
+	std::string tempMsg( 131, '\0' );
+	tempMsg.clear( );
 
-	ss << "Invalid_Fill_Character_Exception: The 'fill character' is not allowed to be one of the following characters: { ";
+	tempMsg += "Invalid_Fill_Character_Exception: The 'fill character' is not allowed to be one of the following characters: { ";
+
+	size_t appendedElementsCount { };
 
 	for ( auto it = CharMatrix::CHAR_SET.cbegin( ); it != CharMatrix::CHAR_SET.cend( ); ++it )
 	{
-		++elementCount;
-		if ( elementCount == CharMatrix::CHAR_SET.size( ) ) { ss << "'" << *it << "' }"; }
-		else { ss << "'" << *it << "', "; }
+		tempMsg += "'";
+		tempMsg += *it;
+
+		++appendedElementsCount;
+		if ( appendedElementsCount != CharMatrix::CHAR_SET.size( ) ) { tempMsg += "', "; }
+		else { tempMsg += "' }"; }
 	}
 
-	const std::string tempMsgStr { ss.str( ) };
+	char* Invalid_Fill_Character_Exception_Msg = new char[ tempMsg.length( ) + 1 ];
+	std::strcpy( Invalid_Fill_Character_Exception_Msg, tempMsg.c_str( ) );
 
-	char* Invalid_Fill_Character_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
-	std::strcpy( Invalid_Fill_Character_Exception_Msg, tempMsgStr.c_str( ) );
-
-	return Invalid_Fill_Character_Exception_Msg;
+	return const_cast<const char*>( Invalid_Fill_Character_Exception_Msg );
 }
 
 const char* Invalid_Y_Axis_Len_Exception::what( ) const throw( )
 {
-	std::stringstream ss;
+	std::string tempMsg( 105, '\0' );
+	tempMsg.clear( );
 
-	ss << "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than " <<
-			MAX_ALLOWED_Y_AXIS_LEN << " and lesser than " << MIN_ALLOWED_Y_AXIS_LEN << ".";
+	tempMsg = "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than " 
+			  + std::to_string( MAX_ALLOWED_Y_AXIS_LEN ) + " and lesser than "
+			  + std::to_string( MIN_ALLOWED_Y_AXIS_LEN ) + ".";
 
-	const std::string tempMsgStr { ss.str( ) };
+	char* Invalid_Y_Axis_Len_Exception_Msg = new char[ tempMsg.length( ) + 1 ];
+	std::strcpy( Invalid_Y_Axis_Len_Exception_Msg, tempMsg.c_str( ) );
 
-	char* Invalid_Y_Axis_Len_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
-	std::strcpy( Invalid_Y_Axis_Len_Exception_Msg, tempMsgStr.c_str( ) );
-
-	return Invalid_Y_Axis_Len_Exception_Msg;
+	return const_cast<const char*>( Invalid_Y_Axis_Len_Exception_Msg );
 }
 
 const char* Invalid_X_Axis_Len_Exception::what( ) const throw( )
 {
-	std::stringstream ss;
+	std::string tempMsg( 106, '\0' );
+	tempMsg.clear( );
 
-	ss << "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than " <<
-			MAX_ALLOWED_X_AXIS_LEN << " and lesser than " << MIN_ALLOWED_X_AXIS_LEN << ".";
+	tempMsg = "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than " 
+			  + std::to_string( MAX_ALLOWED_X_AXIS_LEN ) + " and lesser than "
+			  + std::to_string( MIN_ALLOWED_X_AXIS_LEN ) + ".";
 
-	const std::string tempMsgStr { ss.str( ) };
+	char* Invalid_X_Axis_Len_Exception_Msg = new char[ tempMsg.length( ) + 1 ];
+	std::strcpy( Invalid_X_Axis_Len_Exception_Msg, tempMsg.c_str( ) );
 
-	char* Invalid_X_Axis_Len_Exception_Msg = new char[ tempMsgStr.length( ) + 1 ];
-	std::strcpy( Invalid_X_Axis_Len_Exception_Msg, tempMsgStr.c_str( ) );
-
-	return Invalid_X_Axis_Len_Exception_Msg;
+	return const_cast<const char*>( Invalid_X_Axis_Len_Exception_Msg );
 }
