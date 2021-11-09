@@ -14,7 +14,7 @@ inline bool util::tokenize( const char inputStr[], const size_t& expectedTokenCo
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-inline int util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
+int util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
 {
 	int result_int { 0 };
 	size_t pos { 0 };

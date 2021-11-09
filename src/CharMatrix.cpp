@@ -75,7 +75,7 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 	return m_characterMatrix;
 }
 
-inline void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
+void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 {
 	if ( Y_AxisLen == getY_AxisLen( ) ) { return; }
 
@@ -108,7 +108,7 @@ inline void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 	m_Y_AxisLen = { Y_AxisLen };
 }
 
-inline void CharMatrix::setX_AxisLen( const int& X_AxisLen )
+void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 {
 	if ( X_AxisLen == getX_AxisLen( ) ) { return; }
 
@@ -141,7 +141,7 @@ inline void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 	m_X_AxisLen = { X_AxisLen };
 }
 
-inline void CharMatrix::setFillCharacter( const char& fillCharacter )
+void CharMatrix::setFillCharacter( const char& fillCharacter )
 {
 	if ( fillCharacter == getFillCharacter( ) ) { return; }
 
@@ -184,7 +184,7 @@ inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_
 	}
 }
 
-inline bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const
+bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const
 {
 	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y { 1, 3 };
@@ -231,7 +231,7 @@ inline char CharMatrix::findCharType( const int (&coordsOfChar)[CARTESIAN_COMPON
 	}
 }
 
-inline auto CharMatrix::initialize( )
+auto CharMatrix::initialize( )
 {
 	// constexpr char FILL_CHARACTER = '#';
 	constexpr int Y_AXIS_LENGTH { 36 };
@@ -254,7 +254,7 @@ inline auto CharMatrix::initialize( )
 	return uniquePtr2Matrix;
 }
 
-inline int CharMatrix::getNumOfInputLines( ) const
+int CharMatrix::getNumOfInputLines( ) const
 {
 	const int MAX_NUM_OF_INPUT_LINES { ( getY_AxisLen( ) * getX_AxisLen( ) ) / 2 };
 	constexpr int MIN_NUM_OF_INPUT_LINES { 0 };
@@ -282,7 +282,7 @@ inline int CharMatrix::getNumOfInputLines( ) const
 	return int_numOfInputLines[0];
 }
 
-inline void CharMatrix::getCoords( ) const
+void CharMatrix::getCoords( ) const
 {
 	const int numOfInputLines { getNumOfInputLines( ) };
 

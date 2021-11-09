@@ -33,19 +33,19 @@ public:
 	inline const int& getX_AxisLen( ) const;
 	inline const char& getFillCharacter( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( ) const;
-	inline void setY_AxisLen( const int& Y_AxisLen );
-	inline void setX_AxisLen( const int& X_AxisLen );
-	inline void setFillCharacter( const char& fillCharacter );
+	void setY_AxisLen( const int& Y_AxisLen );
+	void setX_AxisLen( const int& X_AxisLen );
+	void setFillCharacter( const char& fillCharacter );
 	inline void setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const;
 
-	inline bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE],
+	bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE],
 											int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const;
-	inline int getNumOfInputLines( ) const;
-	inline void getCoords( ) const;
+	int getNumOfInputLines( ) const;
+	void getCoords( ) const;
 	inline void writeToOutput( ) const;
 
 	inline static char findCharType( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] );
-	inline static auto initialize( );
+	static auto initialize( );
 	static void launch( );
 
 private:

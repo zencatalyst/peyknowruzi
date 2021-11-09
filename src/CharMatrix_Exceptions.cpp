@@ -27,13 +27,13 @@ const char* Invalid_Fill_Character_Exception::what( ) const throw( )
 	char* Invalid_Fill_Character_Exception_Msg = new char[ tempMsg.length( ) + 1 ];
 	std::strcpy( Invalid_Fill_Character_Exception_Msg, tempMsg.c_str( ) );
 
-	return const_cast<const char*>( Invalid_Fill_Character_Exception_Msg );
+	return Invalid_Fill_Character_Exception_Msg;
 }
 
 const char* Invalid_Y_Axis_Len_Exception::what( ) const throw( )
 {
 	std::string tempMsg;
-    tempMsg.reserve( 105 );
+	tempMsg.reserve( 105 );
 
 	tempMsg = "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than ";
 	tempMsg += std::to_string( MAX_ALLOWED_Y_AXIS_LEN ) + " and lesser than ";
@@ -42,13 +42,13 @@ const char* Invalid_Y_Axis_Len_Exception::what( ) const throw( )
 	char* Invalid_Y_Axis_Len_Exception_Msg = new char[ tempMsg.length( ) + 1 ];
 	std::strcpy( Invalid_Y_Axis_Len_Exception_Msg, tempMsg.c_str( ) );
 
-	return const_cast<const char*>( Invalid_Y_Axis_Len_Exception_Msg );
+	return Invalid_Y_Axis_Len_Exception_Msg;
 }
 
 const char* Invalid_X_Axis_Len_Exception::what( ) const throw( )
 {
 	std::string tempMsg;
-    tempMsg.reserve( 106 );
+	tempMsg.reserve( 106 );
 
 	tempMsg = "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than ";
 	tempMsg	+= std::to_string( MAX_ALLOWED_X_AXIS_LEN ) + " and lesser than ";
@@ -57,5 +57,5 @@ const char* Invalid_X_Axis_Len_Exception::what( ) const throw( )
 	char* Invalid_X_Axis_Len_Exception_Msg = new char[ tempMsg.length( ) + 1 ];
 	std::strcpy( Invalid_X_Axis_Len_Exception_Msg, tempMsg.c_str( ) );
 
-	return const_cast<const char*>( Invalid_X_Axis_Len_Exception_Msg );
+	return Invalid_X_Axis_Len_Exception_Msg;
 }
