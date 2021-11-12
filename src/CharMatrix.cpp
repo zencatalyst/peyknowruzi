@@ -3,10 +3,12 @@
 //#define GUI_MODE 0
 
 #if PN_DEBUG == 1
-#define LOG(x) std::cout << (x) << std::endl
+#define LOG(x) std::clog << ( x ) << std::endl
+#define ERR(x) std::cerr << ( x ) << std::endl
 #define WAIT std::cin.get( )
 #else
 #define LOG(x)
+#define ERR(x)
 #define WAIT
 #endif
 
@@ -83,12 +85,11 @@ void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 	{
 		try
 		{
-			const Invalid_Y_Axis_Len_Exception invalid_y_axis_len_exc;
-			throw invalid_y_axis_len_exc;
+			throw Invalid_Y_Axis_Len_Exception( );
 		}
 		catch ( const Invalid_Y_Axis_Len_Exception& e )
 		{
-			LOG( e.what( ) );
+			ERR( e.what( ) );
 			return;
 		}
 	}
@@ -116,12 +117,11 @@ void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 	{
 		try
 		{
-			const Invalid_X_Axis_Len_Exception invalid_x_axis_len_exc;
-			throw invalid_x_axis_len_exc;
+			throw Invalid_X_Axis_Len_Exception( );
 		}
 		catch ( const Invalid_X_Axis_Len_Exception& e )
 		{
-			LOG( e.what( ) );
+			ERR( e.what( ) );
 			return;
 		}
 	}
@@ -149,12 +149,11 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 	{
 		try
 		{
-			const Invalid_Fill_Character_Exception invalid_fill_char_exc;
-			throw invalid_fill_char_exc;
+			throw Invalid_Fill_Character_Exception( );
 		}
 		catch ( const Invalid_Fill_Character_Exception& e )
 		{
-			LOG( e.what( ) );
+			ERR( e.what( ) );
 			return;
 		}
 	}
