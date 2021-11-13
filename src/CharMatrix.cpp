@@ -15,6 +15,7 @@
 
 #include "CharMatrix.h"
 #include "Util.h"
+#include "CharMatrix_Exceptions.h"
 
 using namespace peyknowruzi;
 
@@ -83,15 +84,14 @@ void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 
 	if ( Y_AxisLen > MAX_ALLOWED_Y_AXIS_LEN || Y_AxisLen < MIN_ALLOWED_Y_AXIS_LEN )
 	{
-		try
-		{
-			throw Invalid_Y_Axis_Len_Exception( );
-		}
-		catch ( const Invalid_Y_Axis_Len_Exception& e )
-		{
-			ERR( e.what( ) );
-			return;
-		}
+		std::string exceptionMsg;
+		exceptionMsg.reserve( 105 );
+
+		exceptionMsg = "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than ";
+		exceptionMsg += std::to_string( MAX_ALLOWED_Y_AXIS_LEN ) + " and lesser than ";
+		exceptionMsg += std::to_string( MIN_ALLOWED_Y_AXIS_LEN ) + ".";
+
+		throw Invalid_Y_Axis_Len_Exception( exceptionMsg );
 	}
 
 	getCharacterMatrix( ).resize( Y_AxisLen, std::vector<char>( getX_AxisLen( ), getFillCharacter( ) ) );
@@ -115,15 +115,14 @@ void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 
 	if ( X_AxisLen > MAX_ALLOWED_X_AXIS_LEN || X_AxisLen < MIN_ALLOWED_X_AXIS_LEN )
 	{
-		try
-		{
-			throw Invalid_X_Axis_Len_Exception( );
-		}
-		catch ( const Invalid_X_Axis_Len_Exception& e )
-		{
-			ERR( e.what( ) );
-			return;
-		}
+		std::string exceptionMsg;
+		exceptionMsg.reserve( 106 );
+
+		exceptionMsg = "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than ";
+		exceptionMsg += std::to_string( MAX_ALLOWED_X_AXIS_LEN ) + " and lesser than ";
+		exceptionMsg += std::to_string( MIN_ALLOWED_X_AXIS_LEN ) + ".";
+
+		throw Invalid_X_Axis_Len_Exception( exceptionMsg );
 	}
 
 	for ( auto it = getCharacterMatrix( ).begin( ); it != getCharacterMatrix( ).end(); ++it )
@@ -147,15 +146,24 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 
 	if ( CHAR_SET.count( fillCharacter ) )
 	{
-		try
+		std::string exceptionMsg;
+		exceptionMsg.reserve( 131 );
+
+		exceptionMsg = "Invalid_Fill_Character_Exception: The 'fill character' is not allowed to be one of the following characters: { ";
+
+		size_t appendedElementsCount { };
+
+		for ( auto it = CharMatrix::CHAR_SET.cbegin( ); it != CharMatrix::CHAR_SET.cend( ); ++it )
 		{
-			throw Invalid_Fill_Character_Exception( );
+			exceptionMsg += "'";
+			exceptionMsg += *it;
+
+			++appendedElementsCount;
+			if ( appendedElementsCount != CharMatrix::CHAR_SET.size( ) ) { exceptionMsg += "', "; }
+			else { exceptionMsg += "' }"; }
 		}
-		catch ( const Invalid_Fill_Character_Exception& e )
-		{
-			ERR( e.what( ) );
-			return;
-		}
+
+		throw Invalid_Fill_Character_Exception( exceptionMsg );
 	}
 
 	for ( int row = 0; row < getY_AxisLen( ); ++row )

@@ -7,34 +7,22 @@
 namespace peyknowruzi
 {
 
-class Invalid_Fill_Character_Exception : public std::exception
+class Invalid_Fill_Character_Exception : public std::invalid_argument
 {
 public:
-	Invalid_Fill_Character_Exception( );
-	const char* what( ) const noexcept override;
-
-private:
-	std::string exceptionMsg;
+	explicit Invalid_Fill_Character_Exception( const std::string& what_arg );
 };
 
-class Invalid_Y_Axis_Len_Exception : public std::exception
+class Invalid_Y_Axis_Len_Exception : public std::invalid_argument
 {
 public:
-	Invalid_Y_Axis_Len_Exception( );
-	const char* what( ) const noexcept override;
-
-private:
-	std::string exceptionMsg;
+	explicit Invalid_Y_Axis_Len_Exception( const std::string& what_arg );
 };
 
-class Invalid_X_Axis_Len_Exception : public std::exception
+class Invalid_X_Axis_Len_Exception : public std::invalid_argument
 {
 public:
-	Invalid_X_Axis_Len_Exception( );
-	const char* what( ) const noexcept override;
-
-private:
-	std::string exceptionMsg;
+	explicit Invalid_X_Axis_Len_Exception( const std::string& what_arg );
 };
 
 }

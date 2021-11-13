@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "CharMatrix_Exceptions.h"
 #include "pch.h"
 
 
@@ -54,10 +53,6 @@ private:
 	char m_fillCharacter;
 	mutable std::vector< std::vector<char> > m_characterMatrix;
 	inline static const std::unordered_set<char> CHAR_SET { '/', '\\', '|', '-' };
-
-	friend class Invalid_Fill_Character_Exception;
-	friend class Invalid_Y_Axis_Len_Exception;
-	friend class Invalid_X_Axis_Len_Exception;
 };
 
 }
