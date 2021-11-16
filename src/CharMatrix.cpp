@@ -15,7 +15,6 @@
 
 #include "CharMatrix.h"
 #include "Util.h"
-#include "CharMatrix_Exceptions.h"
 
 using namespace peyknowruzi;
 
@@ -91,7 +90,7 @@ void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 		exceptionMsg += std::to_string( MAX_ALLOWED_Y_AXIS_LEN ) + " and lesser than ";
 		exceptionMsg += std::to_string( MIN_ALLOWED_Y_AXIS_LEN ) + ".";
 
-		throw Invalid_Y_Axis_Len_Exception( exceptionMsg );
+		throw std::invalid_argument( exceptionMsg );
 	}
 
 	getCharacterMatrix( ).resize( Y_AxisLen, std::vector<char>( getX_AxisLen( ), getFillCharacter( ) ) );
@@ -122,7 +121,7 @@ void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 		exceptionMsg += std::to_string( MAX_ALLOWED_X_AXIS_LEN ) + " and lesser than ";
 		exceptionMsg += std::to_string( MIN_ALLOWED_X_AXIS_LEN ) + ".";
 
-		throw Invalid_X_Axis_Len_Exception( exceptionMsg );
+		throw std::invalid_argument( exceptionMsg );
 	}
 
 	for ( auto it = getCharacterMatrix( ).begin( ); it != getCharacterMatrix( ).end(); ++it )
@@ -163,7 +162,7 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 			else { exceptionMsg += "' }"; }
 		}
 
-		throw Invalid_Fill_Character_Exception( exceptionMsg );
+		throw std::invalid_argument( exceptionMsg );
 	}
 
 	for ( int row = 0; row < getY_AxisLen( ); ++row )
