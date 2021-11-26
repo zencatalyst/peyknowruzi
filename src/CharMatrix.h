@@ -9,7 +9,7 @@ namespace peyknowruzi
 
 inline constexpr char DEFAULT_FILL_CHARACTER { ' ' };
 inline constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
-inline constexpr size_t CARTESIAN_COMPONENTS_COUNT { 4 };
+inline constexpr std::size_t CARTESIAN_COMPONENTS_COUNT { 4 };
 
 class CharMatrix
 {

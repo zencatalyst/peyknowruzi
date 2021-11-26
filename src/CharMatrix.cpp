@@ -19,7 +19,7 @@
 using namespace peyknowruzi;
 
 
-static constexpr int MIN_ALLOWED_Y_AXIS_LEN { 0 };
+static constexpr int MIN_ALLOWED_Y_AXIS_LEN { 1 };
 static constexpr int MIN_ALLOWED_X_AXIS_LEN { 1 };
 static constexpr int MAX_ALLOWED_Y_AXIS_LEN { 50 };
 static constexpr int MAX_ALLOWED_X_AXIS_LEN { 168 };
@@ -139,7 +139,7 @@ void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	for ( auto it = getCharacterMatrix( ).begin( ); it != getCharacterMatrix( ).end(); ++it )
+	for ( auto it = getCharacterMatrix( ).begin( ); it != getCharacterMatrix( ).end( ); ++it )
 	{
 		auto& row = *it;
 
@@ -158,7 +158,7 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 {
 	if ( fillCharacter == getFillCharacter( ) ) { return; }
 
-	if ( CHAR_SET.count( fillCharacter ) )
+	if ( CHAR_SET.contains( fillCharacter ) )
 	{
 		std::string exceptionMsg;
 		exceptionMsg.reserve( 131 );
@@ -166,16 +166,17 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 		exceptionMsg = "Invalid_Fill_Character_Exception: The 'fill character' "
 					   "is not allowed to be one of the following characters: { ";
 
-		size_t appendedElementsCount { };
-
-		for ( auto it = CharMatrix::CHAR_SET.cbegin( ); it != CharMatrix::CHAR_SET.cend( ); ++it )
+		for ( auto it = CHAR_SET.cbegin( ); it != CHAR_SET.cend( ); ++it )
 		{
 			exceptionMsg += "'";
 			exceptionMsg += *it;
 
-			++appendedElementsCount;
-			if ( appendedElementsCount != CharMatrix::CHAR_SET.size( ) ) { exceptionMsg += "', "; }
-			else { exceptionMsg += "' }"; }
+			if ( std::distance( CHAR_SET.cbegin( ), it ) + 1 !=
+				 static_cast< decltype( std::distance( CHAR_SET.cbegin( ), it ) ) >( CHAR_SET.size( ) ) )
+
+			{ exceptionMsg += "', "; }
+			else
+			{ exceptionMsg += "' }"; }
 		}
 
 		throw std::invalid_argument( exceptionMsg );
@@ -185,9 +186,9 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 	{
 		for ( int column = 0; column < getX_AxisLen( ) - 1; ++column )
 		{
-			if ( m_characterMatrix[row][column] == getFillCharacter( ) )
+			if ( m_characterMatrix[ row ][ column ] == getFillCharacter( ) )
 			{
-				m_characterMatrix[row][column] = fillCharacter;
+				m_characterMatrix[ row ][ column ] = fillCharacter;
 			}
 		}
 	}
@@ -197,18 +198,18 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 
 inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const
 {
-	const char ch { CharMatrix::findCharType( coordsOfChar ) };
+	const char ch { findCharType( coordsOfChar ) };
 
-	if ( CHAR_SET.count( ch ) )
+	if ( CHAR_SET.contains( ch ) )
 	{
-		m_characterMatrix[coordsOfChar[1]][coordsOfChar[0]] = ch;
-		m_characterMatrix[coordsOfChar[3]][coordsOfChar[2]] = ch;
+		m_characterMatrix[ coordsOfChar[ 1 ] ][ coordsOfChar[ 0 ] ] = ch;
+		m_characterMatrix[ coordsOfChar[ 3 ] ][ coordsOfChar[ 2 ] ] = ch;
 	}
 }
 
 bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const
 {
-	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
+	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y { 1, 3 };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_X { 0, 2 };
 
@@ -249,7 +250,7 @@ inline char CharMatrix::findCharType( const int (&coordsOfChar)[CARTESIAN_COMPON
 	}
 	else
 	{
-		return '!';
+		return '\0';
 	}
 }
 
@@ -284,7 +285,7 @@ int CharMatrix::getNumOfInputLines( ) const
 	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= INT_MAX
 					, "MIN_NUM_OF_INPUT_LINES can not be greater than INT_MAX or less than 0" );
 
-	constexpr size_t REQUIRED_TOKENS_COUNT { 1 };
+	constexpr std::size_t REQUIRED_TOKENS_COUNT { 1 };
 	const std::vector<int> SPECIFIC_TOKENS_INDICES;
 
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
@@ -311,7 +312,7 @@ void CharMatrix::getCoords( ) const
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	char str_userEnteredCoords[ streamSize ] { };
 
-	constexpr size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
+	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 	int int_userEnteredCoords[ REQUIRED_TOKENS_COUNT ] { };
 
 	for ( int i = 0; i < numOfInputLines; ++i )
@@ -332,15 +333,15 @@ void CharMatrix::getCoords( ) const
 
 inline void CharMatrix::writeToOutput( ) const
 {
-	const int& Y_AxisLen { getY_AxisLen( ) };
-	const int& X_AxisLen { getX_AxisLen( ) };
-	const std::vector< std::vector<char> >& characterMatrix { getCharacterMatrix( ) };
+	const auto& Y_AxisLen { getY_AxisLen( ) };
+	const auto& X_AxisLen { getX_AxisLen( ) };
+	const auto& characterMatrix { getCharacterMatrix( ) };
 
 	for ( int row = 0; row < Y_AxisLen; ++row )
 	{
 		for ( int col = 0; col < X_AxisLen; ++col )
 		{
-			std::cout << characterMatrix[row][col];
+			std::cout << characterMatrix[ row ][ col ];
 		}
 	}
 

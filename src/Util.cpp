@@ -4,7 +4,7 @@
 using namespace peyknowruzi;
 
 
-inline bool util::tokenize( const char inputStr[], const size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
+inline bool util::tokenize( const char inputStr[], const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	std::istringstream iss( inputStr );
 
@@ -17,7 +17,7 @@ inline bool util::tokenize( const char inputStr[], const size_t& expectedTokenCo
 int util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
 {
 	int result_int { 0 };
-	size_t pos { 0 };
+	std::size_t pos { 0 };
 
 	try
 	{
@@ -40,7 +40,7 @@ int util::isInt( const std::string& token, const int& minValue, const int& maxVa
 	return result_int;
 }
 
-bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const size_t& expectedTokenCount,
+bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const std::size_t& expectedTokenCount,
 				   					   const std::vector<int>& specificTokensIndices, const int minValue, const int maxValue )
 {
 	std::vector< std::string > foundTokens;
@@ -49,9 +49,9 @@ bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], 
 
 	if ( !isAcceptable ) { return isAcceptable; }
 
-	size_t j { 0 };
+	std::size_t j { 0 };
 
-	for ( size_t i = 0; i < foundTokens.size( ); ++i )
+	for ( std::size_t i = 0; i < foundTokens.size( ); ++i )
 	{
 		if ( !specificTokensIndices.empty( ) )
 		{
