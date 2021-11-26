@@ -7,15 +7,9 @@
 namespace peyknowruzi
 {
 
-inline constexpr int MIN_ALLOWED_Y_AXIS_LEN { 0 };
-inline constexpr int MIN_ALLOWED_X_AXIS_LEN { 1 };
-inline constexpr int MAX_ALLOWED_Y_AXIS_LEN { 50 };
-inline constexpr int MAX_ALLOWED_X_AXIS_LEN { 168 };
-static constexpr int DEFAULT_X_AXIS_LEN { 20 };
-static constexpr int DEFAULT_Y_AXIS_LEN { 20 };
-static constexpr char DEFAULT_FILL_CHARACTER { ' ' };
-static constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
-static constexpr size_t CARTESIAN_COMPONENTS_COUNT { 4 };
+inline constexpr char DEFAULT_FILL_CHARACTER { ' ' };
+inline constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
+inline constexpr size_t CARTESIAN_COMPONENTS_COUNT { 4 };
 
 class CharMatrix
 {

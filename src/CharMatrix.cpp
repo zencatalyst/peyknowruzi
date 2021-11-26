@@ -19,6 +19,19 @@
 using namespace peyknowruzi;
 
 
+static constexpr int MIN_ALLOWED_Y_AXIS_LEN { 0 };
+static constexpr int MIN_ALLOWED_X_AXIS_LEN { 1 };
+static constexpr int MAX_ALLOWED_Y_AXIS_LEN { 50 };
+static constexpr int MAX_ALLOWED_X_AXIS_LEN { 168 };
+static constexpr int DEFAULT_Y_AXIS_LEN { 20 };
+static constexpr int DEFAULT_X_AXIS_LEN { 20 };
+
+static_assert( DEFAULT_Y_AXIS_LEN >= MIN_ALLOWED_Y_AXIS_LEN || DEFAULT_Y_AXIS_LEN <= MAX_ALLOWED_Y_AXIS_LEN ||
+			   DEFAULT_X_AXIS_LEN >= MIN_ALLOWED_X_AXIS_LEN || DEFAULT_X_AXIS_LEN <= MAX_ALLOWED_X_AXIS_LEN,
+			   "DEFAULT_Y_AXIS_LEN can not be greater than MAX_ALLOWED_Y_AXIS_LEN or less than MIN_ALLOWED_Y_AXIS_LEN;\n"
+			   "DEFAULT_X_AXIS_LEN can not be greater than MAX_ALLOWED_X_AXIS_LEN or less than MIN_ALLOWED_X_AXIS_LEN." );
+
+
 inline CharMatrix::CharMatrix( )
 	:m_Y_AxisLen( DEFAULT_Y_AXIS_LEN ), m_X_AxisLen( DEFAULT_X_AXIS_LEN ), m_fillCharacter( DEFAULT_FILL_CHARACTER ),
 	m_characterMatrix( DEFAULT_Y_AXIS_LEN, std::vector<char>( DEFAULT_X_AXIS_LEN, DEFAULT_FILL_CHARACTER ) )
@@ -86,7 +99,8 @@ void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 		std::string exceptionMsg;
 		exceptionMsg.reserve( 105 );
 
-		exceptionMsg = "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' is not allowed to be greater than ";
+		exceptionMsg = "Invalid_Y_Axis_Len_Exception: The 'Y-axis length' "
+					   "is not allowed to be greater than ";
 		exceptionMsg += std::to_string( MAX_ALLOWED_Y_AXIS_LEN ) + " and lesser than ";
 		exceptionMsg += std::to_string( MIN_ALLOWED_Y_AXIS_LEN ) + ".";
 
@@ -117,7 +131,8 @@ void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 		std::string exceptionMsg;
 		exceptionMsg.reserve( 106 );
 
-		exceptionMsg = "Invalid_X_Axis_Len_Exception: The 'X-axis length' is not allowed to be greater than ";
+		exceptionMsg = "Invalid_X_Axis_Len_Exception: The 'X-axis length' "
+					   "is not allowed to be greater than ";
 		exceptionMsg += std::to_string( MAX_ALLOWED_X_AXIS_LEN ) + " and lesser than ";
 		exceptionMsg += std::to_string( MIN_ALLOWED_X_AXIS_LEN ) + ".";
 
@@ -148,7 +163,8 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 		std::string exceptionMsg;
 		exceptionMsg.reserve( 131 );
 
-		exceptionMsg = "Invalid_Fill_Character_Exception: The 'fill character' is not allowed to be one of the following characters: { ";
+		exceptionMsg = "Invalid_Fill_Character_Exception: The 'fill character' "
+					   "is not allowed to be one of the following characters: { ";
 
 		size_t appendedElementsCount { };
 
@@ -246,7 +262,7 @@ auto CharMatrix::initialize( )
 	constexpr int MAX_NUM_OF_INPUT_LINES { ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 };
 
 	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= INT_MAX
-					, "(Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
+					, "( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
 
 	std::unique_ptr<CharMatrix> uniquePtr2Matrix { std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ ) };
 
