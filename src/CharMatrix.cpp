@@ -196,7 +196,7 @@ void CharMatrix::setFillCharacter( const char& fillCharacter )
 	m_fillCharacter = { fillCharacter };
 }
 
-inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const
+inline void CharMatrix::setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const
 {
 	const char ch { findCharType( coordsOfChar ) };
 
@@ -207,44 +207,48 @@ inline void CharMatrix::setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_
 	}
 }
 
-bool CharMatrix::validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE], int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const
+bool CharMatrix::validateUserEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_userEnteredCoords,
+											std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_userEnteredCoords ) const
 {
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
-	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_Y { 1, 3 };
-	const std::vector<int> SPECIFIC_TOKENS_INDICES_FOR_X { 0, 2 };
+	const std::vector<int> specificTokensIndicesFor_Y { 1, 3 };
+	const std::vector<int> specificTokensIndicesFor_X { 0, 2 };
 
 	const int MAX_ALLOWED_Y { getY_AxisLen( ) - 1 };
 	const int MAX_ALLOWED_X { getX_AxisLen( ) - 1 };
 	constexpr int MIN_ALLOWED_Y { 0 };
 	constexpr int MIN_ALLOWED_X { 0 };
 
-	const bool isValid { util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
-							SPECIFIC_TOKENS_INDICES_FOR_Y, MIN_ALLOWED_Y, MAX_ALLOWED_Y ) &&
-						   util::convert_str_to_valid_ints( str_userEnteredCoords, int_userEnteredCoords, REQUIRED_TOKENS_COUNT,
-							SPECIFIC_TOKENS_INDICES_FOR_X, MIN_ALLOWED_X, MAX_ALLOWED_X ) ? true : false };
+	const bool isValid { util::convert_str_to_valid_ints( str_userEnteredCoords.data( ), int_userEnteredCoords.data( ),
+						 REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_Y,
+						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_Y ), std::move( MAX_ALLOWED_Y ) ) )
+																															&&
+						 util::convert_str_to_valid_ints( str_userEnteredCoords.data( ), int_userEnteredCoords.data( ),
+						 REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_X,
+						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_X ), std::move( MAX_ALLOWED_X ) ) ) ? true : false };
 
 	return isValid;
 }
 
-inline char CharMatrix::findCharType( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] )
+inline char CharMatrix::findCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar )
 {
-	if ( abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
-		((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
-		 (coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3])) )
+	if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
+	   ((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
+		(coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3])) )
 	{
 		return '/';
 	}
-	else if ( abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
-		((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3]) ||
-		 (coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3])) )
+	else if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
+			((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3]) ||
+			 (coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3])) )
 	{
 		return '\\';
 	}
-	else if ( (coordsOfChar[0] == coordsOfChar[2]) && abs(coordsOfChar[1] - coordsOfChar[3]) == 1 )
+	else if ( (coordsOfChar[0] == coordsOfChar[2]) && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 )
 	{
 		return '|';
 	}
-	else if ( abs(coordsOfChar[0] - coordsOfChar[2]) == 1  && (coordsOfChar[1] == coordsOfChar[3]) )
+	else if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1  && (coordsOfChar[1] == coordsOfChar[3]) )
 	{
 		return '-';
 	}
@@ -262,7 +266,7 @@ auto CharMatrix::initialize( )
 
 	constexpr int MAX_NUM_OF_INPUT_LINES { ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 };
 
-	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= INT_MAX
+	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= std::numeric_limits<int>::max( )
 					, "( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
 
 	std::unique_ptr<CharMatrix> uniquePtr2Matrix { std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ ) };
@@ -282,24 +286,25 @@ int CharMatrix::getNumOfInputLines( ) const
 	const int MAX_NUM_OF_INPUT_LINES { ( getY_AxisLen( ) * getX_AxisLen( ) ) / 2 };
 	constexpr int MIN_NUM_OF_INPUT_LINES { 0 };
 
-	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= INT_MAX
+	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= std::numeric_limits<int>::max( )
 					, "MIN_NUM_OF_INPUT_LINES can not be greater than INT_MAX or less than 0" );
 
-	constexpr std::size_t REQUIRED_TOKENS_COUNT { 1 };
-	const std::vector<int> SPECIFIC_TOKENS_INDICES;
-
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
-	char str_numOfInputLines[ streamSize ] { };
-	int int_numOfInputLines[ REQUIRED_TOKENS_COUNT ] { };
-	
+	constexpr std::size_t REQUIRED_TOKENS_COUNT { 1 };
+
+	std::array<char, streamSize> str_numOfInputLines { };
+	std::array<int, REQUIRED_TOKENS_COUNT> int_numOfInputLines { };
+
 	bool isValid { false };
 
 	do
 	{
-		util::getCharInput( str_numOfInputLines, streamSize );
+		util::getCharInput( str_numOfInputLines.data( ), streamSize );
 		
-		isValid = { util::convert_str_to_valid_ints( str_numOfInputLines, int_numOfInputLines, REQUIRED_TOKENS_COUNT,
-									SPECIFIC_TOKENS_INDICES, MIN_NUM_OF_INPUT_LINES, MAX_NUM_OF_INPUT_LINES ) };
+		isValid = { util::convert_str_to_valid_ints( str_numOfInputLines.data( ), int_numOfInputLines.data( ),
+					REQUIRED_TOKENS_COUNT, std::vector<int>( 0 ), std::make_pair<const int, const int>
+					( std::move( MIN_NUM_OF_INPUT_LINES ), std::move( MAX_NUM_OF_INPUT_LINES ) ) ) };
+
 	} while ( !isValid );
 
 	return int_numOfInputLines[0];
@@ -310,10 +315,10 @@ void CharMatrix::getCoords( ) const
 	const int numOfInputLines { getNumOfInputLines( ) };
 
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
-	char str_userEnteredCoords[ streamSize ] { };
-
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
-	int int_userEnteredCoords[ REQUIRED_TOKENS_COUNT ] { };
+
+	std::array<char, streamSize> str_userEnteredCoords { };
+	std::array<int, REQUIRED_TOKENS_COUNT> int_userEnteredCoords { };
 
 	for ( int i = 0; i < numOfInputLines; ++i )
 	{
@@ -321,7 +326,7 @@ void CharMatrix::getCoords( ) const
 
 		do
 		{
-			util::getCharInput( str_userEnteredCoords, streamSize );
+			util::getCharInput( str_userEnteredCoords.data( ), streamSize );
 
 			isAcceptable = { validateUserEnteredCoords( str_userEnteredCoords, int_userEnteredCoords ) };
 

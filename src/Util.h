@@ -9,12 +9,17 @@ namespace peyknowruzi
 
 namespace util
 {
-	inline bool tokenize( const char inputStr[], const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens );
+	inline bool tokenize( const char inputStr[], const std::size_t& expectedTokenCount,
+						  std::vector< std::string >& foundTokens );
 
-	int isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_UInt );
+	int isInt( const std::string& token, bool& is_a_valid_UInt,
+			   const std::pair<int, int>& acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),
+			   																	 std::numeric_limits<int>::max( ) ) );
 
 	bool convert_str_to_valid_ints( const char inputStr[], int result_ints[], const std::size_t& expectedTokenCount,
-											const std::vector<int>& specificTokensIndices, const int minValue = 0, const int maxValue = INT_MAX );
+									const std::vector<int>& specificTokensIndices,
+									const std::pair<int, int>& acceptableRange =
+									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
 	void getCharInput( char arr[], const std::streamsize streamSize );
 };

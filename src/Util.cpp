@@ -14,7 +14,7 @@ inline bool util::tokenize( const char inputStr[], const std::size_t& expectedTo
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-int util::isInt( const std::string& token, const int& minValue, const int& maxValue, bool& is_a_valid_int )
+int util::isInt( const std::string& token, bool& is_a_valid_int, const std::pair<int, int>& acceptableRange )
 {
 	int result_int { 0 };
 	std::size_t pos { 0 };
@@ -23,7 +23,9 @@ int util::isInt( const std::string& token, const int& minValue, const int& maxVa
 	{
 		result_int = std::stoi( token, &pos, 10 );
 
-		if ( pos == token.length( ) && (result_int <= maxValue && result_int >= minValue) )
+		const auto& [ minAcceptableValue, maxAcceptableValue ] { acceptableRange };
+
+		if ( pos == token.length( ) && ( result_int <= maxAcceptableValue && result_int >= minAcceptableValue ) )
 		{
 			is_a_valid_int = true;
 		}
@@ -41,9 +43,10 @@ int util::isInt( const std::string& token, const int& minValue, const int& maxVa
 }
 
 bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const std::size_t& expectedTokenCount,
-				   					   const std::vector<int>& specificTokensIndices, const int minValue, const int maxValue )
+				   					  const std::vector<int>& specificTokensIndices, const std::pair<int, int>& acceptableRange )
 {
 	std::vector< std::string > foundTokens;
+	foundTokens.reserve( expectedTokenCount );
 
 	bool isAcceptable { util::tokenize( inputStr, expectedTokenCount, foundTokens ) };
 
@@ -66,7 +69,7 @@ bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], 
 			}
 		}
 
-		int tempInt { isInt( foundTokens[i], minValue, maxValue, isAcceptable ) };
+		int tempInt { isInt( foundTokens[i], isAcceptable, acceptableRange ) };
 
 		if ( !isAcceptable ) { break; }
 		else { result_ints[i] = tempInt; }

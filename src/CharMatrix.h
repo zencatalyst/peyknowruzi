@@ -29,15 +29,15 @@ public:
 	void setY_AxisLen( const int& Y_AxisLen );
 	void setX_AxisLen( const int& X_AxisLen );
 	void setFillCharacter( const char& fillCharacter );
-	inline void setCharacterMatrix( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] ) const;
+	inline void setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const;
 
-	bool validateUserEnteredCoords( const char (&str_userEnteredCoords)[DEFAULT_BUFFER_SIZE],
-											int (&int_userEnteredCoords)[CARTESIAN_COMPONENTS_COUNT] ) const;
+	bool validateUserEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_userEnteredCoords,
+									std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_userEnteredCoords ) const;
 	int getNumOfInputLines( ) const;
 	void getCoords( ) const;
 	inline void writeToOutput( ) const;
 
-	inline static char findCharType( const int (&coordsOfChar)[CARTESIAN_COMPONENTS_COUNT] );
+	inline static char findCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar );
 	static auto initialize( );
 	static void launch( );
 

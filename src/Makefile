@@ -6,13 +6,13 @@ all: PeykNowruzi
 PeykNowruzi: PeykNowruzi.o Util.o CharMatrix.o
 	$(CXX) PeykNowruzi.o Util.o CharMatrix.o -o runPeykNowruzi
 
-PeykNowruzi.o: PeykNowruzi.cpp CharMatrix.h
+PeykNowruzi.o: PeykNowruzi.cpp CharMatrix.h pch.h
 	$(CXX) -c $(CXXFLAGS) PeykNowruzi.cpp
 
-Util.o: Util.cpp Util.h
+Util.o: Util.cpp Util.h pch.h
 	$(CXX) -c $(CXXFLAGS) Util.cpp
 
-CharMatrix.o: CharMatrix.cpp CharMatrix.h Util.h
+CharMatrix.o: CharMatrix.cpp CharMatrix.h Util.h pch.h
 	$(CXX) -c $(CXXFLAGS) CharMatrix.cpp
 
 clean:
