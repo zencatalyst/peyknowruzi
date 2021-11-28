@@ -4,7 +4,7 @@
 using namespace peyknowruzi;
 
 
-inline bool util::tokenize( const char inputStr[], const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
+inline bool util::tokenize( const char* inputStr, const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	std::istringstream iss( inputStr );
 
@@ -42,7 +42,7 @@ int util::isInt( const std::string& token, bool& is_a_valid_int, const std::pair
 	return result_int;
 }
 
-bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], const std::size_t& expectedTokenCount,
+bool util::convert_str_to_valid_ints( const char* inputStr, int* result_ints, const std::size_t& expectedTokenCount,
 				   					  const std::vector<int>& specificTokensIndices, const std::pair<int, int>& acceptableRange )
 {
 	std::vector< std::string > foundTokens;
@@ -78,7 +78,7 @@ bool util::convert_str_to_valid_ints( const char inputStr[], int result_ints[], 
 	return isAcceptable;
 }
 
-void util::getCharInput( char arr[], const std::streamsize streamSize )
+void util::getCharInput( char* arr, const std::streamsize streamSize )
 {
 	std::cin.putback( '\n' );
 	std::cin.clear( );
