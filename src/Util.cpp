@@ -4,9 +4,9 @@
 using namespace peyknowruzi;
 
 
-inline bool util::tokenize( const char* inputStr, const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
+inline bool util::tokenize( const std::string_view inputStr, const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
-	std::istringstream iss( inputStr );
+	std::istringstream iss( inputStr.data( ) );
 
 	foundTokens = { std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) ) };
 	foundTokens.shrink_to_fit( );
@@ -14,14 +14,14 @@ inline bool util::tokenize( const char* inputStr, const std::size_t& expectedTok
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
 }
 
-int util::isInt( const std::string& token, bool& is_a_valid_int, const std::pair<int, int>& acceptableRange )
+int util::isInt( const std::string_view token, bool& is_a_valid_int, const std::pair<int, int>& acceptableRange )
 {
 	int result_int { 0 };
 	std::size_t pos { 0 };
 
 	try
 	{
-		result_int = std::stoi( token, &pos, 10 );
+		result_int = std::stoi( token.data( ), &pos, 10 );
 
 		const auto& [ minAcceptableValue, maxAcceptableValue ] { acceptableRange };
 
@@ -42,7 +42,7 @@ int util::isInt( const std::string& token, bool& is_a_valid_int, const std::pair
 	return result_int;
 }
 
-bool util::convert_str_to_valid_ints( const char* inputStr, int* result_ints, const std::size_t& expectedTokenCount,
+bool util::convert_str_to_valid_ints( const std::string_view inputStr, int* result_ints, const std::size_t& expectedTokenCount,
 				   					  const std::vector<int>& specificTokensIndices, const std::pair<int, int>& acceptableRange )
 {
 	std::vector< std::string > foundTokens;
@@ -78,10 +78,10 @@ bool util::convert_str_to_valid_ints( const char* inputStr, int* result_ints, co
 	return isAcceptable;
 }
 
-void util::getCharInput( char* arr, const std::streamsize streamSize )
+void util::getCharInput( char* inputBuffer, const std::streamsize streamSize )
 {
 	std::cin.putback( '\n' );
 	std::cin.clear( );
 	std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
-	std::cin.getline( arr, streamSize );
+	std::cin.getline( inputBuffer, streamSize );
 }

@@ -11,6 +11,9 @@ all: PeykNowruzi
 PeykNowruzi: $(OBJ)
 	$(CXX) $^ -o runPeykNowruzi
 
+$(PCH_OUT): $(PCH_SRC)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
 PeykNowruzi.o: PeykNowruzi.cpp CharMatrix.h $(PCH_OUT)
 	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
 
@@ -19,9 +22,6 @@ Util.o: Util.cpp Util.h $(PCH_OUT)
 
 CharMatrix.o: CharMatrix.cpp CharMatrix.h Util.h $(PCH_OUT)
 	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
-
-$(PCH_OUT): $(PCH_SRC)
-	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
 	rm *.o runPeykNowruzi
