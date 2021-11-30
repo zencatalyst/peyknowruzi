@@ -219,12 +219,12 @@ bool CharMatrix::validateUserEnteredCoords( const std::array<char, DEFAULT_BUFFE
 	constexpr int MIN_ALLOWED_Y { 0 };
 	constexpr int MIN_ALLOWED_X { 0 };
 
-	const bool isValid { util::convert_str_to_valid_ints( str_userEnteredCoords.data( ), int_userEnteredCoords.data( ),
-						 REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_Y,
+	const bool isValid { util::convert_str_to_valid_ints( { str_userEnteredCoords.data( ), str_userEnteredCoords.size( ) },
+						 int_userEnteredCoords.data( ), REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_Y,
 						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_Y ), std::move( MAX_ALLOWED_Y ) ) )
 																															&&
-						 util::convert_str_to_valid_ints( str_userEnteredCoords.data( ), int_userEnteredCoords.data( ),
-						 REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_X,
+						 util::convert_str_to_valid_ints( { str_userEnteredCoords.data( ), str_userEnteredCoords.size( ) },
+						 int_userEnteredCoords.data( ), REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_X,
 						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_X ), std::move( MAX_ALLOWED_X ) ) ) ? true : false };
 
 	return isValid;
@@ -300,9 +300,10 @@ int CharMatrix::getNumOfInputLines( ) const
 	do
 	{
 		util::getCharInput( str_numOfInputLines.data( ), streamSize );
-		
-		isValid = { util::convert_str_to_valid_ints( str_numOfInputLines.data( ), int_numOfInputLines.data( ),
-					REQUIRED_TOKENS_COUNT, std::vector<int>( 0 ), std::make_pair<const int, const int>
+
+		isValid = { util::convert_str_to_valid_ints( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
+					int_numOfInputLines.data( ), REQUIRED_TOKENS_COUNT,
+					std::vector<int>( 0 ), std::make_pair<const int, const int>
 					( std::move( MIN_NUM_OF_INPUT_LINES ), std::move( MAX_NUM_OF_INPUT_LINES ) ) ) };
 
 	} while ( !isValid );

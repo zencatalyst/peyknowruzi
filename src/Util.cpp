@@ -6,9 +6,18 @@ using namespace peyknowruzi;
 
 inline bool util::tokenize( const std::string_view inputStr, const std::size_t& expectedTokenCount, std::vector< std::string >& foundTokens )
 {
-	std::istringstream iss( inputStr.data( ) );
+	std::stringstream ss;
 
-	foundTokens = { std::vector<std::string>( std::istream_iterator<std::string>( iss ), std::istream_iterator<std::string>( ) ) };
+	if ( *( inputStr.data( ) + inputStr.size( ) - 1 ) == '\0' )
+	{
+		ss << inputStr.data( );
+	}
+	else
+	{
+		ss << std::string{ inputStr };
+	}
+
+	foundTokens = { std::vector<std::string>( std::istream_iterator<std::string>( ss ), std::istream_iterator<std::string>( ) ) };
 	foundTokens.shrink_to_fit( );
 
 	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
@@ -21,7 +30,14 @@ int util::isInt( const std::string_view token, bool& is_a_valid_int, const std::
 
 	try
 	{
-		result_int = std::stoi( token.data( ), &pos, 10 );
+		if ( *( token.data( ) + token.size( ) - 1 ) == '\0' )
+		{
+			result_int = std::stoi( token.data( ), &pos, 10 );
+		}
+		else
+		{
+			result_int = std::stoi( std::string{ token }, &pos, 10 );
+		}
 
 		const auto& [ minAcceptableValue, maxAcceptableValue ] { acceptableRange };
 
