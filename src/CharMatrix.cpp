@@ -16,6 +16,11 @@
 #include "CharMatrix.h"
 #include "Util.h"
 
+#if PN_DEBUG == 1
+#include <chrono>
+#endif
+
+
 using namespace peyknowruzi;
 
 
@@ -339,17 +344,24 @@ void CharMatrix::getCoords( ) const
 
 inline void CharMatrix::writeToOutput( ) const
 {
-	const auto& Y_AxisLen { getY_AxisLen( ) };
-	const auto& X_AxisLen { getX_AxisLen( ) };
+	const auto X_AxisLen { getX_AxisLen( ) };
 	const auto& characterMatrix { getCharacterMatrix( ) };
 
-	for ( int row = 0; row < Y_AxisLen; ++row )
+#if PN_DEBUG == 1
+	auto t1 = std::chrono::high_resolution_clock::now( );
+#endif
+
+	for ( const auto& row : characterMatrix )
 	{
-		for ( int col = 0; col < X_AxisLen; ++col )
-		{
-			std::cout << characterMatrix[ row ][ col ];
-		}
+		std::cout.write( row.data( ), X_AxisLen );
 	}
+
+#if PN_DEBUG == 1
+	auto t2 = std::chrono::high_resolution_clock::now( );
+
+	std::chrono::duration< double, std::milli > duration_ms { t2 - t1 };
+	std::clog << duration_ms.count( ) << " ms\n";
+#endif
 
 	LOG( "\nFinished." );
 	WAIT;
