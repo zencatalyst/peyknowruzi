@@ -15,7 +15,7 @@ class CharMatrix
 {
 public:
 	inline CharMatrix( );
-	inline CharMatrix( const int& Y_AxisLen, const int& X_AxisLen, const char fillCharacter = DEFAULT_FILL_CHARACTER );
+	inline CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter = DEFAULT_FILL_CHARACTER );
 	inline ~CharMatrix( ) = default;
 	inline CharMatrix( const CharMatrix& ) = delete;
 	inline CharMatrix& operator=( const CharMatrix& ) = delete;
@@ -26,9 +26,9 @@ public:
 	inline const int& getX_AxisLen( ) const;
 	inline const char& getFillCharacter( ) const;
 	inline std::vector< std::vector<char> >& getCharacterMatrix( ) const;
-	void setY_AxisLen( const int& Y_AxisLen );
-	void setX_AxisLen( const int& X_AxisLen );
-	void setFillCharacter( const char& fillCharacter );
+	void setY_AxisLen( const int Y_AxisLen );
+	void setX_AxisLen( const int X_AxisLen );
+	void setFillCharacter( const char fillCharacter );
 	inline void setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const;
 
 	bool validateUserEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_userEnteredCoords,

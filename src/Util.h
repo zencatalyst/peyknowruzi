@@ -9,19 +9,31 @@ namespace peyknowruzi
 
 namespace util
 {
-	inline bool tokenize( const std::string_view inputStr, const std::size_t& expectedTokenCount,
+	inline bool tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount,
 						  std::vector< std::string >& foundTokens );
 
-	int isInt( const std::string_view token, bool& is_a_valid_UInt,
-			   const std::pair<int, int>& acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),
-			   																	 std::numeric_limits<int>::max( ) ) );
+	inline bool tokenize( const char* const inputStr, const std::size_t expectedTokenCount,
+						  std::vector< std::string >& foundTokens ) = delete;
 
-	bool convert_str_to_valid_ints( const std::string_view inputStr, int* result_ints, const std::size_t& expectedTokenCount,
+	int isInt( const std::string_view token, bool& is_a_valid_int,
+			   const std::pair<int, int> acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),
+			   																	std::numeric_limits<int>::max( ) ) );
+
+	int isInt( const char* const token, bool& is_a_valid_int,
+			   const std::pair<int, int> acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),
+			   																	std::numeric_limits<int>::max( ) ) ) = delete;
+
+	bool convert_str_to_valid_ints( const std::string_view inputStr, int* const result_ints, const std::size_t expectedTokenCount,
 									const std::vector<int>& specificTokensIndices,
-									const std::pair<int, int>& acceptableRange =
+									const std::pair<int, int> acceptableRange =
 									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	void getCharInput( char* inputBuffer, const std::streamsize streamSize );
+	bool convert_str_to_valid_ints( const char* const inputStr, int* const result_ints, const std::size_t expectedTokenCount,
+									const std::vector<int>& specificTokensIndices,
+									const std::pair<int, int> acceptableRange =
+									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
+
+	void getCharInput( char* const inputBuffer, const std::streamsize streamSize );
 };
 
 }

@@ -38,7 +38,7 @@ inline CharMatrix::CharMatrix( )
 {
 }
 
-inline CharMatrix::CharMatrix( const int& Y_AxisLen, const int& X_AxisLen, const char fillCharacter )
+inline CharMatrix::CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter )
 	: m_Y_AxisLen( Y_AxisLen ), m_X_AxisLen( X_AxisLen ), m_fillCharacter( fillCharacter ),
 	m_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
 {
@@ -90,7 +90,7 @@ inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
 	return m_characterMatrix;
 }
 
-void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
+void CharMatrix::setY_AxisLen( const int Y_AxisLen )
 {
 	if ( Y_AxisLen == getY_AxisLen( ) ) { return; }
 
@@ -122,7 +122,7 @@ void CharMatrix::setY_AxisLen( const int& Y_AxisLen )
 	m_Y_AxisLen = { Y_AxisLen };
 }
 
-void CharMatrix::setX_AxisLen( const int& X_AxisLen )
+void CharMatrix::setX_AxisLen( const int X_AxisLen )
 {
 	if ( X_AxisLen == getX_AxisLen( ) ) { return; }
 
@@ -154,7 +154,7 @@ void CharMatrix::setX_AxisLen( const int& X_AxisLen )
 	m_X_AxisLen = { X_AxisLen };
 }
 
-void CharMatrix::setFillCharacter( const char& fillCharacter )
+void CharMatrix::setFillCharacter( const char fillCharacter )
 {
 	if ( fillCharacter == getFillCharacter( ) ) { return; }
 
