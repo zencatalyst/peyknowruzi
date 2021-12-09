@@ -9,7 +9,7 @@ namespace peyknowruzi
 
 namespace util
 {
-	inline bool tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount,
+	bool tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount,
 						  std::vector< std::string >& foundTokens );
 
 	inline bool tokenize( const char* const inputStr, const std::size_t expectedTokenCount,

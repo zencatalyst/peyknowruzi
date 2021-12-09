@@ -1,6 +1,7 @@
 
 #define PN_DEBUG 0
 //#define GUI_MODE 0
+#define FULL_INPUT_MODE 0
 
 #if PN_DEBUG == 1
 #define LOG(x) std::clog << ( x ) << std::endl
@@ -25,16 +26,26 @@ using namespace peyknowruzi;
 
 
 static constexpr int MIN_ALLOWED_Y_AXIS_LEN { 1 };
-static constexpr int MIN_ALLOWED_X_AXIS_LEN { 1 };
+static constexpr int MIN_ALLOWED_X_AXIS_LEN { 2 };
 static constexpr int MAX_ALLOWED_Y_AXIS_LEN { 50 };
 static constexpr int MAX_ALLOWED_X_AXIS_LEN { 168 };
-static constexpr int DEFAULT_Y_AXIS_LEN { 20 };
-static constexpr int DEFAULT_X_AXIS_LEN { 20 };
+static constexpr int MAX_POSSIBLE_NUM_OF_INPUT_LINES { ( MAX_ALLOWED_Y_AXIS_LEN * ( MAX_ALLOWED_X_AXIS_LEN - 1 ) ) / 2 };
+static constexpr int MIN_POSSIBLE_NUM_OF_INPUT_LINES { 0 };
 
-static_assert( DEFAULT_Y_AXIS_LEN >= MIN_ALLOWED_Y_AXIS_LEN || DEFAULT_Y_AXIS_LEN <= MAX_ALLOWED_Y_AXIS_LEN ||
-			   DEFAULT_X_AXIS_LEN >= MIN_ALLOWED_X_AXIS_LEN || DEFAULT_X_AXIS_LEN <= MAX_ALLOWED_X_AXIS_LEN,
-			   "DEFAULT_Y_AXIS_LEN can not be greater than MAX_ALLOWED_Y_AXIS_LEN or less than MIN_ALLOWED_Y_AXIS_LEN;\n"
-			   "DEFAULT_X_AXIS_LEN can not be greater than MAX_ALLOWED_X_AXIS_LEN or less than MIN_ALLOWED_X_AXIS_LEN." );
+static_assert( DEFAULT_Y_AXIS_LEN >= MIN_ALLOWED_Y_AXIS_LEN && DEFAULT_Y_AXIS_LEN <= MAX_ALLOWED_Y_AXIS_LEN,
+			   "DEFAULT_Y_AXIS_LEN can not be greater than MAX_ALLOWED_Y_AXIS_LEN or less than MIN_ALLOWED_Y_AXIS_LEN" );
+
+static_assert( DEFAULT_X_AXIS_LEN >= MIN_ALLOWED_X_AXIS_LEN && DEFAULT_X_AXIS_LEN <= MAX_ALLOWED_X_AXIS_LEN,
+			   "DEFAULT_X_AXIS_LEN can not be greater than MAX_ALLOWED_X_AXIS_LEN or less than MIN_ALLOWED_X_AXIS_LEN" );
+
+static_assert( MAX_POSSIBLE_NUM_OF_INPUT_LINES <= ( MAX_ALLOWED_Y_AXIS_LEN * ( MAX_ALLOWED_X_AXIS_LEN - 1 ) ) / 2 && MAX_POSSIBLE_NUM_OF_INPUT_LINES >= 0,
+			   "MAX_POSSIBLE_NUM_OF_INPUT_LINES can not be greater than ( MAX_ALLOWED_Y_AXIS_LEN * MAX_ALLOWED_X_AXIS_LEN ) / 2 or "
+			   "less than 0" );
+
+static_assert( MIN_POSSIBLE_NUM_OF_INPUT_LINES <= ( MAX_ALLOWED_Y_AXIS_LEN * ( MAX_ALLOWED_X_AXIS_LEN - 1 ) ) / 2 && MIN_POSSIBLE_NUM_OF_INPUT_LINES >= 0
+			   && MIN_POSSIBLE_NUM_OF_INPUT_LINES <= MAX_POSSIBLE_NUM_OF_INPUT_LINES,
+			   "MIN_POSSIBLE_NUM_OF_INPUT_LINES can not be greater than ( MAX_ALLOWED_Y_AXIS_LEN * MAX_ALLOWED_X_AXIS_LEN ) / 2 or "
+			   "less than 0 or greater than MAX_POSSIBLE_NUM_OF_INPUT_LINES" );
 
 
 inline CharMatrix::CharMatrix( )
@@ -149,7 +160,7 @@ void CharMatrix::setX_AxisLen( const int X_AxisLen )
 		auto& row = *it;
 
 		row.resize( X_AxisLen, getFillCharacter( ) );
-		row[X_AxisLen - 1] = '\n';
+		row[ X_AxisLen - 1 ] = '\n';
 		if ( X_AxisLen > getX_AxisLen( ) )
 		{
 			row[ getX_AxisLen( ) - 1 ] = getFillCharacter( );
@@ -212,24 +223,57 @@ inline void CharMatrix::setCharacterMatrix( const std::array<int, CARTESIAN_COMP
 	}
 }
 
-bool CharMatrix::validateUserEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_userEnteredCoords,
-											std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_userEnteredCoords ) const
+bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, DEFAULT_BUFFER_SIZE>& str_enteredMatrixAttributes,
+												  std::tuple<int, int, char>& tuple_enteredMatrixAttributes )
+{
+	constexpr std::size_t REQUIRED_TOKENS_COUNT { MATRIX_ATTRIBUTES_COUNT };
+	const std::vector<int> specificTokenIndexFor_Y_AxisLen { 0 };
+	const std::vector<int> specificTokenIndexFor_X_AxisLen { 1 };
+
+	std::vector< std::string > foundTokens;
+	bool isAcceptable { util::tokenize( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
+						 				  REQUIRED_TOKENS_COUNT, foundTokens ) };
+
+	std::array<int, REQUIRED_TOKENS_COUNT> int_EnteredMatrix_YX { };
+
+	const bool isValid { util::convert_str_to_valid_ints( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
+						 int_EnteredMatrix_YX.data( ), REQUIRED_TOKENS_COUNT, specificTokenIndexFor_Y_AxisLen,
+						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_Y_AXIS_LEN ), std::move( MAX_ALLOWED_Y_AXIS_LEN ) ) )
+																																			&&
+						 util::convert_str_to_valid_ints( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
+						 int_EnteredMatrix_YX.data( ), REQUIRED_TOKENS_COUNT, specificTokenIndexFor_X_AxisLen,
+						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_X_AXIS_LEN ), std::move( MAX_ALLOWED_X_AXIS_LEN ) ) )
+						 																													&&
+						 ( isAcceptable && foundTokens[ 2 ].size( ) == 1 && !CHAR_SET.contains( foundTokens[ 2 ][ 0 ] ) ) ? true : false };
+
+	if ( isValid )
+	{
+		std::get<0>( tuple_enteredMatrixAttributes ) = int_EnteredMatrix_YX[ 0 ];
+		std::get<1>( tuple_enteredMatrixAttributes ) = int_EnteredMatrix_YX[ 1 ];
+		std::get<2>( tuple_enteredMatrixAttributes ) = foundTokens[ 2 ][ 0 ];
+	}
+
+	return isValid;
+}
+
+bool CharMatrix::validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_EnteredCoords,
+										std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_EnteredCoords ) const
 {
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 	const std::vector<int> specificTokensIndicesFor_Y { 1, 3 };
 	const std::vector<int> specificTokensIndicesFor_X { 0, 2 };
 
 	const int MAX_ALLOWED_Y { getY_AxisLen( ) - 1 };
-	const int MAX_ALLOWED_X { getX_AxisLen( ) - 1 };
+	const int MAX_ALLOWED_X { getX_AxisLen( ) - 2 };
 	constexpr int MIN_ALLOWED_Y { 0 };
 	constexpr int MIN_ALLOWED_X { 0 };
 
-	const bool isValid { util::convert_str_to_valid_ints( { str_userEnteredCoords.data( ), str_userEnteredCoords.size( ) },
-						 int_userEnteredCoords.data( ), REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_Y,
+	const bool isValid { util::convert_str_to_valid_ints( { str_EnteredCoords.data( ), str_EnteredCoords.size( ) },
+						 int_EnteredCoords.data( ), REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_Y,
 						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_Y ), std::move( MAX_ALLOWED_Y ) ) )
 																															&&
-						 util::convert_str_to_valid_ints( { str_userEnteredCoords.data( ), str_userEnteredCoords.size( ) },
-						 int_userEnteredCoords.data( ), REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_X,
+						 util::convert_str_to_valid_ints( { str_EnteredCoords.data( ), str_EnteredCoords.size( ) },
+						 int_EnteredCoords.data( ), REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_X,
 						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_X ), std::move( MAX_ALLOWED_X ) ) ) ? true : false };
 
 	return isValid;
@@ -263,24 +307,15 @@ inline char CharMatrix::findCharType( const std::array<int, CARTESIAN_COMPONENTS
 	}
 }
 
-auto CharMatrix::initialize( )
+auto CharMatrix::createCharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter )
 {
-	// constexpr char FILL_CHARACTER = '#';
-	constexpr int Y_AXIS_LENGTH { 36 };
-	constexpr int X_AXIS_LENGTH { 168 };
-
-	constexpr int MAX_NUM_OF_INPUT_LINES { ( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 };
-
-	static_assert( MAX_NUM_OF_INPUT_LINES >= 0 && MAX_NUM_OF_INPUT_LINES <= std::numeric_limits<int>::max( )
-					, "( Y_AXIS_LENGTH * X_AXIS_LENGTH ) / 2 can not be greater than INT_MAX or less than 0" );
-
-	std::unique_ptr<CharMatrix> uniquePtr2Matrix { std::make_unique<CharMatrix>( Y_AXIS_LENGTH, X_AXIS_LENGTH /*, FILL_CHARACTER*/ ) };
+	std::unique_ptr<CharMatrix> uniquePtr2Matrix { std::make_unique<CharMatrix>( Y_AxisLen, X_AxisLen , fillCharacter ) };
 
 	std::vector< std::vector<char> >& characterMatrix { uniquePtr2Matrix->getCharacterMatrix( ) };
 
-	for ( int row = 0; row < Y_AXIS_LENGTH; ++row )
+	for ( int row = 0; row < Y_AxisLen; ++row )
 	{
-		characterMatrix[row][X_AXIS_LENGTH - 1] = '\n';
+		characterMatrix[ row ][ X_AxisLen - 1 ] = '\n';
 	}
 
 	return uniquePtr2Matrix;
@@ -288,11 +323,8 @@ auto CharMatrix::initialize( )
 
 int CharMatrix::getNumOfInputLines( ) const
 {
-	const int MAX_NUM_OF_INPUT_LINES { ( getY_AxisLen( ) * getX_AxisLen( ) ) / 2 };
-	constexpr int MIN_NUM_OF_INPUT_LINES { 0 };
-
-	static_assert( MIN_NUM_OF_INPUT_LINES >= 0 && MIN_NUM_OF_INPUT_LINES <= std::numeric_limits<int>::max( )
-					, "MIN_NUM_OF_INPUT_LINES can not be greater than INT_MAX or less than 0" );
+	const int MAX_ALLOWED_NUM_OF_INPUT_LINES { ( getY_AxisLen( ) * ( getX_AxisLen( ) - 1 ) ) / 2 };
+	const int MIN_ALLOWED_NUM_OF_INPUT_LINES { MIN_POSSIBLE_NUM_OF_INPUT_LINES };
 
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { 1 };
@@ -309,11 +341,31 @@ int CharMatrix::getNumOfInputLines( ) const
 		isValid = { util::convert_str_to_valid_ints( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
 					int_numOfInputLines.data( ), REQUIRED_TOKENS_COUNT,
 					std::vector<int>( 0 ), std::make_pair<const int, const int>
-					( std::move( MIN_NUM_OF_INPUT_LINES ), std::move( MAX_NUM_OF_INPUT_LINES ) ) ) };
+					( std::move( MIN_ALLOWED_NUM_OF_INPUT_LINES ), std::move( MAX_ALLOWED_NUM_OF_INPUT_LINES ) ) ) };
 
 	} while ( !isValid );
 
 	return int_numOfInputLines[0];
+}
+
+auto CharMatrix::getMatrixAttributes( )
+{
+	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
+
+	std::array<char, streamSize> str_enteredMatrixAttributes { };
+	std::tuple<int, int, char> enteredMatrixAttributes { };
+
+	bool isAcceptable { false };
+
+	do
+	{
+		util::getCharInput( str_enteredMatrixAttributes.data( ), streamSize );
+
+		isAcceptable = { validateEnteredMatrixAttributes( str_enteredMatrixAttributes, enteredMatrixAttributes ) };
+
+	} while ( !isAcceptable );
+
+	return enteredMatrixAttributes;
 }
 
 void CharMatrix::getCoords( ) const
@@ -323,8 +375,8 @@ void CharMatrix::getCoords( ) const
 	constexpr std::streamsize streamSize { DEFAULT_BUFFER_SIZE };
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
 
-	std::array<char, streamSize> str_userEnteredCoords { };
-	std::array<int, REQUIRED_TOKENS_COUNT> int_userEnteredCoords { };
+	std::array<char, streamSize> str_EnteredCoords { };
+	std::array<int, REQUIRED_TOKENS_COUNT> int_EnteredCoords { };
 
 	for ( int i = 0; i < numOfInputLines; ++i )
 	{
@@ -332,13 +384,13 @@ void CharMatrix::getCoords( ) const
 
 		do
 		{
-			util::getCharInput( str_userEnteredCoords.data( ), streamSize );
+			util::getCharInput( str_EnteredCoords.data( ), streamSize );
 
-			isAcceptable = { validateUserEnteredCoords( str_userEnteredCoords, int_userEnteredCoords ) };
+			isAcceptable = { validateEnteredCoords( str_EnteredCoords, int_EnteredCoords ) };
 
 		} while ( !isAcceptable );
 
-		setCharacterMatrix( int_userEnteredCoords );
+		setCharacterMatrix( int_EnteredCoords );
 	}
 }
 
@@ -360,16 +412,37 @@ inline void CharMatrix::writeToOutput( ) const
 	auto t2 = std::chrono::high_resolution_clock::now( );
 
 	std::chrono::duration< double, std::milli > duration_ms { t2 - t1 };
-	std::clog << duration_ms.count( ) << " ms\n";
+	std::clog << '\n' << duration_ms.count( ) << " ms\n";
 #endif
 
 	LOG( "\nFinished." );
 	WAIT;
 }
 
+inline void CharMatrix::initialize( )
+{
+	std::ios_base::sync_with_stdio( false );
+}
+
 void CharMatrix::launch( )
 {
-	const std::unique_ptr<CharMatrix> uniquePtr2Matrix { CharMatrix::initialize( ) };
+	// initialize( );
+
+#if FULL_INPUT_MODE == 1
+	const auto [ Y_AxisLen, X_AxisLen, fillCharacter ] { getMatrixAttributes( ) };
+#else
+	constexpr int Y_AxisLen { 36 };
+	constexpr int X_AxisLen { 168 };
+	constexpr char fillCharacter { ' ' };
+
+	static_assert( Y_AxisLen >= MIN_ALLOWED_Y_AXIS_LEN && Y_AxisLen <= MAX_ALLOWED_Y_AXIS_LEN,
+				   "Y_AxisLen can not be greater than MAX_ALLOWED_Y_AXIS_LEN or less than MIN_ALLOWED_Y_AXIS_LEN" );
+
+	static_assert( X_AxisLen >= MIN_ALLOWED_X_AXIS_LEN && X_AxisLen <= MAX_ALLOWED_X_AXIS_LEN,
+				   "X_AxisLen can not be greater than MAX_ALLOWED_X_AXIS_LEN or less than MIN_ALLOWED_X_AXIS_LEN" );
+#endif
+
+	const std::unique_ptr<CharMatrix> uniquePtr2Matrix { CharMatrix::createCharMatrix( Y_AxisLen, X_AxisLen, fillCharacter ) };
 
 	uniquePtr2Matrix->getCoords( );
 	uniquePtr2Matrix->writeToOutput( );

@@ -4,7 +4,7 @@
 using namespace peyknowruzi;
 
 
-inline bool util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount, std::vector< std::string >& foundTokens )
+bool util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	if ( inputStr.empty( ) )
 	{

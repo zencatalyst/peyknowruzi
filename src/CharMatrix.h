@@ -7,15 +7,18 @@
 namespace peyknowruzi
 {
 
+inline constexpr int DEFAULT_Y_AXIS_LEN { 20 };
+inline constexpr int DEFAULT_X_AXIS_LEN { 20 };
 inline constexpr char DEFAULT_FILL_CHARACTER { ' ' };
 inline constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
 inline constexpr std::size_t CARTESIAN_COMPONENTS_COUNT { 4 };
+inline constexpr std::size_t MATRIX_ATTRIBUTES_COUNT { 3 };
 
 class CharMatrix
 {
 public:
 	inline CharMatrix( );
-	inline CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter = DEFAULT_FILL_CHARACTER );
+	inline CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter );
 	inline ~CharMatrix( ) = default;
 	inline CharMatrix( const CharMatrix& ) = delete;
 	inline CharMatrix& operator=( const CharMatrix& ) = delete;
@@ -31,14 +34,19 @@ public:
 	void setFillCharacter( const char fillCharacter );
 	inline void setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const;
 
-	bool validateUserEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_userEnteredCoords,
-									std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_userEnteredCoords ) const;
+	bool validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_EnteredCoords,
+								std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_EnteredCoords ) const;
+	static bool validateEnteredMatrixAttributes( const std::array<char, DEFAULT_BUFFER_SIZE>& str_enteredMatrixAttributes,
+												 std::tuple<int, int, char>& tuple_enteredMatrixAttributes );
 	int getNumOfInputLines( ) const;
+	static auto getMatrixAttributes( );
 	void getCoords( ) const;
 	inline void writeToOutput( ) const;
 
 	inline static char findCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar );
-	static auto initialize( );
+	static auto createCharMatrix( const int Y_AxisLen = DEFAULT_Y_AXIS_LEN, const int X_AxisLen = DEFAULT_X_AXIS_LEN,
+								  const char fillCharacter = DEFAULT_FILL_CHARACTER );
+	inline static void initialize( );
 	static void launch( );
 
 private:
