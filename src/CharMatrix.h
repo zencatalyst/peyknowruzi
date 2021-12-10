@@ -12,7 +12,6 @@ inline constexpr int DEFAULT_X_AXIS_LEN { 20 };
 inline constexpr char DEFAULT_FILL_CHARACTER { ' ' };
 inline constexpr std::streamsize DEFAULT_BUFFER_SIZE { 169 };
 inline constexpr std::size_t CARTESIAN_COMPONENTS_COUNT { 4 };
-inline constexpr std::size_t MATRIX_ATTRIBUTES_COUNT { 3 };
 
 class CharMatrix
 {
@@ -34,8 +33,8 @@ public:
 	void setFillCharacter( const char fillCharacter );
 	inline void setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const;
 
-	bool validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_EnteredCoords,
-								std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_EnteredCoords ) const;
+	bool validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_enteredCoords,
+								std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_enteredCoords ) const;
 	static bool validateEnteredMatrixAttributes( const std::array<char, DEFAULT_BUFFER_SIZE>& str_enteredMatrixAttributes,
 												 std::tuple<int, int, char>& tuple_enteredMatrixAttributes );
 	int getNumOfInputLines( ) const;
