@@ -9,11 +9,20 @@ namespace peyknowruzi
 
 namespace util
 {
+	struct Timer
+	{
+		std::chrono::time_point< std::chrono::steady_clock > start;
+		std::chrono::time_point< std::chrono::steady_clock > end;
+
+		Timer( );
+		~Timer( );
+	};
+
 	bool tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount,
 				   std::vector< std::string >& foundTokens );
 
-	inline bool tokenize( const char* const inputStr, const std::size_t expectedTokenCount,
-						  std::vector< std::string >& foundTokens ) = delete;
+	bool tokenize( const char* const inputStr, const std::size_t expectedTokenCount,
+				   std::vector< std::string >& foundTokens ) = delete;
 
 	int isInt( const std::string_view token, bool& is_a_valid_int,
 			   const std::pair<int, int> acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),

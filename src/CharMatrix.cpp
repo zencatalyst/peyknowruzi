@@ -17,10 +17,6 @@
 #include "CharMatrix.h"
 #include "Util.h"
 
-#if PN_DEBUG == 1
-#include <chrono>
-#endif
-
 
 using namespace peyknowruzi;
 
@@ -215,7 +211,7 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 
 inline void CharMatrix::setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const
 {
-	const char ch { findCharType( coordsOfChar ) };
+	const char ch { processCoordsToObtainCharType( coordsOfChar ) };
 
 	if ( CHAR_SET.contains( ch ) )
 	{
@@ -280,7 +276,7 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SI
 	return isValid;
 }
 
-inline char CharMatrix::findCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar )
+inline char CharMatrix::processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar )
 {
 	if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
 	   ((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
@@ -401,7 +397,8 @@ inline void CharMatrix::writeToOutput( ) const
 	const auto& characterMatrix { getCharacterMatrix( ) };
 
 #if PN_DEBUG == 1
-	auto t1 = std::chrono::high_resolution_clock::now( );
+	{
+	util::Timer timer;
 #endif
 
 	for ( const auto& row : characterMatrix )
@@ -410,10 +407,7 @@ inline void CharMatrix::writeToOutput( ) const
 	}
 
 #if PN_DEBUG == 1
-	auto t2 = std::chrono::high_resolution_clock::now( );
-
-	std::chrono::duration< double, std::milli > duration_ms { t2 - t1 };
-	std::clog << '\n' << duration_ms.count( ) << " ms\n";
+	}
 #endif
 
 	LOG( "\nFinished." );

@@ -4,6 +4,17 @@
 using namespace peyknowruzi;
 
 
+util::Timer::Timer( )
+: start( std::chrono::steady_clock::now( ) )
+{
+}
+
+util::Timer::~Timer( )
+{
+	end = std::chrono::steady_clock::now( );
+	std::clog << "\nTimer took " << std::chrono::duration< double, std::milli >( end - start ).count( ) << " ms\n";
+}
+
 bool util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount, std::vector< std::string >& foundTokens )
 {
 	if ( inputStr.empty( ) )
