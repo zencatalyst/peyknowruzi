@@ -15,11 +15,11 @@ util::Timer::~Timer( )
 	std::clog << "\nTimer took " << std::chrono::duration< double, std::milli >( end - start ).count( ) << " ms\n";
 }
 
-bool util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount, std::vector< std::string >& foundTokens )
+std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount )
 {
 	if ( inputStr.empty( ) )
 	{
-		return ( expectedTokenCount == 0 ) ? true : false;
+		return { ( expectedTokenCount == 0 ) ? true : false, std::vector< std::string >( 0 ) };
 	}
 
 	std::stringstream ss;
@@ -33,21 +33,20 @@ bool util::tokenize( const std::string_view inputStr, const std::size_t expected
 		ss << std::string{ inputStr };
 	}
 
-	foundTokens = { std::vector< std::string >( std::istream_iterator< std::string >( ss ), std::istream_iterator< std::string >( ) ) };
+	std::vector< std::string > foundTokens { std::vector< std::string >( std::istream_iterator< std::string >( ss ), std::istream_iterator< std::string >( ) ) };
 	foundTokens.shrink_to_fit( );
 
-	return ( foundTokens.size( ) == expectedTokenCount ) ? true : false;
+	return { ( foundTokens.size( ) == expectedTokenCount ) ? true : false, foundTokens };
 }
 
-int util::isInt( const std::string_view token, bool& is_a_valid_int, const std::pair<int, int> acceptableRange )
+std::pair< bool, int > util::isInt( const std::string_view token, const std::pair<int, int> acceptableRange )
 {
-	int result_int { 0 };
+	bool isValidInt { };
+	int result_int { };
 
 	if ( token.empty( ) )
 	{
-		is_a_valid_int = false;
-
-		return result_int;
+		return { isValidInt = false, result_int = 0 };
 	}
 
 	try
@@ -67,31 +66,30 @@ int util::isInt( const std::string_view token, bool& is_a_valid_int, const std::
 
 		if ( pos == token.length( ) && ( result_int <= maxAcceptableValue && result_int >= minAcceptableValue ) )
 		{
-			is_a_valid_int = true;
+			isValidInt = true;
 		}
 		else
 		{
-			is_a_valid_int = false;
+			isValidInt = false;
 			result_int = 0;
 		}
 	}
-	catch ( const std::invalid_argument& ia ) { is_a_valid_int = false; }
-	catch ( const std::out_of_range& oor ) { is_a_valid_int = false; }
-	catch ( const std::exception& e ) { is_a_valid_int = false; }
+	catch ( const std::invalid_argument& ia ) { isValidInt = false; }
+	catch ( const std::out_of_range& oor ) { isValidInt = false; }
+	catch ( const std::exception& e ) { isValidInt = false; }
 
-	return result_int;
+	return { isValidInt, result_int };
 }
 
-bool util::convert_str_to_valid_ints( const std::string_view inputStr, int* const result_ints, const std::size_t expectedTokenCount,
+bool util::convert_str_to_valid_ints( const std::string_view inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
 				   					  const std::vector<int>& specificTokensIndices, const std::pair<int, int> acceptableRange )
 {
-	std::vector< std::string > foundTokens;
+	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( inputStr, expectedTokenCount ) };
 
-	bool isAcceptable { util::tokenize( inputStr, expectedTokenCount, foundTokens ) };
-
-	if ( !isAcceptable ) { return isAcceptable; }
+	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
 	std::size_t j { 0 };
+	bool isValidInt { true };
 
 	for ( std::size_t i = 0; i < foundTokens.size( ); ++i )
 	{
@@ -108,13 +106,14 @@ bool util::convert_str_to_valid_ints( const std::string_view inputStr, int* cons
 			}
 		}
 
-		int tempInt { isInt( foundTokens[i], isAcceptable, acceptableRange ) };
+		int tempInt;
+		std::tie( isValidInt, tempInt ) = isInt( foundTokens[i], acceptableRange );
 
-		if ( !isAcceptable ) { break; }
+		if ( !isValidInt ) { break; }
 		else { result_ints[i] = tempInt; }
 	}
 
-	return isAcceptable;
+	return isValidInt;
 }
 
 void util::getCharInput( char* const inputBuffer, const std::streamsize streamSize )

@@ -18,26 +18,22 @@ namespace util
 		~Timer( );
 	};
 
-	bool tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount,
-				   std::vector< std::string >& foundTokens );
+	std::pair< bool, std::vector< std::string > > tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount );
 
-	bool tokenize( const char* const inputStr, const std::size_t expectedTokenCount,
-				   std::vector< std::string >& foundTokens ) = delete;
+	std::pair< bool, std::vector< std::string > > tokenize( const char* const inputStr, const std::size_t expectedTokenCount ) = delete;
 
-	int isInt( const std::string_view token, bool& is_a_valid_int,
-			   const std::pair<int, int> acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),
-			   																	std::numeric_limits<int>::max( ) ) );
+	std::pair< bool, int > isInt( const std::string_view token, const std::pair<int, int> acceptableRange = std::pair<int, int>
+								( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	int isInt( const char* const token, bool& is_a_valid_int,
-			   const std::pair<int, int> acceptableRange = std::pair<int, int>( std::numeric_limits<int>::min( ),
-			   																	std::numeric_limits<int>::max( ) ) ) = delete;
+	std::pair< bool, int > isInt( const char* const token, const std::pair<int, int> acceptableRange = std::pair<int, int>
+								( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
 
-	bool convert_str_to_valid_ints( const std::string_view inputStr, int* const result_ints, const std::size_t expectedTokenCount,
+	bool convert_str_to_valid_ints( const std::string_view inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
 									const std::vector<int>& specificTokensIndices,
 									const std::pair<int, int> acceptableRange =
 									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	bool convert_str_to_valid_ints( const char* const inputStr, int* const result_ints, const std::size_t expectedTokenCount,
+	bool convert_str_to_valid_ints( const char* const inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
 									const std::vector<int>& specificTokensIndices,
 									const std::pair<int, int> acceptableRange =
 									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
