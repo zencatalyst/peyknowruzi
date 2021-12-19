@@ -234,11 +234,11 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, DEFAULT
 
 	const bool isValid { util::convert_str_to_valid_ints( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
 						 int_enteredMatrix_YX, REQUIRED_TOKENS_COUNT, specificTokenIndexFor_Y_AxisLen,
-						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_Y_AXIS_LEN ), std::move( MAX_ALLOWED_Y_AXIS_LEN ) ) )
+						 std::pair<const int, const int>( MIN_ALLOWED_Y_AXIS_LEN, MAX_ALLOWED_Y_AXIS_LEN ) )
 																																			&&
 						 util::convert_str_to_valid_ints( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
 						 int_enteredMatrix_YX, REQUIRED_TOKENS_COUNT, specificTokenIndexFor_X_AxisLen,
-						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_X_AXIS_LEN ), std::move( MAX_ALLOWED_X_AXIS_LEN ) ) )
+						 std::pair<const int, const int>( MIN_ALLOWED_X_AXIS_LEN, MAX_ALLOWED_X_AXIS_LEN ) )
 						 																													&&
 						 ( hasExpectedTokenCount && foundTokens[ 2 ].size( ) == 1 && !CHAR_SET.contains( foundTokens[ 2 ][ 0 ] ) ) ? true : false };
 
@@ -266,11 +266,11 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SI
 
 	const bool isValid { util::convert_str_to_valid_ints( { str_enteredCoords.data( ), str_enteredCoords.size( ) },
 						 int_enteredCoords, REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_Y,
-						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_Y ), std::move( MAX_ALLOWED_Y ) ) )
+						 std::pair<const int, const int>( MIN_ALLOWED_Y, MAX_ALLOWED_Y ) )
 																															&&
 						 util::convert_str_to_valid_ints( { str_enteredCoords.data( ), str_enteredCoords.size( ) },
 						 int_enteredCoords, REQUIRED_TOKENS_COUNT, specificTokensIndicesFor_X,
-						 std::make_pair<const int, const int>( std::move( MIN_ALLOWED_X ), std::move( MAX_ALLOWED_X ) ) ) ? true : false };
+						 std::pair<const int, const int>( MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false };
 
 	return isValid;
 }
@@ -335,9 +335,8 @@ int CharMatrix::getNumOfInputLines( ) const
 		util::getCharInput( str_numOfInputLines.data( ), streamSize );
 
 		isValid = { util::convert_str_to_valid_ints( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
-					int_numOfInputLines, REQUIRED_TOKENS_COUNT,
-					std::vector<int>( 0 ), std::make_pair<const int, const int>
-					( std::move( MIN_ALLOWED_NUM_OF_INPUT_LINES ), std::move( MAX_ALLOWED_NUM_OF_INPUT_LINES ) ) ) };
+					int_numOfInputLines, REQUIRED_TOKENS_COUNT, std::vector<int>( 0 ),
+					std::pair<const int, const int>( MIN_ALLOWED_NUM_OF_INPUT_LINES, MAX_ALLOWED_NUM_OF_INPUT_LINES ) ) };
 
 	} while ( !isValid );
 
@@ -402,7 +401,7 @@ inline void CharMatrix::writeToOutput( ) const
 
 	for ( const auto& row : characterMatrix )
 	{
-		std::cout.write( row.data( ), X_AxisLen );
+		std::cout.write( row.data( ), static_cast<std::streamsize>( X_AxisLen ) );
 	}
 
 #if PN_DEBUG == 1
