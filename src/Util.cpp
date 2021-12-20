@@ -39,18 +39,16 @@ std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_
 	return { ( foundTokens.size( ) == expectedTokenCount ) ? true : false, foundTokens };
 }
 
-std::pair< bool, int > util::isInt( const std::string_view token, const std::pair<int, int> acceptableRange )
+std::optional<int> util::isInt( const std::string_view token, const std::pair<int, int> acceptableRange )
 {
-	bool isValidInt { };
-	int result_int { };
-
 	if ( token.empty( ) )
 	{
-		return { isValidInt = false, result_int = 0 };
+		return { };
 	}
 
 	try
 	{
+		int result_int { };
 		std::size_t pos { 0 };
 
 		if ( token.back( ) == '\0' )
@@ -66,19 +64,16 @@ std::pair< bool, int > util::isInt( const std::string_view token, const std::pai
 
 		if ( pos == token.length( ) && ( result_int <= maxAcceptableValue && result_int >= minAcceptableValue ) )
 		{
-			isValidInt = true;
+			return result_int;
 		}
 		else
 		{
-			isValidInt = false;
-			result_int = 0;
+			return { };
 		}
 	}
-	catch ( const std::invalid_argument& ia ) { isValidInt = false; }
-	catch ( const std::out_of_range& oor ) { isValidInt = false; }
-	catch ( const std::exception& e ) { isValidInt = false; }
-
-	return { isValidInt, result_int };
+	catch ( const std::invalid_argument& ia ) { return { }; }
+	catch ( const std::out_of_range& oor ) { return { }; }
+	catch ( const std::exception& e ) { return { }; }
 }
 
 bool util::convert_str_to_valid_ints( const std::string_view inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
@@ -89,7 +84,7 @@ bool util::convert_str_to_valid_ints( const std::string_view inputStr, const std
 	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
 	std::size_t j { 0 };
-	bool isValidInt { true };
+	bool doesStrConsistOfValidInts { };
 
 	for ( std::size_t i = 0; i < foundTokens.size( ); ++i )
 	{
@@ -106,14 +101,13 @@ bool util::convert_str_to_valid_ints( const std::string_view inputStr, const std
 			}
 		}
 
-		int tempInt;
-		std::tie( isValidInt, tempInt ) = isInt( foundTokens[i], acceptableRange );
+		const std::optional<int> tempInt { isInt( foundTokens[i], acceptableRange ) };
 
-		if ( !isValidInt ) { break; }
-		else { result_ints[i] = tempInt; }
+		if ( tempInt ) { result_ints[i] = tempInt.value( ); }
+		else { return doesStrConsistOfValidInts = false; }
 	}
 
-	return isValidInt;
+	return doesStrConsistOfValidInts = true;
 }
 
 void util::getCharInput( char* const inputBuffer, const std::streamsize streamSize )

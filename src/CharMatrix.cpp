@@ -211,12 +211,12 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 
 inline void CharMatrix::setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const
 {
-	const char ch { processCoordsToObtainCharType( coordsOfChar ) };
+	const std::optional<char> ch { processCoordsToObtainCharType( coordsOfChar ) };
 
-	if ( CHAR_SET.contains( ch ) )
+	if ( ch.has_value( ) && CHAR_SET.contains( ch.value( ) ) )
 	{
-		m_characterMatrix[ coordsOfChar[ 1 ] ][ coordsOfChar[ 0 ] ] = ch;
-		m_characterMatrix[ coordsOfChar[ 3 ] ][ coordsOfChar[ 2 ] ] = ch;
+		m_characterMatrix[ coordsOfChar[ 1 ] ][ coordsOfChar[ 0 ] ] = ch.value( );
+		m_characterMatrix[ coordsOfChar[ 3 ] ][ coordsOfChar[ 2 ] ] = ch.value( );
 	}
 }
 
@@ -275,7 +275,7 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SI
 	return isValid;
 }
 
-inline char CharMatrix::processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar )
+inline std::optional<char> CharMatrix::processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar )
 {
 	if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
 	   ((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
@@ -299,7 +299,7 @@ inline char CharMatrix::processCoordsToObtainCharType( const std::array<int, CAR
 	}
 	else
 	{
-		return '\0';
+		return { };
 	}
 }
 

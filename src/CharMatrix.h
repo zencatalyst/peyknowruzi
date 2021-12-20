@@ -42,7 +42,7 @@ public:
 	void getCoords( ) const;
 	inline void writeToOutput( ) const;
 
-	inline static char processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar );
+	inline static std::optional<char> processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar );
 	static auto createCharMatrix( const int Y_AxisLen = DEFAULT_Y_AXIS_LEN, const int X_AxisLen = DEFAULT_X_AXIS_LEN,
 								  const char fillCharacter = DEFAULT_FILL_CHARACTER );
 	inline static void initialize( );
