@@ -28,15 +28,13 @@ namespace util
 	std::optional<int> isInt( const char* const token, const std::pair<int, int> acceptableRange = std::pair<int, int>
 							( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
 
-	bool convert_str_to_valid_ints( const std::string_view inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
-									const std::vector<int>& specificTokensIndices,
-									const std::pair<int, int> acceptableRange =
-									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
+	bool convert_tokens_to_valid_ints( const std::span<const std::string> tokens, const std::span<int> result_ints,
+									   const std::span<const int> specificTokensIndices, const std::pair<int, int> acceptableRange =
+									   std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	bool convert_str_to_valid_ints( const char* const inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
-									const std::vector<int>& specificTokensIndices,
-									const std::pair<int, int> acceptableRange =
-									std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
+	bool convert_tokens_to_valid_ints( const std::string* const tokens, const std::span<int> result_ints,
+									   const std::span<const int> specificTokensIndices, const std::pair<int, int> acceptableRange =
+									   std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
 
 	void getCharInput( char* const inputBuffer, const std::streamsize streamSize );
 };

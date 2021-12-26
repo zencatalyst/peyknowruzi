@@ -33,7 +33,8 @@ std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_
 		ss << std::string{ inputStr };
 	}
 
-	std::vector< std::string > foundTokens { std::vector< std::string >( std::istream_iterator< std::string >( ss ), std::istream_iterator< std::string >( ) ) };
+	std::vector< std::string > foundTokens { std::vector< std::string >( std::istream_iterator< std::string >( ss ),
+																		 std::istream_iterator< std::string >( ) ) };
 	foundTokens.shrink_to_fit( );
 
 	return { ( foundTokens.size( ) == expectedTokenCount ) ? true : false, foundTokens };
@@ -76,17 +77,13 @@ std::optional<int> util::isInt( const std::string_view token, const std::pair<in
 	catch ( const std::exception& e ) { return { }; }
 }
 
-bool util::convert_str_to_valid_ints( const std::string_view inputStr, const std::span<int> result_ints, const std::size_t expectedTokenCount,
-				   					  const std::vector<int>& specificTokensIndices, const std::pair<int, int> acceptableRange )
+bool util::convert_tokens_to_valid_ints( const std::span<const std::string> tokens, const std::span<int> result_ints,
+				   						 const std::span<const int> specificTokensIndices, const std::pair<int, int> acceptableRange )
 {
-	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( inputStr, expectedTokenCount ) };
-
-	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
-
 	std::size_t j { 0 };
 	bool doesStrConsistOfValidInts { };
 
-	for ( std::size_t i = 0; i < foundTokens.size( ); ++i )
+	for ( std::size_t i = 0; i < tokens.size( ); ++i )
 	{
 		if ( !specificTokensIndices.empty( ) )
 		{
@@ -101,7 +98,7 @@ bool util::convert_str_to_valid_ints( const std::string_view inputStr, const std
 			}
 		}
 
-		const std::optional<int> tempInt { isInt( foundTokens[i], acceptableRange ) };
+		const std::optional<int> tempInt { util::isInt( tokens[i], acceptableRange ) };
 
 		if ( tempInt ) { result_ints[i] = tempInt.value( ); }
 		else { return doesStrConsistOfValidInts = false; }
