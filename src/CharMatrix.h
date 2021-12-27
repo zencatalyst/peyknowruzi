@@ -46,7 +46,7 @@ public:
 	static auto createCharMatrix( const int Y_AxisLen = DEFAULT_Y_AXIS_LEN, const int X_AxisLen = DEFAULT_X_AXIS_LEN,
 								  const char fillCharacter = DEFAULT_FILL_CHARACTER );
 	inline static void initialize( );
-	static void launch( );
+	static void runScript( );
 
 private:
 	int m_Y_AxisLen;

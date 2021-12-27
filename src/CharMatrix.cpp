@@ -422,7 +422,7 @@ inline void CharMatrix::initialize( )
 	std::ios_base::sync_with_stdio( false );
 }
 
-void CharMatrix::launch( )
+void CharMatrix::runScript( )
 {
 	// initialize( );
 

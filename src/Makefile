@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -c -std=c++20 -Wall -Wextra -Wpedantic -Wshadow -O3 -flto
-DEPS = CharMatrix.h Util.h
-OBJ = PeykNowruzi.o Util.o CharMatrix.o
+DEPS = Scripts.h CharMatrix.h Util.h
+OBJ = Launch.o Scripts.o Util.o CharMatrix.o
 
 PCH_SRC = pch.h
 PCH_OUT = pch.h.gch
@@ -14,7 +14,10 @@ PeykNowruzi: $(OBJ)
 $(PCH_OUT): $(PCH_SRC)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-PeykNowruzi.o: PeykNowruzi.cpp CharMatrix.h $(PCH_OUT)
+Launch.o: Launch.cpp Scripts.h $(PCH_OUT)
+	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+Scripts.o: Scripts.cpp Scripts.h CharMatrix.h $(PCH_OUT)
 	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
 
 Util.o: Util.cpp Util.h $(PCH_OUT)
