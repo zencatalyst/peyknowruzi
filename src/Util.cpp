@@ -4,17 +4,6 @@
 using namespace peyknowruzi;
 
 
-util::Timer::Timer( )
-: start( std::chrono::steady_clock::now( ) )
-{
-}
-
-util::Timer::~Timer( )
-{
-	end = std::chrono::steady_clock::now( );
-	std::clog << "\nTimer took " << std::chrono::duration< double, std::milli >( end - start ).count( ) << " ms\n";
-}
-
 std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount )
 {
 	if ( inputStr.empty( ) )
@@ -23,15 +12,7 @@ std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_
 	}
 
 	std::stringstream ss;
-
-	if ( inputStr.back( ) == '\0' )
-	{
-		ss << inputStr.data( );
-	}
-	else
-	{
-		ss << std::string{ inputStr };
-	}
+	ss << inputStr.data( );
 
 	std::vector< std::string > foundTokens { std::vector< std::string >( std::istream_iterator< std::string >( ss ),
 																		 std::istream_iterator< std::string >( ) ) };
@@ -40,7 +21,7 @@ std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_
 	return { ( foundTokens.size( ) == expectedTokenCount ) ? true : false, foundTokens };
 }
 
-std::optional<int> util::isInt( const std::string_view token, const std::pair<int, int> acceptableRange )
+std::optional<int> util::isInteger( const std::string_view token, const std::pair<int, int> acceptableRange )
 {
 	if ( token.empty( ) )
 	{
@@ -49,23 +30,15 @@ std::optional<int> util::isInt( const std::string_view token, const std::pair<in
 
 	try
 	{
-		int result_int { };
 		std::size_t pos { 0 };
 
-		if ( token.back( ) == '\0' )
-		{
-			result_int = std::stoi( token.data( ), &pos, 10 );
-		}
-		else
-		{
-			result_int = std::stoi( std::string{ token }, &pos, 10 );
-		}
+		const int result_integer { std::stoi( std::string{ token }, &pos, 10 ) };
 
 		const auto& [ minAcceptableValue, maxAcceptableValue ] { acceptableRange };
 
-		if ( pos == token.length( ) && ( result_int <= maxAcceptableValue && result_int >= minAcceptableValue ) )
+		if ( pos == token.length( ) && ( result_integer <= maxAcceptableValue && result_integer >= minAcceptableValue ) )
 		{
-			return result_int;
+			return result_integer;
 		}
 		else
 		{
@@ -74,43 +47,48 @@ std::optional<int> util::isInt( const std::string_view token, const std::pair<in
 	}
 	catch ( const std::invalid_argument& ia ) { return { }; }
 	catch ( const std::out_of_range& oor ) { return { }; }
-	catch ( const std::exception& e ) { return { }; }
+	catch ( const std::length_error& le ) { return { }; }
+	catch ( const std::bad_alloc& ba ) { return { }; }
 }
 
-bool util::convert_tokens_to_valid_ints( const std::span<const std::string> tokens, const std::span<int> result_ints,
-				   						 const std::span<const int> specificTokensIndices, const std::pair<int, int> acceptableRange )
+bool util::convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+									   const std::pair<int, int> acceptableRange )
 {
-	std::size_t j { 0 };
-	bool doesStrConsistOfValidInts { };
+	bool areTokensConvertibleToValidIntegers { };
 
-	for ( std::size_t i = 0; i < tokens.size( ); ++i )
+	if ( tokens.empty( ) || tokens.size( ) > result_integers.size( ) )
+	{ return areTokensConvertibleToValidIntegers = false; }
+
+	for ( std::size_t idx = 0; idx < tokens.size( ); ++idx )
 	{
-		if ( !specificTokensIndices.empty( ) )
-		{
-			if ( j < specificTokensIndices.size( ) )
-			{
-				i = specificTokensIndices[j];
-				++j;
-			}
-			else
-			{
-				break;
-			}
-		}
+		const std::optional<int> tempInteger { util::isInteger( tokens[ idx ], acceptableRange ) };
 
-		const std::optional<int> tempInt { util::isInt( tokens[i], acceptableRange ) };
-
-		if ( tempInt ) { result_ints[i] = tempInt.value( ); }
-		else { return doesStrConsistOfValidInts = false; }
+		if ( tempInteger ) { result_integers[ idx ] = tempInteger.value( ); }
+		else { return areTokensConvertibleToValidIntegers = false; }
 	}
 
-	return doesStrConsistOfValidInts = true;
+	return areTokensConvertibleToValidIntegers = true;
 }
 
-void util::getCharInput( char* const inputBuffer, const std::streamsize streamSize )
+bool util::convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+				   								const std::span<const std::size_t> specificTokensIndices, const std::pair<int, int> acceptableRange )
 {
-	std::cin.putback( '\n' );
-	std::cin.clear( );
-	std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
-	std::cin.getline( inputBuffer, streamSize );
+	bool areTokensConvertibleToValidIntegers { };
+
+	if ( tokens.empty( ) || tokens.size( ) > result_integers.size( ) ||
+		 specificTokensIndices.empty( ) || specificTokensIndices.size( ) > tokens.size( ) )
+	{ return areTokensConvertibleToValidIntegers = false; }
+
+	for ( const auto specificTokenIndex : specificTokensIndices )
+	{
+		if ( specificTokenIndex >= tokens.size( ) )
+		{ return areTokensConvertibleToValidIntegers = false; }
+
+		const std::optional<int> tempInteger { util::isInteger( tokens[ specificTokenIndex ], acceptableRange ) };
+
+		if ( tempInteger ) { result_integers[ specificTokenIndex ] = tempInteger.value( ); }
+		else { return areTokensConvertibleToValidIntegers = false; }
+	}
+
+	return areTokensConvertibleToValidIntegers = true;
 }

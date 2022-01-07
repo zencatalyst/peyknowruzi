@@ -16,22 +16,22 @@ inline constexpr std::size_t CARTESIAN_COMPONENTS_COUNT { 4 };
 class CharMatrix
 {
 public:
-	inline CharMatrix( );
-	inline CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter );
-	inline ~CharMatrix( ) = default;
-	inline CharMatrix( const CharMatrix& ) = delete;
-	inline CharMatrix& operator=( const CharMatrix& ) = delete;
-	inline CharMatrix( CharMatrix&& rhs ) noexcept;
-	inline CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
+	CharMatrix( );
+	CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter );
+	~CharMatrix( ) = default;
+	CharMatrix( const CharMatrix& ) = delete;
+	CharMatrix& operator=( const CharMatrix& ) = delete;
+	CharMatrix( CharMatrix&& rhs ) noexcept;
+	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 
-	inline const int& getY_AxisLen( ) const;
-	inline const int& getX_AxisLen( ) const;
-	inline const char& getFillCharacter( ) const;
-	inline std::vector< std::vector<char> >& getCharacterMatrix( ) const;
+	const int& getY_AxisLen( ) const;
+	const int& getX_AxisLen( ) const;
+	const char& getFillCharacter( ) const;
+	std::vector< std::vector<char> >& getCharacterMatrix( ) const;
 	void setY_AxisLen( const int Y_AxisLen );
 	void setX_AxisLen( const int X_AxisLen );
 	void setFillCharacter( const char fillCharacter );
-	inline void setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const;
+	void setCharacterMatrix( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar ) const;
 
 	bool validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SIZE>& str_enteredCoords,
 								std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_enteredCoords ) const;
@@ -40,12 +40,12 @@ public:
 	int getNumOfInputLines( ) const;
 	static auto getMatrixAttributes( );
 	void getCoords( ) const;
-	inline void writeToOutput( ) const;
+	void writeToOutput( ) const;
 
-	inline static std::optional<char> processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar );
+	static std::optional<char> processCoordsToObtainCharType( const std::array<int, CARTESIAN_COMPONENTS_COUNT>& coordsOfChar );
 	static auto createCharMatrix( const int Y_AxisLen = DEFAULT_Y_AXIS_LEN, const int X_AxisLen = DEFAULT_X_AXIS_LEN,
 								  const char fillCharacter = DEFAULT_FILL_CHARACTER );
-	inline static void initialize( );
+	static void initialize( );
 	static void runScript( );
 
 private:

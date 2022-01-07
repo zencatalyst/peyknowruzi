@@ -152,10 +152,8 @@ void CharMatrix::setX_AxisLen( const int X_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	for ( auto it = getCharacterMatrix( ).begin( ); it != getCharacterMatrix( ).end( ); ++it )
+	for ( auto& row : getCharacterMatrix( ) )
 	{
-		auto& row = *it;
-
 		row.resize( X_AxisLen, getFillCharacter( ) );
 		row[ X_AxisLen - 1 ] = '\n';
 		if ( X_AxisLen > getX_AxisLen( ) )
@@ -224,8 +222,8 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, DEFAULT
 												  std::tuple<int, int, char>& tuple_enteredMatrixAttributes )
 {
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { MATRIX_ATTRIBUTES_COUNT };
-	constexpr std::array<int, 1> specificTokenIndexFor_Y_AxisLen { 0 };
-	constexpr std::array<int, 1> specificTokenIndexFor_X_AxisLen { 1 };
+	constexpr std::array<std::size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
+	constexpr std::array<std::size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
 
 	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
 																		  REQUIRED_TOKENS_COUNT ) };
@@ -233,12 +231,12 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, DEFAULT
 
 	std::array<int, REQUIRED_TOKENS_COUNT> int_enteredMatrix_YX { };
 
-	const bool isValid { util::convert_tokens_to_valid_ints( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
-						 									 std::pair<const int, const int>( MIN_ALLOWED_Y_AXIS_LEN, MAX_ALLOWED_Y_AXIS_LEN ) )
-																																					&&
-						 util::convert_tokens_to_valid_ints( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
-						 									 std::pair<const int, const int>( MIN_ALLOWED_X_AXIS_LEN, MAX_ALLOWED_X_AXIS_LEN ) )
-						 																															&&
+	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
+						 											std::pair<const int, const int>( MIN_ALLOWED_Y_AXIS_LEN, MAX_ALLOWED_Y_AXIS_LEN ) )
+																																						&&
+						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
+						 											std::pair<const int, const int>( MIN_ALLOWED_X_AXIS_LEN, MAX_ALLOWED_X_AXIS_LEN ) )
+						 																																&&
 						 ( foundTokens[ 2 ].size( ) == 1 && !CHAR_SET.contains( foundTokens[ 2 ][ 0 ] ) ) ? true : false };
 
 	if ( isValid )
@@ -255,8 +253,8 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SI
 										std::array<int, CARTESIAN_COMPONENTS_COUNT>& int_enteredCoords ) const
 {
 	constexpr std::size_t REQUIRED_TOKENS_COUNT { CARTESIAN_COMPONENTS_COUNT };
-	constexpr std::array<int, 2> specificTokensIndicesFor_Y { 1, 3 };
-	constexpr std::array<int, 2> specificTokensIndicesFor_X { 0, 2 };
+	constexpr std::array<std::size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
+	constexpr std::array<std::size_t, 2> specificTokensIndicesFor_X { 0, 2 };
 
 	const int MAX_ALLOWED_Y { getY_AxisLen( ) - 1 };
 	const int MAX_ALLOWED_X { getX_AxisLen( ) - 2 };
@@ -267,11 +265,11 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, DEFAULT_BUFFER_SI
 																		  REQUIRED_TOKENS_COUNT ) };
 	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
-	const bool isValid { util::convert_tokens_to_valid_ints( foundTokens, int_enteredCoords, specificTokensIndicesFor_Y,
-						 									 std::pair<const int, const int>( MIN_ALLOWED_Y, MAX_ALLOWED_Y ) )
-																																&&
-						 util::convert_tokens_to_valid_ints( foundTokens, int_enteredCoords, specificTokensIndicesFor_X,
-						 									 std::pair<const int, const int>( MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false };
+	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords, specificTokensIndicesFor_Y,
+						 											std::pair<const int, const int>( MIN_ALLOWED_Y, MAX_ALLOWED_Y ) )
+																																		&&
+						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords, specificTokensIndicesFor_X,
+						 											std::pair<const int, const int>( MIN_ALLOWED_X, MAX_ALLOWED_X ) ) ? true : false };
 
 	return isValid;
 }
@@ -333,15 +331,14 @@ int CharMatrix::getNumOfInputLines( ) const
 
 	do
 	{
-		util::getCharInput( str_numOfInputLines.data( ), streamSize );
+		util::getCharInput( str_numOfInputLines );
 
 		const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
 																			  REQUIRED_TOKENS_COUNT ) };
 
 		isValid = { hasExpectedTokenCount &&
-					util::convert_tokens_to_valid_ints( foundTokens, int_numOfInputLines, std::span<const int>( ),
-														std::pair<const int, const int>( MIN_ALLOWED_NUM_OF_INPUT_LINES,
-																						 MAX_ALLOWED_NUM_OF_INPUT_LINES ) ) };
+					util::convert_tokens_to_integers( foundTokens, int_numOfInputLines, std::pair<const int, const int>(
+													  MIN_ALLOWED_NUM_OF_INPUT_LINES, MAX_ALLOWED_NUM_OF_INPUT_LINES ) ) };
 
 	} while ( !isValid );
 
@@ -359,7 +356,7 @@ auto CharMatrix::getMatrixAttributes( )
 
 	do
 	{
-		util::getCharInput( str_enteredMatrixAttributes.data( ), streamSize );
+		util::getCharInput( str_enteredMatrixAttributes );
 
 		isAcceptable = { validateEnteredMatrixAttributes( str_enteredMatrixAttributes, tuple_enteredMatrixAttributes ) };
 
@@ -384,7 +381,7 @@ void CharMatrix::getCoords( ) const
 
 		do
 		{
-			util::getCharInput( str_enteredCoords.data( ), streamSize );
+			util::getCharInput( str_enteredCoords );
 
 			isAcceptable = { validateEnteredCoords( str_enteredCoords, int_enteredCoords ) };
 

@@ -11,32 +11,42 @@ namespace util
 {
 	struct Timer
 	{
-		std::chrono::time_point< std::chrono::steady_clock > start;
+		std::chrono::time_point< std::chrono::steady_clock > start { std::chrono::steady_clock::now( ) };
 		std::chrono::time_point< std::chrono::steady_clock > end;
 
-		Timer( );
-		~Timer( );
+		Timer( ) = default;
+		~Timer( )
+		{
+			end = std::chrono::steady_clock::now( );
+			std::clog << "\nTimer took " << std::chrono::duration< double, std::milli >( end - start ).count( ) << " ms\n";
+		}
 	};
 
 	std::pair< bool, std::vector< std::string > > tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount );
 
 	std::pair< bool, std::vector< std::string > > tokenize( const char* const inputStr, const std::size_t expectedTokenCount ) = delete;
 
-	std::optional<int> isInt( const std::string_view token, const std::pair<int, int> acceptableRange = std::pair<int, int>
-							( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
+	std::optional<int> isInteger( const std::string_view token, const std::pair<int, int> acceptableRange =
+								  std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	std::optional<int> isInt( const char* const token, const std::pair<int, int> acceptableRange = std::pair<int, int>
-							( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
+	std::optional<int> isInteger( const char* const token, const std::pair<int, int> acceptableRange =
+								  std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
 
-	bool convert_tokens_to_valid_ints( const std::span<const std::string> tokens, const std::span<int> result_ints,
-									   const std::span<const int> specificTokensIndices, const std::pair<int, int> acceptableRange =
-									   std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
+	bool convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+									 const std::pair<int, int> acceptableRange =
+									 std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	bool convert_tokens_to_valid_ints( const std::string* const tokens, const std::span<int> result_ints,
-									   const std::span<const int> specificTokensIndices, const std::pair<int, int> acceptableRange =
-									   std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
+	bool convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+											  const std::span<const std::size_t> specificTokensIndices, const std::pair<int, int> acceptableRange =
+											  std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
 
-	void getCharInput( char* const inputBuffer, const std::streamsize streamSize );
-};
+	inline void getCharInput( const std::span<char> inputBuffer )
+	{
+		std::cin.putback( '\n' );
+		std::cin.clear( );
+		std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
+		std::cin.getline( inputBuffer.data( ), static_cast< std::streamsize >( inputBuffer.size( ) ) );
+	}
+}
 
 }
