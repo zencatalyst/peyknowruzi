@@ -20,6 +20,8 @@ namespace util
 			end = std::chrono::steady_clock::now( );
 			std::clog << "\nTimer took " << std::chrono::duration< double, std::milli >( end - start ).count( ) << " ms\n";
 		}
+		Timer( const Timer& ) = delete;
+		Timer& operator=( const Timer& ) = delete;
 	};
 
 	std::pair< bool, std::vector< std::string > > tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount );

@@ -18,9 +18,6 @@ class CharMatrix
 public:
 	CharMatrix( );
 	CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter );
-	~CharMatrix( ) = default;
-	CharMatrix( const CharMatrix& ) = delete;
-	CharMatrix& operator=( const CharMatrix& ) = delete;
 	CharMatrix( CharMatrix&& rhs ) noexcept;
 	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 
