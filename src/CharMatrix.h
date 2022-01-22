@@ -16,8 +16,8 @@ inline constexpr std::size_t CARTESIAN_COMPONENTS_COUNT { 4 };
 class CharMatrix
 {
 public:
-	CharMatrix( );
-	CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter );
+	CharMatrix( const int Y_AxisLen = DEFAULT_Y_AXIS_LEN, const int X_AxisLen = DEFAULT_X_AXIS_LEN,
+				const char fillCharacter = DEFAULT_FILL_CHARACTER );
 	CharMatrix( CharMatrix&& rhs ) noexcept;
 	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 

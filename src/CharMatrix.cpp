@@ -45,12 +45,6 @@ static_assert( MIN_POSSIBLE_NUM_OF_INPUT_LINES <= ( MAX_ALLOWED_Y_AXIS_LEN * ( M
 			   "less than 0 or greater than MAX_POSSIBLE_NUM_OF_INPUT_LINES" );
 
 
-inline CharMatrix::CharMatrix( )
-	:m_Y_AxisLen( DEFAULT_Y_AXIS_LEN ), m_X_AxisLen( DEFAULT_X_AXIS_LEN ), m_fillCharacter( DEFAULT_FILL_CHARACTER ),
-	m_characterMatrix( DEFAULT_Y_AXIS_LEN, std::vector<char>( DEFAULT_X_AXIS_LEN, DEFAULT_FILL_CHARACTER ) )
-{
-}
-
 inline CharMatrix::CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter )
 	: m_Y_AxisLen( Y_AxisLen ), m_X_AxisLen( X_AxisLen ), m_fillCharacter( fillCharacter ),
 	m_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
