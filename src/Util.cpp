@@ -14,8 +14,8 @@ std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_
 	std::stringstream ss;
 	ss << inputStr.data( );
 
-	std::vector< std::string > foundTokens { std::vector< std::string >( std::istream_iterator< std::string >( ss ),
-																		 std::istream_iterator< std::string >( ) ) };
+	std::vector< std::string > foundTokens { std::istream_iterator< std::string >( ss ),
+											 std::istream_iterator< std::string >( ) };
 	foundTokens.shrink_to_fit( );
 
 	return { ( foundTokens.size( ) == expectedTokenCount ) ? true : false, foundTokens };
