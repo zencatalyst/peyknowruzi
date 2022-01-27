@@ -15,6 +15,15 @@ inline constexpr std::size_t cartesian_components_count { 4 };
 
 class CharMatrix
 {
+private:
+	enum AllowedChars : char
+	{
+		ForwardSlash = '/',
+		BackSlash = '\\',
+		VerticalSlash = '|',
+		Dash = '-'
+	};
+
 public:
 	CharMatrix( const int Y_AxisLen = default_y_axis_len, const int X_AxisLen = default_x_axis_len,
 				const char fillCharacter = default_fill_character );
@@ -39,7 +48,7 @@ public:
 	void getCoords( ) const;
 	void writeToOutput( ) const;
 
-	static std::optional<char> processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar );
+	static std::optional<AllowedChars> processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar );
 	static auto createCharMatrix( const int Y_AxisLen = default_y_axis_len, const int X_AxisLen = default_x_axis_len,
 								  const char fillCharacter = default_fill_character );
 	static void initialize( );
@@ -51,7 +60,7 @@ private:
 	char m_fillCharacter;
 	mutable std::vector< std::vector<char> > m_characterMatrix;
 
-	inline static const std::unordered_set<char> CHAR_SET { '/', '\\', '|', '-' };
+	inline static const std::unordered_set< AllowedChars > chars_for_drawing { ForwardSlash, BackSlash, VerticalSlash, Dash };
 };
 
 }

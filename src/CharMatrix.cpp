@@ -163,7 +163,7 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 {
 	if ( fillCharacter == getFillCharacter( ) ) { return; }
 
-	if ( CHAR_SET.contains( fillCharacter ) )
+	if ( chars_for_drawing.contains( static_cast<AllowedChars>( fillCharacter ) ) )
 	{
 		std::string exceptionMsg;
 		exceptionMsg.reserve( 131 );
@@ -171,13 +171,12 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 		exceptionMsg = "Invalid_Fill_Character_Exception: The 'fill character' "
 					   "is not allowed to be one of the following characters: { ";
 
-		for ( auto it = CHAR_SET.cbegin( ); it != CHAR_SET.cend( ); ++it )
+		for ( std::size_t counter { }; const auto ch : chars_for_drawing )
 		{
 			exceptionMsg += "'";
-			exceptionMsg += *it;
+			exceptionMsg += ch;
 
-			if ( std::distance( CHAR_SET.cbegin( ), it ) + 1 !=
-				 static_cast< decltype( std::distance( CHAR_SET.cbegin( ), it ) ) >( CHAR_SET.size( ) ) )
+			if ( ++counter != chars_for_drawing.size( ) )
 
 			{ exceptionMsg += "', "; }
 			else
@@ -203,9 +202,9 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 
 inline void CharMatrix::setCharacterMatrix( const std::array<int, cartesian_components_count>& coordsOfChar ) const
 {
-	const std::optional<char> ch { processCoordsToObtainCharType( coordsOfChar ) };
+	const std::optional< AllowedChars > ch { processCoordsToObtainCharType( coordsOfChar ) };
 
-	if ( ch.has_value( ) && CHAR_SET.contains( ch.value( ) ) )
+	if ( ch.has_value( ) && chars_for_drawing.contains( ch.value( ) ) )
 	{
 		m_characterMatrix[ coordsOfChar[ 1 ] ][ coordsOfChar[ 0 ] ] = ch.value( );
 		m_characterMatrix[ coordsOfChar[ 3 ] ][ coordsOfChar[ 2 ] ] = ch.value( );
@@ -231,7 +230,7 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default
 						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
 						 											std::pair<const int, const int>( min_allowed_x_axis_len, max_allowed_x_axis_len ) )
 						 																																&&
-						 ( foundTokens[ 2 ].size( ) == 1 && !CHAR_SET.contains( foundTokens[ 2 ][ 0 ] ) ) ? true : false };
+						 ( foundTokens[ 2 ].size( ) == 1 && !chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) ) ) ? true : false };
 
 	if ( isValid )
 	{
@@ -268,27 +267,27 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 	return isValid;
 }
 
-inline std::optional<char> CharMatrix::processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar )
+inline std::optional< CharMatrix::AllowedChars > CharMatrix::processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar )
 {
 	if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
 	   ((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
 		(coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3])) )
 	{
-		return '/';
+		return ForwardSlash;
 	}
 	else if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
 			((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3]) ||
 			 (coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3])) )
 	{
-		return '\\';
+		return BackSlash;
 	}
 	else if ( (coordsOfChar[0] == coordsOfChar[2]) && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 )
 	{
-		return '|';
+		return VerticalSlash;
 	}
 	else if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1  && (coordsOfChar[1] == coordsOfChar[3]) )
 	{
-		return '-';
+		return Dash;
 	}
 	else
 	{
