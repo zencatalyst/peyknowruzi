@@ -7,7 +7,7 @@
 namespace pynz = peyknowruzi;
 
 
-void launch( )
+inline static void launch( )
 {
 	pynz::runScripts( );
 }

@@ -28,19 +28,19 @@ namespace util
 
 	std::pair< bool, std::vector< std::string > > tokenize( const char* const inputStr, const std::size_t expectedTokenCount ) = delete;
 
-	std::optional<int> isInteger( const std::string_view token, const std::pair<int, int> acceptableRange =
-								  std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
+	std::optional<int> isInteger( std::string_view token, const std::pair<int, int> acceptableRange =
+								  { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept;
 
 	std::optional<int> isInteger( const char* const token, const std::pair<int, int> acceptableRange =
-								  std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) ) = delete;
+								  { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept = delete;
 
 	bool convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
 									 const std::pair<int, int> acceptableRange =
-									 std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
+									 { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept;
 
 	bool convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
 											  const std::span<const std::size_t> specificTokensIndices, const std::pair<int, int> acceptableRange =
-											  std::pair<int, int>( std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) ) );
+											  { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept;
 
 	inline void getCharInput( const std::span<char> inputBuffer )
 	{
