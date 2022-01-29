@@ -77,22 +77,22 @@ inline CharMatrix& CharMatrix::operator=( CharMatrix&& rhs ) noexcept
 	return *this;
 }
 
-inline const int& CharMatrix::getY_AxisLen( ) const
+inline const int& CharMatrix::getY_AxisLen( ) const noexcept
 {
 	return m_Y_AxisLen;
 }
 
-inline const int& CharMatrix::getX_AxisLen( ) const
+inline const int& CharMatrix::getX_AxisLen( ) const noexcept
 {
 	return m_X_AxisLen;
 }
 
-inline const char& CharMatrix::getFillCharacter( ) const
+inline const char& CharMatrix::getFillCharacter( ) const noexcept
 {
 	return m_fillCharacter;
 }
 
-inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const
+inline std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const noexcept
 {
 	return m_characterMatrix;
 }
@@ -267,7 +267,7 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 	return isValid;
 }
 
-inline std::optional< CharMatrix::AllowedChars > CharMatrix::processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar )
+inline std::optional< CharMatrix::AllowedChars > CharMatrix::processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar ) noexcept
 {
 	if ( std::abs(coordsOfChar[0] - coordsOfChar[2]) == 1 && std::abs(coordsOfChar[1] - coordsOfChar[3]) == 1 &&
 	   ((coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3]) ||
@@ -324,7 +324,7 @@ int CharMatrix::getNumOfInputLines( ) const
 
 	do
 	{
-		util::getCharInput( str_numOfInputLines );
+		util::get_char_input( str_numOfInputLines );
 
 		const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
 																			  required_tokens_count ) };
@@ -349,7 +349,7 @@ auto CharMatrix::getMatrixAttributes( )
 
 	do
 	{
-		util::getCharInput( str_enteredMatrixAttributes );
+		util::get_char_input( str_enteredMatrixAttributes );
 
 		isAcceptable = { validateEnteredMatrixAttributes( str_enteredMatrixAttributes, tuple_enteredMatrixAttributes ) };
 
@@ -374,7 +374,7 @@ void CharMatrix::getCoords( ) const
 
 		do
 		{
-			util::getCharInput( str_enteredCoords );
+			util::get_char_input( str_enteredCoords );
 
 			isAcceptable = { validateEnteredCoords( str_enteredCoords, int_enteredCoords ) };
 

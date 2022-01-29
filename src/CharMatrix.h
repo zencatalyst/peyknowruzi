@@ -30,10 +30,10 @@ public:
 	CharMatrix( CharMatrix&& rhs ) noexcept;
 	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 
-	const int& getY_AxisLen( ) const;
-	const int& getX_AxisLen( ) const;
-	const char& getFillCharacter( ) const;
-	std::vector< std::vector<char> >& getCharacterMatrix( ) const;
+	const int& getY_AxisLen( ) const noexcept;
+	const int& getX_AxisLen( ) const noexcept;
+	const char& getFillCharacter( ) const noexcept;
+	std::vector< std::vector<char> >& getCharacterMatrix( ) const noexcept;
 	void setY_AxisLen( const int Y_AxisLen );
 	void setX_AxisLen( const int X_AxisLen );
 	void setFillCharacter( const char fillCharacter );
@@ -48,7 +48,7 @@ public:
 	void getCoords( ) const;
 	void writeToOutput( ) const;
 
-	static std::optional<AllowedChars> processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar );
+	static std::optional<AllowedChars> processCoordsToObtainCharType( const std::array<int, cartesian_components_count>& coordsOfChar ) noexcept;
 	static auto createCharMatrix( const int Y_AxisLen = default_y_axis_len, const int X_AxisLen = default_x_axis_len,
 								  const char fillCharacter = default_fill_character );
 	static void initialize( );

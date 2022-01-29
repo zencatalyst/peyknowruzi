@@ -21,7 +21,7 @@ std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_
 	return { ( foundTokens.size( ) == expectedTokenCount ) ? true : false, foundTokens };
 }
 
-std::optional<int> util::isInteger( std::string_view token, const std::pair<int, int> acceptableRange ) noexcept
+std::optional<int> util::to_integer( std::string_view token, const std::pair<int, int> acceptableRange ) noexcept
 {
 	if ( token.empty( ) )
 	{
@@ -51,7 +51,7 @@ bool util::convert_tokens_to_integers( const std::span<const std::string> tokens
 
 	for ( std::size_t idx = 0; idx < tokens.size( ); ++idx )
 	{
-		const std::optional<int> tempInteger { util::isInteger( tokens[ idx ], acceptableRange ) };
+		const std::optional<int> tempInteger { util::to_integer( tokens[ idx ], acceptableRange ) };
 
 		if ( tempInteger ) { result_integers[ idx ] = tempInteger.value( ); }
 		else { return areTokensConvertibleToValidIntegers = false; }
@@ -75,7 +75,7 @@ bool util::convert_specific_tokens_to_integers( const std::span<const std::strin
 		if ( specificTokenIndex >= tokens.size( ) )
 		{ return areTokensConvertibleToValidIntegers = false; }
 
-		const std::optional<int> tempInteger { util::isInteger( tokens[ specificTokenIndex ], acceptableRange ) };
+		const std::optional<int> tempInteger { util::to_integer( tokens[ specificTokenIndex ], acceptableRange ) };
 
 		if ( tempInteger ) { result_integers[ specificTokenIndex ] = tempInteger.value( ); }
 		else { return areTokensConvertibleToValidIntegers = false; }
