@@ -25,7 +25,8 @@ private:
 	};
 
 public:
-	CharMatrix( const int Y_AxisLen = default_y_axis_len, const int X_AxisLen = default_x_axis_len,
+	CharMatrix( const int Y_AxisLen = default_y_axis_len,
+				const int X_AxisLen = default_x_axis_len,
 				const char fillCharacter = default_fill_character );
 	CharMatrix( CharMatrix&& rhs ) noexcept;
 	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
@@ -40,9 +41,9 @@ public:
 	void setCharacterMatrix( const std::array<int, cartesian_components_count>& coordsOfChar ) const;
 
 	bool validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
-								std::array<int, cartesian_components_count>& int_enteredCoords ) const;
+								std::array<int, cartesian_components_count>& int_enteredCoords_OUT ) const;
 	static bool validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
-												 std::tuple<int, int, char>& tuple_enteredMatrixAttributes );
+												 std::tuple<int, int, char>& tuple_enteredMatrixAttributes_OUT );
 	int getNumOfInputLines( ) const;
 	static auto getMatrixAttributes( );
 	void getCoords( ) const;

@@ -34,20 +34,20 @@ namespace util
 	std::optional<int> to_integer( const char* const token, const std::pair<int, int> acceptableRange =
 								   { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept = delete;
 
-	bool convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+	bool convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers_OUT,
 									 const std::pair<int, int> acceptableRange =
 									 { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept;
 
-	bool convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+	bool convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers_OUT,
 											  const std::span<const std::size_t> specificTokensIndices, const std::pair<int, int> acceptableRange =
 											  { std::numeric_limits<int>::min( ), std::numeric_limits<int>::max( ) } ) noexcept;
 
-	inline void get_char_input( const std::span<char> inputBuffer )
+	inline void get_char_input( const std::span<char> inputBuffer_OUT )
 	{
 		std::cin.putback( '\n' );
 		std::cin.clear( );
 		std::cin.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
-		std::cin.getline( inputBuffer.data( ), static_cast< std::streamsize >( inputBuffer.size( ) ) );
+		std::cin.getline( inputBuffer_OUT.data( ), static_cast< std::streamsize >( inputBuffer_OUT.size( ) ) );
 	}
 }
 

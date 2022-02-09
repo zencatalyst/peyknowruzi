@@ -30,7 +30,7 @@ std::optional<int> util::to_integer( std::string_view token, const std::pair<int
 
 	if ( token.size( ) > 1 && token[ 0 ] == '+' && token[ 1 ] != '-' ) { token.remove_prefix( 1 ); }
 
-	int value { };
+	int value;
 	const auto [ ptr, ec ] { std::from_chars( token.begin( ), token.end( ), value, 10 ) };
 
 	const auto& [ minAcceptableValue, maxAcceptableValue ] { acceptableRange };
@@ -41,32 +41,32 @@ std::optional<int> util::to_integer( std::string_view token, const std::pair<int
 	return value;
 }
 
-bool util::convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+bool util::convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers_OUT,
 									   const std::pair<int, int> acceptableRange ) noexcept
 {
 	bool areTokensConvertibleToValidIntegers { };
 
-	if ( tokens.empty( ) || tokens.size( ) > result_integers.size( ) )
+	if ( tokens.empty( ) || tokens.size( ) > result_integers_OUT.size( ) )
 	{ return areTokensConvertibleToValidIntegers = false; }
 
 	for ( std::size_t idx = 0; idx < tokens.size( ); ++idx )
 	{
 		const std::optional<int> tempInteger { util::to_integer( tokens[ idx ], acceptableRange ) };
 
-		if ( tempInteger ) { result_integers[ idx ] = tempInteger.value( ); }
+		if ( tempInteger ) { result_integers_OUT[ idx ] = tempInteger.value( ); }
 		else { return areTokensConvertibleToValidIntegers = false; }
 	}
 
 	return areTokensConvertibleToValidIntegers = true;
 }
 
-bool util::convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers,
+bool util::convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers_OUT,
 				   								const std::span<const std::size_t> specificTokensIndices,
 				   								const std::pair<int, int> acceptableRange ) noexcept
 {
 	bool areTokensConvertibleToValidIntegers { };
 
-	if ( tokens.empty( ) || tokens.size( ) > result_integers.size( ) ||
+	if ( tokens.empty( ) || tokens.size( ) > result_integers_OUT.size( ) ||
 		 specificTokensIndices.empty( ) || specificTokensIndices.size( ) > tokens.size( ) )
 	{ return areTokensConvertibleToValidIntegers = false; }
 
@@ -77,7 +77,7 @@ bool util::convert_specific_tokens_to_integers( const std::span<const std::strin
 
 		const std::optional<int> tempInteger { util::to_integer( tokens[ specificTokenIndex ], acceptableRange ) };
 
-		if ( tempInteger ) { result_integers[ specificTokenIndex ] = tempInteger.value( ); }
+		if ( tempInteger ) { result_integers_OUT[ specificTokenIndex ] = tempInteger.value( ); }
 		else { return areTokensConvertibleToValidIntegers = false; }
 	}
 

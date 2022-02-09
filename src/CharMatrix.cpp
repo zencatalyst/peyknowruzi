@@ -1,5 +1,5 @@
 
-#define PN_DEBUG 0
+#define PN_DEBUG 1
 //#define GUI_MODE 0
 #define FULL_INPUT_MODE 0
 
@@ -212,7 +212,7 @@ inline void CharMatrix::setCharacterMatrix( const std::array<int, cartesian_comp
 }
 
 bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
-												  std::tuple<int, int, char>& tuple_enteredMatrixAttributes )
+												  std::tuple<int, int, char>& tuple_enteredMatrixAttributes_OUT )
 {
 	constexpr std::size_t required_tokens_count { matrix_attributes_count };
 	constexpr std::array<std::size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
@@ -234,16 +234,16 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default
 
 	if ( isValid )
 	{
-		std::get<0>( tuple_enteredMatrixAttributes ) = int_enteredMatrix_YX[ 0 ];
-		std::get<1>( tuple_enteredMatrixAttributes ) = int_enteredMatrix_YX[ 1 ];
-		std::get<2>( tuple_enteredMatrixAttributes ) = foundTokens[ 2 ][ 0 ];
+		std::get<0>( tuple_enteredMatrixAttributes_OUT ) = int_enteredMatrix_YX[ 0 ];
+		std::get<1>( tuple_enteredMatrixAttributes_OUT ) = int_enteredMatrix_YX[ 1 ];
+		std::get<2>( tuple_enteredMatrixAttributes_OUT ) = foundTokens[ 2 ][ 0 ];
 	}
 
 	return isValid;
 }
 
 bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
-										std::array<int, cartesian_components_count>& int_enteredCoords ) const
+										std::array<int, cartesian_components_count>& int_enteredCoords_OUT ) const
 {
 	constexpr std::size_t required_tokens_count { cartesian_components_count };
 	constexpr std::array<std::size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
@@ -258,10 +258,10 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 																		  required_tokens_count ) };
 	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
-	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords, specificTokensIndicesFor_Y,
+	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
 						 											{ min_allowed_y, max_allowed_y } )
 																																&&
-						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords, specificTokensIndicesFor_X,
+						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_X,
 						 											{ min_allowed_x, max_allowed_x } ) ? true : false };
 
 	return isValid;
