@@ -49,13 +49,13 @@ static_assert( min_possible_num_of_input_lines <= ( max_allowed_y_axis_len * ( m
 
 inline CharMatrix::CharMatrix( const int Y_AxisLen, const int X_AxisLen, const char fillCharacter )
 	: m_Y_AxisLen( Y_AxisLen ), m_X_AxisLen( X_AxisLen ), m_fillCharacter( fillCharacter ),
-	m_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
+	  m_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
 {
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
-	:m_Y_AxisLen( rhs.m_Y_AxisLen ), m_X_AxisLen( rhs.m_X_AxisLen ), m_fillCharacter( rhs.m_fillCharacter ),
-	m_characterMatrix( std::move( rhs.m_characterMatrix ) )
+	: m_Y_AxisLen( rhs.m_Y_AxisLen ), m_X_AxisLen( rhs.m_X_AxisLen ), m_fillCharacter( rhs.m_fillCharacter ),
+	  m_characterMatrix( std::move( rhs.m_characterMatrix ) )
 {
 	rhs.m_Y_AxisLen = 0;
 	rhs.m_X_AxisLen = 0;
@@ -318,7 +318,7 @@ int CharMatrix::getNumOfInputLines( ) const
 	std::array<char, stream_size> str_numOfInputLines { };
 	std::array<int, required_tokens_count> int_numOfInputLines { };
 
-	bool isValid { false };
+	bool isValid;
 
 	do
 	{
@@ -343,7 +343,7 @@ auto CharMatrix::getMatrixAttributes( )
 	std::array<char, stream_size> str_enteredMatrixAttributes { };
 	std::tuple<int, int, char> tuple_enteredMatrixAttributes { };
 
-	bool isAcceptable { false };
+	bool isAcceptable;
 
 	do
 	{
