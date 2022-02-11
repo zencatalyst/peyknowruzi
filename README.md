@@ -50,9 +50,9 @@ and the coords (x2, y2) of the second character. In the following example, 6 lin
 2 33 2
 ```
 
-- Press <kbd>enter<kbd> after you've typed the four numbers of each line to go to the next line.
+- Press <kbd>enter</kbd> after you've typed the four numbers of each line to go to the next line.
 
-- Once you have typed the last (n/2 th) line of coords, press enter to see the result (a figure drawn on the screen).
+- Once you have typed the last (n/2 th) line of coords, press <kbd>enter</kbd> to see the result (a figure drawn on the screen).
 
 ```sh
  /\
