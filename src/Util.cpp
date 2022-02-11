@@ -1,10 +1,12 @@
 
 #include "Util.h"
 
+
+using std::size_t;
 using namespace peyknowruzi;
 
 
-std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount )
+std::pair< bool, std::vector< std::string > > util::tokenize( const std::string_view inputStr, const size_t expectedTokenCount )
 {
 	if ( inputStr.empty( ) )
 	{
@@ -49,7 +51,7 @@ bool util::convert_tokens_to_integers( const std::span<const std::string> tokens
 	if ( tokens.empty( ) || tokens.size( ) > result_integers_OUT.size( ) )
 	{ return areTokensConvertibleToValidIntegers = false; }
 
-	for ( std::size_t idx = 0; idx < tokens.size( ); ++idx )
+	for ( size_t idx { }; idx < tokens.size( ); ++idx )
 	{
 		const std::optional<int> tempInteger { util::to_integer( tokens[ idx ], acceptableRange ) };
 
@@ -61,7 +63,7 @@ bool util::convert_tokens_to_integers( const std::span<const std::string> tokens
 }
 
 bool util::convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<int> result_integers_OUT,
-				   								const std::span<const std::size_t> specificTokensIndices,
+				   								const std::span<const size_t> specificTokensIndices,
 				   								const std::pair<int, int> acceptableRange ) noexcept
 {
 	bool areTokensConvertibleToValidIntegers { };

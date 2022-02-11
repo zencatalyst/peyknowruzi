@@ -18,6 +18,8 @@
 #include "Util.h"
 
 
+using std::size_t;
+using std::streamsize;
 using namespace peyknowruzi;
 
 
@@ -27,7 +29,7 @@ static constexpr int max_allowed_y_axis_len { 50 };
 static constexpr int max_allowed_x_axis_len { 168 };
 static constexpr int max_possible_num_of_input_lines { ( max_allowed_y_axis_len * ( max_allowed_x_axis_len - 1 ) ) / 2 };
 static constexpr int min_possible_num_of_input_lines { 0 };
-static constexpr std::size_t matrix_attributes_count { 3 };
+static constexpr size_t matrix_attributes_count { 3 };
 
 static_assert( default_y_axis_len >= min_allowed_y_axis_len && default_y_axis_len <= max_allowed_y_axis_len,
 			   "default_y_axis_len can not be greater than max_allowed_y_axis_len or less than min_allowed_y_axis_len" );
@@ -118,7 +120,7 @@ void CharMatrix::setY_AxisLen( const int Y_AxisLen )
 
 	if ( Y_AxisLen > getY_AxisLen( ) )
 	{
-		for ( int i = getY_AxisLen( ); i < Y_AxisLen; ++i )
+		for ( int i { getY_AxisLen( ) }; i < Y_AxisLen; ++i )
 		{
 			auto& row = getCharacterMatrix( )[i];
 
@@ -171,24 +173,20 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 		exceptionMsg = "Invalid_Fill_Character_Exception: The 'fill character' "
 					   "is not allowed to be one of the following characters: { ";
 
-		for ( std::size_t counter { }; const auto ch : chars_for_drawing )
+		for ( size_t counter { }; const auto ch : chars_for_drawing )
 		{
 			exceptionMsg += "'";
 			exceptionMsg += ch;
 
-			if ( ++counter != chars_for_drawing.size( ) )
-
-			{ exceptionMsg += "', "; }
-			else
-			{ exceptionMsg += "' }"; }
+			exceptionMsg += ( ++counter != chars_for_drawing.size( ) ) ? "', " : "' }";
 		}
 
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	for ( int row = 0; row < getY_AxisLen( ); ++row )
+	for ( int row { }; row < getY_AxisLen( ); ++row )
 	{
-		for ( int column = 0; column < getX_AxisLen( ) - 1; ++column )
+		for ( int column { }; column < getX_AxisLen( ) - 1; ++column )
 		{
 			if ( m_characterMatrix[ row ][ column ] == getFillCharacter( ) )
 			{
@@ -214,12 +212,12 @@ inline void CharMatrix::setCharacterMatrix( const std::array<int, cartesian_comp
 bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
 												  std::tuple<int, int, char>& tuple_enteredMatrixAttributes_OUT )
 {
-	constexpr std::size_t required_tokens_count { matrix_attributes_count };
-	constexpr std::array<std::size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
-	constexpr std::array<std::size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
+	constexpr size_t required_tokens_count { matrix_attributes_count };
+	constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
+	constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
 
 	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
-																		  required_tokens_count ) };
+																		required_tokens_count ) };
 	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
 	std::array<int, required_tokens_count> int_enteredMatrix_YX { };
@@ -245,9 +243,9 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default
 bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
 										std::array<int, cartesian_components_count>& int_enteredCoords_OUT ) const
 {
-	constexpr std::size_t required_tokens_count { cartesian_components_count };
-	constexpr std::array<std::size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
-	constexpr std::array<std::size_t, 2> specificTokensIndicesFor_X { 0, 2 };
+	constexpr size_t required_tokens_count { cartesian_components_count };
+	constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
+	constexpr std::array<size_t, 2> specificTokensIndicesFor_X { 0, 2 };
 
 	const int max_allowed_y { getY_AxisLen( ) - 1 };
 	const int max_allowed_x { getX_AxisLen( ) - 2 };
@@ -255,7 +253,7 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 	constexpr int min_allowed_x { 0 };
 
 	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_enteredCoords.data( ), str_enteredCoords.size( ) },
-																		  required_tokens_count ) };
+																		required_tokens_count ) };
 	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
 	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
@@ -301,7 +299,7 @@ auto CharMatrix::createCharMatrix( const int Y_AxisLen, const int X_AxisLen, con
 
 	std::vector< std::vector<char> >& characterMatrix { uniquePtr2Matrix->getCharacterMatrix( ) };
 
-	for ( int row = 0; row < Y_AxisLen; ++row )
+	for ( int row { }; row < Y_AxisLen; ++row )
 	{
 		characterMatrix[ row ][ X_AxisLen - 1 ] = '\n';
 	}
@@ -314,10 +312,10 @@ int CharMatrix::getNumOfInputLines( ) const
 	const int max_allowed_num_of_input_lines { ( getY_AxisLen( ) * ( getX_AxisLen( ) - 1 ) ) / 2 };
 	const int min_allowed_num_of_input_lines { min_possible_num_of_input_lines };
 
-	constexpr std::streamsize streamSize { default_buffer_size };
-	constexpr std::size_t required_tokens_count { 1 };
+	constexpr streamsize stream_size { default_buffer_size };
+	constexpr size_t required_tokens_count { 1 };
 
-	std::array<char, streamSize> str_numOfInputLines { };
+	std::array<char, stream_size> str_numOfInputLines { };
 	std::array<int, required_tokens_count> int_numOfInputLines { };
 
 	bool isValid { false };
@@ -327,7 +325,7 @@ int CharMatrix::getNumOfInputLines( ) const
 		util::get_char_input( str_numOfInputLines );
 
 		const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
-																			  required_tokens_count ) };
+																			required_tokens_count ) };
 
 		isValid = { hasExpectedTokenCount &&
 					util::convert_tokens_to_integers( foundTokens, int_numOfInputLines,
@@ -340,9 +338,9 @@ int CharMatrix::getNumOfInputLines( ) const
 
 auto CharMatrix::getMatrixAttributes( )
 {
-	constexpr std::streamsize streamSize { default_buffer_size };
+	constexpr streamsize stream_size { default_buffer_size };
 
-	std::array<char, streamSize> str_enteredMatrixAttributes { };
+	std::array<char, stream_size> str_enteredMatrixAttributes { };
 	std::tuple<int, int, char> tuple_enteredMatrixAttributes { };
 
 	bool isAcceptable { false };
@@ -360,17 +358,17 @@ auto CharMatrix::getMatrixAttributes( )
 
 void CharMatrix::getCoords( ) const
 {
-	const int numOfInputLines { getNumOfInputLines( ) };
+	const size_t numOfInputLines { getNumOfInputLines( ) };
 
-	constexpr std::streamsize streamSize { default_buffer_size };
-	constexpr std::size_t required_tokens_count { cartesian_components_count };
+	constexpr streamsize stream_size { default_buffer_size };
+	constexpr size_t required_tokens_count { cartesian_components_count };
 
-	std::array<char, streamSize> str_enteredCoords { };
+	std::array<char, stream_size> str_enteredCoords { };
 	std::array<int, required_tokens_count> int_enteredCoords { };
 
-	for ( int i = 0; i < numOfInputLines; ++i )
+	for ( size_t counter { }; counter < numOfInputLines; ++counter )
 	{
-		bool isAcceptable { false };
+		bool isAcceptable;
 
 		do
 		{
@@ -396,7 +394,7 @@ inline void CharMatrix::writeToOutput( ) const
 
 	for ( const auto& row : characterMatrix )
 	{
-		std::cout.write( row.data( ), static_cast<std::streamsize>( X_AxisLen ) );
+		std::cout.write( row.data( ), static_cast<streamsize>( X_AxisLen ) );
 	}
 
 #if PN_DEBUG == 1
