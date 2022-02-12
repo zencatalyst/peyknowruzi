@@ -1,5 +1,5 @@
 
-#define PN_DEBUG 1
+#define PN_DEBUG 0
 //#define GUI_MODE 0
 #define FULL_INPUT_MODE 0
 
@@ -222,11 +222,11 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default
 
 	std::array<int, required_tokens_count> int_enteredMatrix_YX { };
 
-	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
-						 											{ min_allowed_y_axis_len, max_allowed_y_axis_len } )
+	const bool isValid { util::convert_specific_tokens_to_integers<int>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
+						 												 { min_allowed_y_axis_len, max_allowed_y_axis_len } )
 																																			&&
-						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
-						 											{ min_allowed_x_axis_len, max_allowed_x_axis_len } )
+						 util::convert_specific_tokens_to_integers<int>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
+						 												 { min_allowed_x_axis_len, max_allowed_x_axis_len } )
 						 																													&&
 						 ( foundTokens[ 2 ].size( ) == 1 && !chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) ) ) ? true : false };
 
@@ -256,11 +256,11 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 																		required_tokens_count ) };
 	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
 
-	const bool isValid { util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
-						 											{ min_allowed_y, max_allowed_y } )
-																																&&
-						 util::convert_specific_tokens_to_integers( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_X,
-						 											{ min_allowed_x, max_allowed_x } ) ? true : false };
+	const bool isValid { util::convert_specific_tokens_to_integers<int>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
+						 												 { min_allowed_y, max_allowed_y } )
+																																		&&
+						 util::convert_specific_tokens_to_integers<int>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_X,
+						 												 { min_allowed_x, max_allowed_x } ) ? true : false };
 
 	return isValid;
 }
@@ -328,8 +328,8 @@ int CharMatrix::getNumOfInputLines( ) const
 																			required_tokens_count ) };
 
 		isValid = { hasExpectedTokenCount &&
-					util::convert_tokens_to_integers( foundTokens, int_numOfInputLines,
-													  { min_allowed_num_of_input_lines, max_allowed_num_of_input_lines } ) };
+					util::convert_tokens_to_integers<int>( foundTokens, int_numOfInputLines,
+														   { min_allowed_num_of_input_lines, max_allowed_num_of_input_lines } ) };
 
 	} while ( !isValid );
 

@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <utility>
 #include <optional>
+#include <concepts>
 
 #include <memory>
 #include <stdexcept>
