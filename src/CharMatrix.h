@@ -18,10 +18,10 @@ class CharMatrix
 private:
 	enum AllowedChars : char
 	{
-		ForwardSlash = '/',
-		BackSlash = '\\',
-		VerticalSlash = '|',
-		Dash = '-'
+		Dash		  = '-' ,
+		BackSlash	  = '\\',
+		ForwardSlash  = '/' ,
+		VerticalSlash = '|' ,
 	};
 
 public:
@@ -35,6 +35,7 @@ public:
 	const std::uint32_t& getX_AxisLen( ) const noexcept;
 	const char& getFillCharacter( ) const noexcept;
 	const std::vector< std::vector<char> >& getCharacterMatrix( ) const noexcept;
+
 	void setY_AxisLen( const std::uint32_t Y_AxisLen );
 	void setX_AxisLen( const std::uint32_t X_AxisLen );
 	void setFillCharacter( const char fillCharacter );
@@ -62,7 +63,7 @@ private:
 	char m_fillCharacter;
 	std::vector< std::vector<char> > m_characterMatrix;
 
-	inline static const std::unordered_set< AllowedChars > chars_for_drawing { ForwardSlash, BackSlash, VerticalSlash, Dash };
+	inline static const std::unordered_set< AllowedChars > chars_for_drawing { Dash, BackSlash, ForwardSlash, VerticalSlash };
 };
 
 }
