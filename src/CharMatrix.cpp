@@ -51,9 +51,13 @@ static_assert( min_possible_num_of_input_lines <= ( max_allowed_y_axis_len * ( m
 
 inline CharMatrix::CharMatrix( const uint32_t Y_AxisLen, const uint32_t X_AxisLen, const char fillCharacter )
 	: m_Y_AxisLen( Y_AxisLen ), m_X_AxisLen( X_AxisLen ), m_fillCharacter( fillCharacter ),
-	  m_characterMatrix( Y_AxisLen, std::vector<char>( X_AxisLen, fillCharacter ) )
+	  m_characterMatrix( Y_AxisLen * X_AxisLen, fillCharacter )
 {
-	for ( auto& row : m_characterMatrix ) { row.back( ) = '\n'; }
+	for ( size_t last_idx_of_row { m_X_AxisLen - 1 }; last_idx_of_row < m_characterMatrix.size( )
+		  ; last_idx_of_row += m_X_AxisLen )
+	{
+		m_characterMatrix[ last_idx_of_row ] = '\n';
+	}
 }
 
 inline CharMatrix::CharMatrix( CharMatrix&& rhs ) noexcept
@@ -97,7 +101,7 @@ inline const char& CharMatrix::getFillCharacter( ) const noexcept
 	return m_fillCharacter;
 }
 
-inline const std::vector< std::vector<char> >& CharMatrix::getCharacterMatrix( ) const noexcept
+inline const std::vector<char>& CharMatrix::getCharacterMatrix( ) const noexcept
 {
 	return m_characterMatrix;
 }
@@ -119,14 +123,21 @@ void CharMatrix::setY_AxisLen( const uint32_t Y_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	m_characterMatrix.resize( Y_AxisLen, std::vector<char>( getX_AxisLen( ), getFillCharacter( ) ) );
-
 	if ( Y_AxisLen > getY_AxisLen( ) )
 	{
-		for ( size_t row_idx { getY_AxisLen( ) }; row_idx < Y_AxisLen; ++row_idx )
+		m_characterMatrix.resize( m_characterMatrix.size( ) + ( Y_AxisLen - getY_AxisLen( ) ) *
+								  getX_AxisLen( ), getFillCharacter( ) );
+
+		for ( size_t last_idx_of_row { ( getY_AxisLen( ) + 1 ) * getX_AxisLen( ) - 1 }
+			  ; last_idx_of_row < m_characterMatrix.size( ); last_idx_of_row += getX_AxisLen( ) )
 		{
-			m_characterMatrix[ row_idx ].back( ) = '\n';
+			m_characterMatrix[ last_idx_of_row ] = '\n';
 		}
+	}
+	else
+	{
+		m_characterMatrix.resize( m_characterMatrix.size( ) - ( getY_AxisLen( ) - Y_AxisLen ) *
+								  getX_AxisLen( ) );
 	}
 
 	m_Y_AxisLen = { Y_AxisLen };
@@ -151,20 +162,34 @@ void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
 
 	if ( X_AxisLen > getX_AxisLen( ) )
 	{
-		for ( auto& row : m_characterMatrix )
+		m_characterMatrix.resize( getY_AxisLen( ) * X_AxisLen, getFillCharacter( ) );
+
+		for ( auto new_it { m_characterMatrix.end( ) - 1 },
+			  old_it { m_characterMatrix.begin( ) + ( getY_AxisLen( ) - 1 ) * getX_AxisLen( ) }
+			  ; old_it >= m_characterMatrix.begin( ); old_it -= getX_AxisLen( ), --new_it )
 		{
-			row.back( ) = getFillCharacter( );
-			row.resize( X_AxisLen, getFillCharacter( ) );
-			row.back( ) = '\n';
+			*new_it = '\n';
+
+			new_it -= X_AxisLen - getX_AxisLen( );
+			std::fill_n( new_it, X_AxisLen - getX_AxisLen( ), getFillCharacter( ) );
+
+			new_it -= getX_AxisLen( ) - 1;
+			std::copy_n( old_it, getX_AxisLen( ) - 1, new_it );
 		}
 	}
 	else
 	{
-		for ( auto& row : m_characterMatrix )
+		for ( auto new_it { m_characterMatrix.begin( ) },
+			  old_it { m_characterMatrix.begin( ) }
+			  ; old_it != m_characterMatrix.end( ); old_it += getX_AxisLen( ), ++new_it )
 		{
-			row.resize( X_AxisLen, getFillCharacter( ) );
-			row.back( ) = '\n';
+			std::copy_n( old_it, X_AxisLen - 1, new_it );
+
+			new_it += X_AxisLen - 1;
+			*new_it = '\n';
 		}
+
+		m_characterMatrix.resize( getY_AxisLen( ) * X_AxisLen );
 	}
 
 	m_X_AxisLen = { X_AxisLen };
@@ -193,28 +218,25 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	for ( auto& row : m_characterMatrix )
+	for ( auto& elem : m_characterMatrix )
 	{
-		for ( auto& col : row )
+		if ( elem == getFillCharacter( ) )
 		{
-			if ( col == getFillCharacter( ) )
-			{
-				col = fillCharacter;
-			}
+			elem = fillCharacter;
 		}
 	}
 
 	m_fillCharacter = { fillCharacter };
 }
 
-inline void CharMatrix::setCharacterMatrix( const std::array<uint32_t, cartesian_components_count>& coordsOfChar )
+inline void CharMatrix::setCharacterMatrix( const std::array<uint32_t, cartesian_components_count>& coordsOfChar ) noexcept
 {
 	const std::optional< AllowedChars > ch { processCoordsToObtainCharType( coordsOfChar ) };
 
 	if ( ch.has_value( ) && chars_for_drawing.contains( ch.value( ) ) )
 	{
-		m_characterMatrix[ coordsOfChar[ 1 ] ][ coordsOfChar[ 0 ] ] = ch.value( );
-		m_characterMatrix[ coordsOfChar[ 3 ] ][ coordsOfChar[ 2 ] ] = ch.value( );
+		m_characterMatrix[ coordsOfChar[ 1 ] * getX_AxisLen( ) + coordsOfChar[ 0 ] ] = ch.value( );
+		m_characterMatrix[ coordsOfChar[ 3 ] * getX_AxisLen( ) + coordsOfChar[ 2 ] ] = ch.value( );
 	}
 }
 
@@ -389,10 +411,7 @@ inline void CharMatrix::writeToOutput( ) const
 	util::Timer timer;
 #endif
 
-	for ( const auto& row : getCharacterMatrix( ) )
-	{
-		std::cout.write( row.data( ), static_cast<streamsize>( getX_AxisLen( ) ) );
-	}
+	std::cout.write( getCharacterMatrix( ).data( ), static_cast<streamsize>( getCharacterMatrix( ).size( ) ) );
 
 #if PN_DEBUG == 1
 	}

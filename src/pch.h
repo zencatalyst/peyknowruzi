@@ -17,6 +17,8 @@
 #include <optional>
 #include <concepts>
 
+#include <algorithm>
+
 #include <memory>
 #include <stdexcept>
 

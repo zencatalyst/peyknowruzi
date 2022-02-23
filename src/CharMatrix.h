@@ -34,12 +34,12 @@ public:
 	const std::uint32_t& getY_AxisLen( ) const noexcept;
 	const std::uint32_t& getX_AxisLen( ) const noexcept;
 	const char& getFillCharacter( ) const noexcept;
-	const std::vector< std::vector<char> >& getCharacterMatrix( ) const noexcept;
+	const std::vector<char>& getCharacterMatrix( ) const noexcept;
 
 	void setY_AxisLen( const std::uint32_t Y_AxisLen );
 	void setX_AxisLen( const std::uint32_t X_AxisLen );
 	void setFillCharacter( const char fillCharacter );
-	void setCharacterMatrix( const std::array<std::uint32_t, cartesian_components_count>& coordsOfChar );
+	void setCharacterMatrix( const std::array<std::uint32_t, cartesian_components_count>& coordsOfChar ) noexcept;
 
 	bool validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
 								std::array<std::uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const;
@@ -61,7 +61,7 @@ private:
 	std::uint32_t m_Y_AxisLen;
 	std::uint32_t m_X_AxisLen;
 	char m_fillCharacter;
-	std::vector< std::vector<char> > m_characterMatrix;
+	std::vector<char> m_characterMatrix;
 
 	inline static const std::unordered_set< AllowedChars > chars_for_drawing { Dash, BackSlash, ForwardSlash, VerticalSlash };
 };
