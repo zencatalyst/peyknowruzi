@@ -164,29 +164,29 @@ void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
 	{
 		m_characterMatrix.resize( getY_AxisLen( ) * X_AxisLen, getFillCharacter( ) );
 
-		for ( auto new_it { m_characterMatrix.end( ) - 1 },
-			  old_it { m_characterMatrix.begin( ) + ( getY_AxisLen( ) - 1 ) * getX_AxisLen( ) }
-			  ; old_it >= m_characterMatrix.begin( ); old_it -= getX_AxisLen( ), --new_it )
+		for ( auto new_pos { m_characterMatrix.end( ) - 1 },
+			  old_pos { m_characterMatrix.begin( ) + ( getY_AxisLen( ) - 1 ) * getX_AxisLen( ) }
+			  ; old_pos >= m_characterMatrix.begin( ); old_pos -= getX_AxisLen( ), --new_pos )
 		{
-			*new_it = '\n';
+			*new_pos = '\n';
 
-			new_it -= X_AxisLen - getX_AxisLen( );
-			std::fill_n( new_it, X_AxisLen - getX_AxisLen( ), getFillCharacter( ) );
+			new_pos -= X_AxisLen - getX_AxisLen( );
+			std::fill_n( new_pos, X_AxisLen - getX_AxisLen( ), getFillCharacter( ) );
 
-			new_it -= getX_AxisLen( ) - 1;
-			std::copy_n( old_it, getX_AxisLen( ) - 1, new_it );
+			new_pos -= getX_AxisLen( ) - 1;
+			std::copy_n( old_pos, getX_AxisLen( ) - 1, new_pos );
 		}
 	}
 	else
 	{
-		for ( auto new_it { m_characterMatrix.begin( ) },
-			  old_it { m_characterMatrix.begin( ) }
-			  ; old_it != m_characterMatrix.end( ); old_it += getX_AxisLen( ), ++new_it )
+		for ( auto new_pos { m_characterMatrix.begin( ) },
+			  old_pos { m_characterMatrix.begin( ) }
+			  ; old_pos != m_characterMatrix.end( ); old_pos += getX_AxisLen( ), ++new_pos )
 		{
-			std::copy_n( old_it, X_AxisLen - 1, new_it );
+			std::copy_n( old_pos, X_AxisLen - 1, new_pos );
 
-			new_it += X_AxisLen - 1;
-			*new_it = '\n';
+			new_pos += X_AxisLen - 1;
+			*new_pos = '\n';
 		}
 
 		m_characterMatrix.resize( getY_AxisLen( ) * X_AxisLen );
