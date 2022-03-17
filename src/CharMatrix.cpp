@@ -241,15 +241,20 @@ inline void CharMatrix::setCharacterMatrix( const std::array<uint32_t, cartesian
 }
 
 bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
-												  std::tuple<uint32_t, uint32_t, char>& tuple_enteredMatrixAttributes_OUT )
+												  std::tuple<uint32_t, uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept
 {
 	constexpr size_t required_tokens_count { matrix_attributes_count };
 	constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
 	constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
 
-	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_enteredMatrixAttributes.data( ), str_enteredMatrixAttributes.size( ) },
-																		required_tokens_count ) };
-	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
+	const auto posOfNull { std::find( str_enteredMatrixAttributes.cbegin( ), str_enteredMatrixAttributes.cend( ), '\0' ) };
+
+	std::array< std::string_view, required_tokens_count > foundTokens;
+
+	const size_t foundTokensCount { util::tokenize_fast( { str_enteredMatrixAttributes.cbegin( ), posOfNull },
+														 foundTokens, required_tokens_count ) };
+
+	if ( foundTokensCount != required_tokens_count ) { return false; }
 
 	std::array<uint32_t, required_tokens_count> int_enteredMatrix_YX { };
 
@@ -272,7 +277,7 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default
 }
 
 bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
-										std::array<uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const
+										std::array<uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept
 {
 	constexpr size_t required_tokens_count { cartesian_components_count };
 	constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
@@ -283,9 +288,14 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 	constexpr uint32_t min_allowed_y { 0 };
 	constexpr uint32_t min_allowed_x { 0 };
 
-	const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_enteredCoords.data( ), str_enteredCoords.size( ) },
-																		required_tokens_count ) };
-	if ( !hasExpectedTokenCount ) { return hasExpectedTokenCount; }
+	const auto posOfNull { std::find( str_enteredCoords.cbegin( ), str_enteredCoords.cend( ), '\0' ) };
+
+	std::array< std::string_view, required_tokens_count > foundTokens;
+
+	const size_t foundTokensCount { util::tokenize_fast( { str_enteredCoords.cbegin( ), posOfNull },
+														 foundTokens, required_tokens_count ) };
+
+	if ( foundTokensCount != required_tokens_count ) { return false; }
 
 	const bool isValid { util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
 						 													  { min_allowed_y, max_allowed_y } )
@@ -339,6 +349,7 @@ size_t CharMatrix::getNumOfInputLines( ) const
 
 	std::array<char, stream_size> str_numOfInputLines { };
 	std::array<size_t, required_tokens_count> int_numOfInputLines { };
+	std::array< std::string_view, required_tokens_count > foundTokens;
 
 	bool isValid;
 
@@ -346,10 +357,11 @@ size_t CharMatrix::getNumOfInputLines( ) const
 	{
 		util::get_char_input( str_numOfInputLines );
 
-		const auto [ hasExpectedTokenCount, foundTokens ] { util::tokenize( { str_numOfInputLines.data( ), str_numOfInputLines.size( ) },
-																			required_tokens_count ) };
+		const auto posOfNull { std::find( str_numOfInputLines.cbegin( ), str_numOfInputLines.cend( ), '\0' ) };
 
-		isValid = { hasExpectedTokenCount &&
+		const size_t foundTokensCount { util::tokenize_fast( { str_numOfInputLines.cbegin( ), posOfNull }, foundTokens, required_tokens_count ) };
+
+		isValid = { foundTokensCount == required_tokens_count &&
 					util::convert_tokens_to_integers<size_t>( foundTokens, int_numOfInputLines,
 															  { min_allowed_num_of_input_lines, max_allowed_num_of_input_lines } ) };
 

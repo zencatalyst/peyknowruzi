@@ -42,10 +42,10 @@ public:
 	void setCharacterMatrix( const std::array<std::uint32_t, cartesian_components_count>& coordsOfChar ) noexcept;
 
 	bool validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
-								std::array<std::uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const;
+								std::array<std::uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept;
 
 	static bool validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
-												 std::tuple<std::uint32_t, std::uint32_t, char>& tuple_enteredMatrixAttributes_OUT );
+												 std::tuple<std::uint32_t, std::uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept;
 	static std::optional<AllowedChars>
 	processCoordsToObtainCharType( const std::array<std::uint32_t, cartesian_components_count>& coordsOfChar ) noexcept;
 

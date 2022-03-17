@@ -24,9 +24,17 @@ namespace util
 		Timer& operator=( const Timer& ) = delete;
 	};
 
-	std::pair< bool, std::vector< std::string > > tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount );
+	std::vector< std::string > tokenize( const std::string_view inputStr, const std::size_t expectedTokenCount );
 
-	std::pair< bool, std::vector< std::string > > tokenize( const char* const inputStr, const std::size_t expectedTokenCount ) = delete;
+	std::vector< std::string > tokenize( const char* const inputStr, const std::size_t expectedTokenCount ) = delete;
+
+	std::size_t tokenize_fast( const std::string_view inputStr,
+							   const std::span< std::string_view > foundTokens_OUT,
+							   const std::size_t expectedTokenCount ) noexcept;
+
+	std::size_t tokenize_fast( const char* const inputStr,
+							   const std::span< std::string_view > foundTokens_OUT,
+							   const std::size_t expectedTokenCount ) noexcept = delete;
 
 	template < std::integral T >
 	std::optional<T> to_integer( std::string_view token, const std::pair<T, T> acceptableRange =
@@ -37,13 +45,16 @@ namespace util
 								 { std::numeric_limits<T>::min( ), std::numeric_limits<T>::max( ) } ) noexcept = delete;
 
 	template < std::integral T >
-	bool convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<T> result_integers_OUT,
+	bool convert_tokens_to_integers( const std::span<const std::string_view> tokens,
+									 const std::span<T> result_integers_OUT,
 									 const std::pair<T, T> acceptableRange =
 									 { std::numeric_limits<T>::min( ), std::numeric_limits<T>::max( ) } ) noexcept;
 
 	template < std::integral T >
-	bool convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<T> result_integers_OUT,
-											  const std::span<const std::size_t> specificTokensIndices, const std::pair<T, T> acceptableRange =
+	bool convert_specific_tokens_to_integers( const std::span<const std::string_view> tokens,
+											  const std::span<T> result_integers_OUT,
+											  const std::span<const std::size_t> specificTokensIndices,
+											  const std::pair<T, T> acceptableRange =
 											  { std::numeric_limits<T>::min( ), std::numeric_limits<T>::max( ) } ) noexcept;
 
 	void get_char_input( const std::span<char> inputBuffer_OUT );
@@ -71,7 +82,8 @@ namespace util
 	}
 
 	template < std::integral T >
-	bool convert_tokens_to_integers( const std::span<const std::string> tokens, const std::span<T> result_integers_OUT,
+	bool convert_tokens_to_integers( const std::span<const std::string_view> tokens,
+									 const std::span<T> result_integers_OUT,
 									 const std::pair<T, T> acceptableRange ) noexcept
 	{
 		bool areTokensConvertibleToValidIntegers { };
@@ -79,7 +91,7 @@ namespace util
 		if ( tokens.empty( ) || tokens.size( ) > result_integers_OUT.size( ) )
 		{ return areTokensConvertibleToValidIntegers = false; }
 
-		for ( size_t idx { }; idx < tokens.size( ); ++idx )
+		for ( std::size_t idx { }; idx < tokens.size( ); ++idx )
 		{
 			const std::optional<T> tempInteger { util::to_integer<T>( tokens[ idx ], acceptableRange ) };
 
@@ -91,8 +103,9 @@ namespace util
 	}
 
 	template < std::integral T >
-	bool convert_specific_tokens_to_integers( const std::span<const std::string> tokens, const std::span<T> result_integers_OUT,
-					   						  const std::span<const size_t> specificTokensIndices,
+	bool convert_specific_tokens_to_integers( const std::span<const std::string_view> tokens,
+											  const std::span<T> result_integers_OUT,
+					   						  const std::span<const std::size_t> specificTokensIndices,
 					   						  const std::pair<T, T> acceptableRange ) noexcept
 	{
 		bool areTokensConvertibleToValidIntegers { };
