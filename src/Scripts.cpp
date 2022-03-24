@@ -2,10 +2,13 @@
 #include "Scripts.h"
 #include "CharMatrix.h"
 
-using namespace peyknowruzi;
 
+namespace peyknowruzi
+{
 
-void peyknowruzi::runScripts( )
+void runScripts( )
 {
 	CharMatrix::runScript( );
+}
+
 }

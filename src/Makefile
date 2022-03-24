@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -c -std=c++20 -Wall -Wextra -Wpedantic -Wshadow -O3 -flto
+CXXFLAGS = -c -std=c++20 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O3 -flto
+LDFLAGS = -O3 -flto
 DEPS = Scripts.h CharMatrix.h Util.h
 OBJ = Launch.o Scripts.o Util.o CharMatrix.o
 
@@ -9,7 +10,7 @@ PCH_OUT = pch.h.gch
 all: PeykNowruzi
 
 PeykNowruzi: $(OBJ)
-	$(CXX) $^ -o runPeykNowruzi
+	$(CXX) $(LDFLAGS) $^ -o runPeykNowruzi
 
 $(PCH_OUT): $(PCH_SRC)
 	$(CXX) $(CXXFLAGS) $< -o $@

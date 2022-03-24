@@ -3,14 +3,19 @@
 
 
 using std::size_t;
-using namespace peyknowruzi;
 
-
-std::vector< std::string > util::tokenize( const std::string_view inputStr, const size_t expectedTokenCount )
+namespace peyknowruzi
 {
-	if ( inputStr.empty( ) )
+
+namespace util
+{
+
+[[ nodiscard ]] std::vector< std::string >
+tokenize( const std::string_view inputStr, [[ maybe_unused ]] const size_t expectedTokenCount )
+{
+	if ( inputStr.empty( ) ) [[ unlikely ]]
 	{
-		return std::vector< std::string >{ };
+		return std::vector< std::string > { };
 	}
 
 	std::stringstream ss;
@@ -22,13 +27,14 @@ std::vector< std::string > util::tokenize( const std::string_view inputStr, cons
 	return foundTokens;
 }
 
-size_t util::tokenize_fast( const std::string_view inputStr,
-							const std::span< std::string_view > foundTokens_OUT,
-							const size_t expectedTokenCount ) noexcept
+[[ nodiscard ]] size_t
+tokenize_fast( const std::string_view inputStr,
+			   const std::span< std::string_view > foundTokens_OUT,
+			   const size_t expectedTokenCount ) noexcept
 {
 	size_t foundTokensCount { };
 
-	if ( inputStr.empty( ) )
+	if ( inputStr.empty( ) ) [[ unlikely ]]
 	{
 		return foundTokensCount = 0;
 	}
@@ -52,4 +58,8 @@ size_t util::tokenize_fast( const std::string_view inputStr,
 	}
 
 	return foundTokensCount;
+}
+
+}
+
 }

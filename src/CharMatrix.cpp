@@ -22,8 +22,9 @@ using std::uint32_t;
 using std::int64_t;
 using std::size_t;
 using std::streamsize;
-using namespace peyknowruzi;
 
+namespace peyknowruzi
+{
 
 static constexpr uint32_t min_allowed_y_axis_len { 1 };
 static constexpr uint32_t min_allowed_x_axis_len { 2 };
@@ -86,30 +87,28 @@ inline CharMatrix& CharMatrix::operator=( CharMatrix&& rhs ) noexcept
 	return *this;
 }
 
-inline const uint32_t& CharMatrix::getY_AxisLen( ) const noexcept
+[[ nodiscard ]] inline const uint32_t& CharMatrix::getY_AxisLen( ) const noexcept
 {
 	return m_Y_AxisLen;
 }
 
-inline const uint32_t& CharMatrix::getX_AxisLen( ) const noexcept
+[[ nodiscard ]] inline const uint32_t& CharMatrix::getX_AxisLen( ) const noexcept
 {
 	return m_X_AxisLen;
 }
 
-inline const char& CharMatrix::getFillCharacter( ) const noexcept
+[[ nodiscard ]] inline const char& CharMatrix::getFillCharacter( ) const noexcept
 {
 	return m_fillCharacter;
 }
 
-inline const std::vector<char>& CharMatrix::getCharacterMatrix( ) const noexcept
+[[ nodiscard ]] inline const std::vector<char>& CharMatrix::getCharacterMatrix( ) const noexcept
 {
 	return m_characterMatrix;
 }
 
 void CharMatrix::setY_AxisLen( const uint32_t Y_AxisLen )
 {
-	if ( Y_AxisLen == getY_AxisLen( ) ) { return; }
-
 	if ( Y_AxisLen > max_allowed_y_axis_len || Y_AxisLen < min_allowed_y_axis_len )
 	{
 		std::string exceptionMsg;
@@ -122,6 +121,8 @@ void CharMatrix::setY_AxisLen( const uint32_t Y_AxisLen )
 
 		throw std::invalid_argument( exceptionMsg );
 	}
+
+	if ( Y_AxisLen == getY_AxisLen( ) ) { return; }
 
 	if ( Y_AxisLen > getY_AxisLen( ) )
 	{
@@ -145,8 +146,6 @@ void CharMatrix::setY_AxisLen( const uint32_t Y_AxisLen )
 
 void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
 {
-	if ( X_AxisLen == getX_AxisLen( ) ) { return; }
-
 	if ( X_AxisLen > max_allowed_x_axis_len || X_AxisLen < min_allowed_x_axis_len )
 	{
 		std::string exceptionMsg;
@@ -159,6 +158,8 @@ void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
 
 		throw std::invalid_argument( exceptionMsg );
 	}
+
+	if ( X_AxisLen == getX_AxisLen( ) ) { return; }
 
 	if ( X_AxisLen > getX_AxisLen( ) )
 	{
@@ -197,8 +198,6 @@ void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
 
 void CharMatrix::setFillCharacter( const char fillCharacter )
 {
-	if ( fillCharacter == getFillCharacter( ) ) { return; }
-
 	if ( chars_for_drawing.contains( static_cast<AllowedChars>( fillCharacter ) ) )
 	{
 		std::string exceptionMsg;
@@ -217,6 +216,8 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 
 		throw std::invalid_argument( exceptionMsg );
 	}
+
+	if ( fillCharacter == getFillCharacter( ) ) { return; }
 
 	for ( auto& elem : m_characterMatrix )
 	{
@@ -240,12 +241,13 @@ inline void CharMatrix::setCharacterMatrix( const std::array<uint32_t, cartesian
 	}
 }
 
-bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
-												  std::tuple<uint32_t, uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept
+[[ nodiscard ]] bool
+CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
+											 std::tuple<uint32_t, uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept
 {
-	constexpr size_t required_tokens_count { matrix_attributes_count };
-	constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
-	constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
+	static constexpr size_t required_tokens_count { matrix_attributes_count };
+	static constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
+	static constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
 
 	const auto posOfNull { std::find( str_enteredMatrixAttributes.cbegin( ), str_enteredMatrixAttributes.cend( ), '\0' ) };
 
@@ -276,17 +278,18 @@ bool CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default
 	return isValid;
 }
 
-bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
-										std::array<uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept
+[[ nodiscard ]] bool
+CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
+								   std::array<uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept
 {
-	constexpr size_t required_tokens_count { cartesian_components_count };
-	constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
-	constexpr std::array<size_t, 2> specificTokensIndicesFor_X { 0, 2 };
+	static constexpr size_t required_tokens_count { cartesian_components_count };
+	static constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
+	static constexpr std::array<size_t, 2> specificTokensIndicesFor_X { 0, 2 };
 
 	const uint32_t max_allowed_y { getY_AxisLen( ) - 1 };
 	const uint32_t max_allowed_x { getX_AxisLen( ) - 2 };
-	constexpr uint32_t min_allowed_y { 0 };
-	constexpr uint32_t min_allowed_x { 0 };
+	static constexpr uint32_t min_allowed_y { 0 };
+	static constexpr uint32_t min_allowed_x { 0 };
 
 	const auto posOfNull { std::find( str_enteredCoords.cbegin( ), str_enteredCoords.cend( ), '\0' ) };
 
@@ -306,7 +309,7 @@ bool CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_si
 	return isValid;
 }
 
-inline std::optional< CharMatrix::AllowedChars >
+[[ nodiscard ]] inline std::optional< CharMatrix::AllowedChars >
 CharMatrix::processCoordsToObtainCharType( const std::array<uint32_t, cartesian_components_count>& coordsOfChar ) noexcept
 {
 	if ( std::abs( static_cast<int64_t>( coordsOfChar[0] ) - static_cast<int64_t>( coordsOfChar[2] ) ) == 1 &&
@@ -344,8 +347,8 @@ size_t CharMatrix::getNumOfInputLines( ) const
 	const size_t max_allowed_num_of_input_lines { ( getY_AxisLen( ) * ( getX_AxisLen( ) - 1 ) ) / 2 };
 	const size_t min_allowed_num_of_input_lines { min_possible_num_of_input_lines };
 
-	constexpr streamsize stream_size { default_buffer_size };
-	constexpr size_t required_tokens_count { 1 };
+	static constexpr streamsize stream_size { default_buffer_size };
+	static constexpr size_t required_tokens_count { 1 };
 
 	std::array<char, stream_size> str_numOfInputLines { };
 	std::array<size_t, required_tokens_count> int_numOfInputLines { };
@@ -372,7 +375,7 @@ size_t CharMatrix::getNumOfInputLines( ) const
 
 auto CharMatrix::getMatrixAttributes( )
 {
-	constexpr streamsize stream_size { default_buffer_size };
+	static constexpr streamsize stream_size { default_buffer_size };
 
 	std::array<char, stream_size> str_enteredMatrixAttributes { };
 	std::tuple<uint32_t, uint32_t, char> tuple_enteredMatrixAttributes { };
@@ -394,8 +397,8 @@ void CharMatrix::getCoords( )
 {
 	const size_t numOfInputLines { getNumOfInputLines( ) };
 
-	constexpr streamsize stream_size { default_buffer_size };
-	constexpr size_t required_tokens_count { cartesian_components_count };
+	static constexpr streamsize stream_size { default_buffer_size };
+	static constexpr size_t required_tokens_count { cartesian_components_count };
 
 	std::array<char, stream_size> str_enteredCoords { };
 	std::array<uint32_t, required_tokens_count> int_enteredCoords { };
@@ -416,14 +419,14 @@ void CharMatrix::getCoords( )
 	}
 }
 
-inline void CharMatrix::writeToOutput( ) const
+inline void CharMatrix::draw( std::ostream& os ) const
 {
 #if PN_DEBUG == 1
 	{
-	util::Timer timer;
+	util::ScopedTimer timer;
 #endif
 
-	std::cout.write( getCharacterMatrix( ).data( ), static_cast<streamsize>( getCharacterMatrix( ).size( ) ) );
+	os.write( getCharacterMatrix( ).data( ), static_cast<streamsize>( getCharacterMatrix( ).size( ) ) );
 
 #if PN_DEBUG == 1
 	}
@@ -431,6 +434,50 @@ inline void CharMatrix::writeToOutput( ) const
 
 	LOG( "\nFinished." );
 	WAIT;
+}
+
+std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix& char_matrix )
+{
+	ofs.write( reinterpret_cast<const char*>( &char_matrix.getY_AxisLen( ) ),
+			   sizeof( char_matrix.getY_AxisLen( ) ) );
+	ofs.write( reinterpret_cast<const char*>( &char_matrix.getX_AxisLen( ) ),
+			   sizeof( char_matrix.getX_AxisLen( ) ) );
+	ofs.write( reinterpret_cast<const char*>( &char_matrix.getFillCharacter( ) ),
+			   sizeof( char_matrix.getFillCharacter( ) ) );
+	ofs.write( reinterpret_cast<const char*>( char_matrix.getCharacterMatrix( ).data( ) ),
+											  char_matrix.getCharacterMatrix( ).size( ) );
+
+	return ofs;
+}
+
+std::ifstream& operator>>( std::ifstream& ifs, CharMatrix& char_matrix )
+{
+	static CharMatrix temp_char_matrix { default_y_axis_len, default_x_axis_len, default_fill_character };
+
+	ifs.read( reinterpret_cast<char*>( &temp_char_matrix.m_Y_AxisLen ),
+			  sizeof( temp_char_matrix.m_Y_AxisLen ) );
+	ifs.read( reinterpret_cast<char*>( &temp_char_matrix.m_X_AxisLen ),
+			  sizeof( temp_char_matrix.m_X_AxisLen ) );
+	ifs.read( reinterpret_cast<char*>( &temp_char_matrix.m_fillCharacter ),
+			  sizeof( temp_char_matrix.m_fillCharacter ) );
+	temp_char_matrix.m_characterMatrix.resize( temp_char_matrix.getY_AxisLen( ) *
+											   temp_char_matrix.getX_AxisLen( ) );
+	ifs.read( reinterpret_cast<char*>( temp_char_matrix.m_characterMatrix.data( ) ),
+									   temp_char_matrix.m_characterMatrix.size( ) );
+
+	char_matrix.m_Y_AxisLen = temp_char_matrix.getY_AxisLen( );
+	char_matrix.setY_AxisLen( temp_char_matrix.getY_AxisLen( ) );
+	char_matrix.m_X_AxisLen = temp_char_matrix.getX_AxisLen( );
+	char_matrix.setX_AxisLen( temp_char_matrix.getX_AxisLen( ) );
+	char_matrix.m_fillCharacter = temp_char_matrix.getFillCharacter( );
+	char_matrix.setFillCharacter( temp_char_matrix.getFillCharacter( ) );
+	char_matrix.m_characterMatrix.reserve( temp_char_matrix.getCharacterMatrix( ).size( ) );
+	char_matrix.m_characterMatrix.clear( );
+	std::copy( temp_char_matrix.getCharacterMatrix( ).cbegin( ),
+			   temp_char_matrix.getCharacterMatrix( ).cend( ),
+			   std::back_inserter( char_matrix.m_characterMatrix ) );
+
+	return ifs;
 }
 
 inline void CharMatrix::initialize( )
@@ -445,9 +492,9 @@ void CharMatrix::runScript( )
 #if FULL_INPUT_MODE == 1
 	const auto [ Y_AxisLen, X_AxisLen, fillCharacter ] { getMatrixAttributes( ) };
 #else
-	constexpr uint32_t Y_AxisLen { 36 };
-	constexpr uint32_t X_AxisLen { 168 };
-	constexpr char fillCharacter { ' ' };
+	[[ maybe_unused ]] static constexpr uint32_t Y_AxisLen { 36 };
+	[[ maybe_unused ]] static constexpr uint32_t X_AxisLen { 168 };
+	[[ maybe_unused ]] static constexpr char fillCharacter { ' ' };
 
 	static_assert( Y_AxisLen >= min_allowed_y_axis_len && Y_AxisLen <= max_allowed_y_axis_len,
 				   "Y_AxisLen can not be greater than max_allowed_y_axis_len or less than min_allowed_y_axis_len" );
@@ -460,14 +507,16 @@ void CharMatrix::runScript( )
 #define HEAP_ALLOCATED 0
 
 #if HEAP_ALLOCATED == 1
-	const std::unique_ptr<CharMatrix> matrix { std::make_unique<CharMatrix>( Y_AxisLen, X_AxisLen , fillCharacter ) };
+	const auto matrix { std::make_unique<CharMatrix>( Y_AxisLen, X_AxisLen , fillCharacter ) };
 
 	matrix->getCoords( );
-	matrix->writeToOutput( );
+	matrix->draw( std::cout );
 #else
-	CharMatrix matrix { Y_AxisLen, X_AxisLen , fillCharacter };
+	auto matrix { CharMatrix( Y_AxisLen, X_AxisLen , fillCharacter ) };
 
 	matrix.getCoords( );
-	matrix.writeToOutput( );
+	matrix.draw( std::cout );
 #endif
+}
+
 }
