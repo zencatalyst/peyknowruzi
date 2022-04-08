@@ -7,14 +7,17 @@
 namespace peyknowruzi
 {
 
-inline constexpr std::uint32_t default_y_axis_len { 20 };
-inline constexpr std::uint32_t default_x_axis_len { 20 };
-inline constexpr char default_fill_character { ' ' };
 inline constexpr std::streamsize default_buffer_size { 169 };
-inline constexpr std::size_t cartesian_components_count { 4 };
 
 class CharMatrix
 {
+public:
+	static constexpr std::uint32_t default_y_axis_len { 20 };
+	static constexpr std::uint32_t default_x_axis_len { 20 };
+	static constexpr char default_fill_character { ' ' };
+	static constexpr std::size_t cartesian_components_count { 4 };
+	static constexpr std::size_t matrix_attributes_count { 3 };
+
 private:
 	enum AllowedChars : char
 	{
@@ -24,12 +27,21 @@ private:
 		VerticalSlash = '|' ,
 	};
 
+	inline static const std::unordered_set< AllowedChars > chars_for_drawing { Dash,
+																			   BackSlash,
+																			   ForwardSlash,
+																			   VerticalSlash };
+
 public:
-	CharMatrix( const std::uint32_t Y_AxisLen = default_y_axis_len,
-				const std::uint32_t X_AxisLen = default_x_axis_len,
-				const char fillCharacter = default_fill_character );
+	explicit CharMatrix( const std::uint32_t Y_AxisLen = default_y_axis_len,
+						 const std::uint32_t X_AxisLen = default_x_axis_len,
+						 const char fillCharacter = default_fill_character );
 	CharMatrix( CharMatrix&& rhs ) noexcept;
 	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
+
+	explicit operator bool( ) const noexcept;
+	bool operator==( const CharMatrix& rhs ) const noexcept;
+	std::partial_ordering operator<=>( const CharMatrix& rhs ) const noexcept;
 
 	[[ nodiscard ]] const std::uint32_t& getY_AxisLen( ) const noexcept;
 	[[ nodiscard ]] const std::uint32_t& getX_AxisLen( ) const noexcept;
@@ -55,7 +67,7 @@ public:
 	[[ nodiscard ]] std::size_t getNumOfInputLines( ) const;
 	[[ nodiscard ]] static auto getMatrixAttributes( );
 	void getCoords( );
-	void draw( std::ostream& os ) const;
+	void draw( std::ostream& output_stream ) const;
 
 	friend std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix& char_matrix );
 	friend std::ifstream& operator>>( std::ifstream& ifs, CharMatrix& char_matrix );
@@ -68,8 +80,6 @@ private:
 	std::uint32_t m_X_AxisLen;
 	char m_fillCharacter;
 	std::vector<char> m_characterMatrix;
-
-	inline static const std::unordered_set< AllowedChars > chars_for_drawing { Dash, BackSlash, ForwardSlash, VerticalSlash };
 };
 
 }
