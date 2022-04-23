@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to the README of PeykNowruzi 👋</h1>
 
-> PeykNowruzi is a basic ASCII art generator that can draw any desired shape using four characters ('/', '\\', '|', '-') on the console/cmd/terminal screen given that you've provided the corect coordinates of each character.<br />
+> PeykNowruzi is a basic ASCII art generator that can draw any desired shape using only four characters ('/', '\\', '|', '-') on the console/cmd/terminal screen given that you've provided the corect coordinates of each character.<br />
 
 
 ## 🚀 How to use the program:
@@ -41,7 +41,7 @@ and the coords (x2, y2) of the second character. In the following example, 6 lin
        2    3           3  2
 ```
 
-- `x1` (is the x of first character) , `x2` (is the x of the second character) etc.
+- `x1` (is the x of the first character) , `x2` (is the x of the second character) etc.
 
 - Note that at least one **_space_** or **_tab_** character should be inserted between each number in order for the program to work as expected so e.g. the following formats are invalid: `x1y1x2y2` , `x1 y1x2 y2` , etc.
 
@@ -88,7 +88,7 @@ A sample input file called `PeykNowruzi_sample-input.txt` can be found inside '_
 Below is an example of how you can achieve this using **<** operator:
 
 ```sh
-C:\Users\joel\Desktop\magical-creations\Executables>runPeykNowruzi_Windows.exe < "C:\Users\joel\Desktop\magical-creations\Sample Inputs\PeykNowruzi_sample-input.txt"
+C:\Users\joel\Desktop\peyknowruzi\Executables>runPeykNowruzi_Windows.exe < "C:\Users\joel\Desktop\peyknowruzi\Sample Inputs\PeykNowruzi_sample-input.txt"
 ```
 
 **Here is a demo:**
