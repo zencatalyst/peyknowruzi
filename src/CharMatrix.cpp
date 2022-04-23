@@ -1,4 +1,27 @@
 
+// PeykNowruzi - Basic ASCII-Art Generator
+// Copyright (C) 2021-2022 Kasra Hashemi
+
+/*
+
+ This file is part of PeykNowruzi.
+
+ PeykNowruzi is free software: you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License,
+ or (at your option) any later version.
+
+ PeykNowruzi is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty
+ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along
+ with PeykNowruzi. If not, see <https://www.gnu.org/licenses/>.
+
+*/
+
+
 #define PN_DEBUG 0
 //#define GUI_MODE 0
 #define FULL_INPUT_MODE 0
@@ -292,11 +315,11 @@ CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buff
 	std::array<uint32_t, required_tokens_count> int_enteredMatrix_YX { };
 
 	const bool isValid { util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
-						 													  { min_allowed_y_axis_len, max_allowed_y_axis_len } )
+																			  { min_allowed_y_axis_len, max_allowed_y_axis_len } )
 																																				&&
 						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
-						 													  { min_allowed_x_axis_len, max_allowed_x_axis_len } )
-						 																														&&
+																			  { min_allowed_x_axis_len, max_allowed_x_axis_len } )
+																																				&&
 						 ( foundTokens[ 2 ].size( ) == 1 && !chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) ) ) ? true : false };
 
 	if ( isValid )
@@ -332,10 +355,10 @@ CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& 
 	if ( foundTokensCount != required_tokens_count ) { return false; }
 
 	const bool isValid { util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
-						 													  { min_allowed_y, max_allowed_y } )
+																			  { min_allowed_y, max_allowed_y } )
 																																			&&
 						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_X,
-						 													  { min_allowed_x, max_allowed_x } ) ? true : false };
+																			  { min_allowed_x, max_allowed_x } ) ? true : false };
 
 	return isValid;
 }
@@ -353,7 +376,7 @@ CharMatrix::processCoordsToObtainCharType( const std::array<uint32_t, cartesian_
 	else if ( std::abs( static_cast<int64_t>( coordsOfChar[0] ) - static_cast<int64_t>( coordsOfChar[2] ) ) == 1 &&
 			  std::abs( static_cast<int64_t>( coordsOfChar[1] ) - static_cast<int64_t>( coordsOfChar[3] ) ) == 1 &&
 			  ( ( coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3] ) ||
-			  	( coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3] ) ) )
+				( coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3] ) ) )
 	{
 		return BackSlash;
 	}
