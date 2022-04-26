@@ -31,14 +31,14 @@
 namespace pynz = peyknowruzi;
 
 
-inline static void launch( )
+inline static void launch( [[ maybe_unused ]] int argc, [[ maybe_unused ]] char* argv[] )
 {
 	pynz::runScripts( );
 }
 
-int main( [[ maybe_unused ]] int argc, [[ maybe_unused ]] char* argv[] )
+int main( int argc, char* argv[] )
 {
-	launch( );
+	launch( argc, argv );
 
 	return 0;
 }

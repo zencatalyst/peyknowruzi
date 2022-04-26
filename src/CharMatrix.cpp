@@ -176,16 +176,17 @@ void CharMatrix::setY_AxisLen( const uint32_t Y_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	const uint32_t& currentY_AxisLen { getY_AxisLen( ) };
+	const uint32_t& current_Y_AxisLen { getY_AxisLen( ) };
+	const uint32_t& new_Y_AxisLen { Y_AxisLen };
 
-	if ( Y_AxisLen == currentY_AxisLen ) { return; }
+	if ( new_Y_AxisLen == current_Y_AxisLen ) { return; }
 
-	if ( Y_AxisLen > currentY_AxisLen )
+	if ( new_Y_AxisLen > current_Y_AxisLen )
 	{
-		m_characterMatrix.resize( m_characterMatrix.size( ) + ( Y_AxisLen - currentY_AxisLen ) *
+		m_characterMatrix.resize( m_characterMatrix.size( ) + ( new_Y_AxisLen - current_Y_AxisLen ) *
 								  getX_AxisLen( ), getFillCharacter( ) );
 
-		for ( size_t last_idx_of_row { ( currentY_AxisLen + 1 ) * getX_AxisLen( ) - 1 }
+		for ( size_t last_idx_of_row { ( current_Y_AxisLen + 1 ) * getX_AxisLen( ) - 1 }
 			  ; last_idx_of_row < m_characterMatrix.size( ); last_idx_of_row += getX_AxisLen( ) )
 		{
 			m_characterMatrix[ last_idx_of_row ] = '\n';
@@ -193,11 +194,11 @@ void CharMatrix::setY_AxisLen( const uint32_t Y_AxisLen )
 	}
 	else
 	{
-		m_characterMatrix.resize( m_characterMatrix.size( ) - ( currentY_AxisLen - Y_AxisLen ) *
+		m_characterMatrix.resize( m_characterMatrix.size( ) - ( current_Y_AxisLen - new_Y_AxisLen ) *
 								  getX_AxisLen( ) );
 	}
 
-	m_Y_AxisLen = { Y_AxisLen };
+	m_Y_AxisLen = { new_Y_AxisLen };
 }
 
 void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
@@ -215,43 +216,44 @@ void CharMatrix::setX_AxisLen( const uint32_t X_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	const uint32_t& currentX_AxisLen { getX_AxisLen( ) };
+	const uint32_t& current_X_AxisLen { getX_AxisLen( ) };
+	const uint32_t& new_X_AxisLen { X_AxisLen };
 
-	if ( X_AxisLen == currentX_AxisLen ) { return; }
+	if ( new_X_AxisLen == current_X_AxisLen ) { return; }
 
-	if ( X_AxisLen > currentX_AxisLen )
+	if ( new_X_AxisLen > current_X_AxisLen )
 	{
-		m_characterMatrix.resize( getY_AxisLen( ) * X_AxisLen, getFillCharacter( ) );
+		m_characterMatrix.resize( getY_AxisLen( ) * new_X_AxisLen, getFillCharacter( ) );
 
 		for ( auto new_pos { m_characterMatrix.end( ) - 1 },
-			  old_pos { m_characterMatrix.begin( ) + ( getY_AxisLen( ) - 1 ) * currentX_AxisLen }
-			  ; old_pos >= m_characterMatrix.begin( ); old_pos -= currentX_AxisLen, --new_pos )
+			  old_pos { m_characterMatrix.begin( ) + ( getY_AxisLen( ) - 1 ) * current_X_AxisLen }
+			  ; old_pos >= m_characterMatrix.begin( ); old_pos -= current_X_AxisLen, --new_pos )
 		{
 			*new_pos = '\n';
 
-			new_pos -= X_AxisLen - currentX_AxisLen;
-			std::fill_n( new_pos, X_AxisLen - currentX_AxisLen, getFillCharacter( ) );
+			new_pos -= new_X_AxisLen - current_X_AxisLen;
+			std::fill_n( new_pos, new_X_AxisLen - current_X_AxisLen, getFillCharacter( ) );
 
-			new_pos -= currentX_AxisLen - 1;
-			std::copy_n( old_pos, currentX_AxisLen - 1, new_pos );
+			new_pos -= current_X_AxisLen - 1;
+			std::copy_n( old_pos, current_X_AxisLen - 1, new_pos );
 		}
 	}
 	else
 	{
 		for ( auto new_pos { m_characterMatrix.begin( ) },
 			  old_pos { m_characterMatrix.begin( ) }
-			  ; old_pos != m_characterMatrix.end( ); old_pos += currentX_AxisLen, ++new_pos )
+			  ; old_pos != m_characterMatrix.end( ); old_pos += current_X_AxisLen, ++new_pos )
 		{
-			std::copy_n( old_pos, X_AxisLen - 1, new_pos );
+			std::copy_n( old_pos, new_X_AxisLen - 1, new_pos );
 
-			new_pos += X_AxisLen - 1;
+			new_pos += new_X_AxisLen - 1;
 			*new_pos = '\n';
 		}
 
-		m_characterMatrix.resize( getY_AxisLen( ) * X_AxisLen );
+		m_characterMatrix.resize( getY_AxisLen( ) * new_X_AxisLen );
 	}
 
-	m_X_AxisLen = { X_AxisLen };
+	m_X_AxisLen = { new_X_AxisLen };
 }
 
 void CharMatrix::setFillCharacter( const char fillCharacter )
@@ -275,13 +277,14 @@ void CharMatrix::setFillCharacter( const char fillCharacter )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	const char& currentFillCharacter { getFillCharacter( ) };
+	const char& current_fillCharacter { getFillCharacter( ) };
+	const char& new_fillCharacter { fillCharacter };
 
-	if ( fillCharacter == currentFillCharacter ) { return; }
+	if ( new_fillCharacter == current_fillCharacter ) { return; }
 
-	std::ranges::replace( m_characterMatrix, currentFillCharacter, fillCharacter );
+	std::ranges::replace( m_characterMatrix, current_fillCharacter, new_fillCharacter );
 
-	m_fillCharacter = { fillCharacter };
+	m_fillCharacter = { new_fillCharacter };
 }
 
 inline void CharMatrix::setCharacterMatrix( const std::array<uint32_t, cartesian_components_count>& coordsOfChar ) noexcept
