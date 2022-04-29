@@ -108,7 +108,7 @@ convert_specific_tokens_to_integers( const std::span<const std::string_view> tok
 									 const std::pair<T, T> acceptableRange =
 									 { std::numeric_limits<T>::min( ), std::numeric_limits<T>::max( ) } ) noexcept;
 
-void get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT );
+std::size_t get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT );
 
 
 template < std::integral T >
@@ -182,12 +182,15 @@ convert_specific_tokens_to_integers( const std::span<const std::string_view> tok
 	return areTokensConvertibleToValidIntegers = true;
 }
 
-inline void get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT )
+inline std::size_t
+get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT )
 {
 	input_stream.putback( '\n' );
 	input_stream.clear( );
 	input_stream.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
 	input_stream.getline( inputBuffer_OUT.data( ), static_cast< std::streamsize >( inputBuffer_OUT.size( ) ) );
+
+	return std::char_traits<char>::length( inputBuffer_OUT.data( ) );
 }
 
 }

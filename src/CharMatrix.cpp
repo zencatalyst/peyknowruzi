@@ -299,25 +299,23 @@ inline void CharMatrix::setCharacterMatrix( const std::array<uint32_t, cartesian
 }
 
 [[ nodiscard ]] bool
-CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
+CharMatrix::validateEnteredMatrixAttributes( const std::string_view str_enteredMatrixAttributes,
 											 std::tuple<uint32_t, uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept
 {
 	static constexpr size_t required_tokens_count { matrix_attributes_count };
 	static constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
 	static constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
 
-	const auto posOfNull { std::find( str_enteredMatrixAttributes.cbegin( ), str_enteredMatrixAttributes.cend( ), '\0' ) };
-
 	std::array< std::string_view, required_tokens_count > foundTokens;
 
-	const size_t foundTokensCount { util::tokenize_fast( { str_enteredMatrixAttributes.cbegin( ), posOfNull },
+	const size_t foundTokensCount { util::tokenize_fast( str_enteredMatrixAttributes,
 														 foundTokens, required_tokens_count ) };
-
-	if ( foundTokensCount != required_tokens_count ) { return false; }
 
 	std::array<uint32_t, required_tokens_count> int_enteredMatrix_YX { };
 
-	const bool isValid { util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
+	const bool isValid { foundTokensCount == required_tokens_count
+																	&&
+						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_Y_AxisLen,
 																			  { min_allowed_y_axis_len, max_allowed_y_axis_len } )
 																																				&&
 						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX, specificTokenIndexFor_X_AxisLen,
@@ -336,7 +334,7 @@ CharMatrix::validateEnteredMatrixAttributes( const std::array<char, default_buff
 }
 
 [[ nodiscard ]] bool
-CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
+CharMatrix::validateEnteredCoords( const std::string_view str_enteredCoords,
 								   std::array<uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept
 {
 	static constexpr size_t required_tokens_count { cartesian_components_count };
@@ -348,16 +346,14 @@ CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& 
 	static constexpr uint32_t min_allowed_y { 0 };
 	static constexpr uint32_t min_allowed_x { 0 };
 
-	const auto posOfNull { std::find( str_enteredCoords.cbegin( ), str_enteredCoords.cend( ), '\0' ) };
-
 	std::array< std::string_view, required_tokens_count > foundTokens;
 
-	const size_t foundTokensCount { util::tokenize_fast( { str_enteredCoords.cbegin( ), posOfNull },
-														 foundTokens, required_tokens_count ) };
+	const size_t foundTokensCount { util::tokenize_fast( str_enteredCoords, foundTokens,
+														 required_tokens_count ) };
 
-	if ( foundTokensCount != required_tokens_count ) { return false; }
-
-	const bool isValid { util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
+	const bool isValid { foundTokensCount == required_tokens_count
+																	&&
+						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_Y,
 																			  { min_allowed_y, max_allowed_y } )
 																																			&&
 						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT, specificTokensIndicesFor_X,
@@ -369,29 +365,37 @@ CharMatrix::validateEnteredCoords( const std::array<char, default_buffer_size>& 
 [[ nodiscard ]] inline std::optional< CharMatrix::AllowedChars >
 CharMatrix::processCoordsToObtainCharType( const std::array<uint32_t, cartesian_components_count>& coordsOfChar ) noexcept
 {
-	if ( std::abs( static_cast<int64_t>( coordsOfChar[0] ) - static_cast<int64_t>( coordsOfChar[2] ) ) == 1 &&
-		 std::abs( static_cast<int64_t>( coordsOfChar[1] ) - static_cast<int64_t>( coordsOfChar[3] ) ) == 1 &&
-		 ( ( coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3] ) ||
-		   ( coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3] ) ) )
+	const auto& [ x1, y1, x2, y2 ] { coordsOfChar };
+
+	const bool isDifferenceOfX_AxisLensEqualTo_1 { std::abs( static_cast<int64_t>( x1 ) -
+															 static_cast<int64_t>( x2 ) ) == 1 };
+
+	const bool isDifferenceOfY_AxisLensEqualTo_1 { std::abs( static_cast<int64_t>( y1 ) -
+															 static_cast<int64_t>( y2 ) ) == 1 };
+
+	if ( isDifferenceOfX_AxisLensEqualTo_1 &&
+		 ( y1 == y2 ) )
 	{
-		return ForwardSlash;
+		return Dash;
 	}
-	else if ( std::abs( static_cast<int64_t>( coordsOfChar[0] ) - static_cast<int64_t>( coordsOfChar[2] ) ) == 1 &&
-			  std::abs( static_cast<int64_t>( coordsOfChar[1] ) - static_cast<int64_t>( coordsOfChar[3] ) ) == 1 &&
-			  ( ( coordsOfChar[0] < coordsOfChar[2] && coordsOfChar[1] < coordsOfChar[3] ) ||
-				( coordsOfChar[0] > coordsOfChar[2] && coordsOfChar[1] > coordsOfChar[3] ) ) )
-	{
-		return BackSlash;
-	}
-	else if ( ( coordsOfChar[0] == coordsOfChar[2] ) &&
-			  std::abs( static_cast<int64_t>( coordsOfChar[1] ) - static_cast<int64_t>( coordsOfChar[3] ) ) == 1 )
+	else if ( isDifferenceOfY_AxisLensEqualTo_1 &&
+			  ( x1 == x2 ) )
 	{
 		return VerticalSlash;
 	}
-	else if ( ( coordsOfChar[1] == coordsOfChar[3] ) &&
-			  std::abs( static_cast<int64_t>( coordsOfChar[0] ) - static_cast<int64_t>( coordsOfChar[2] ) ) == 1 )
+	else if ( isDifferenceOfX_AxisLensEqualTo_1 &&
+			  isDifferenceOfY_AxisLensEqualTo_1 &&
+			  ( ( x1 < x2 && y1 > y2 ) ||
+				( x1 > x2 && y1 < y2 ) ) )
 	{
-		return Dash;
+		return ForwardSlash;
+	}
+	else if ( isDifferenceOfX_AxisLensEqualTo_1 &&
+			  isDifferenceOfY_AxisLensEqualTo_1 &&
+			  ( ( x1 < x2 && y1 < y2 ) ||
+				( x1 > x2 && y1 > y2 ) ) )
+	{
+		return BackSlash;
 	}
 	else
 	{
@@ -415,15 +419,15 @@ size_t CharMatrix::getNumOfInputLines( ) const
 
 	do
 	{
-		util::get_chars_from_input( std::cin, str_numOfInputLines );
+		const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_numOfInputLines ) };
 
-		const auto posOfNull { std::find( str_numOfInputLines.cbegin( ), str_numOfInputLines.cend( ), '\0' ) };
-
-		const size_t foundTokensCount { util::tokenize_fast( { str_numOfInputLines.cbegin( ), posOfNull }, foundTokens, required_tokens_count ) };
+		const size_t foundTokensCount { util::tokenize_fast( { str_numOfInputLines.data( ), lengthOfInputStr },
+															 foundTokens, required_tokens_count ) };
 
 		isValid = { foundTokensCount == required_tokens_count &&
 					util::convert_tokens_to_integers<size_t>( foundTokens, int_numOfInputLines,
-															  { min_allowed_num_of_input_lines, max_allowed_num_of_input_lines } ) };
+															  { min_allowed_num_of_input_lines,
+															  	max_allowed_num_of_input_lines } ) };
 
 	} while ( !isValid );
 
@@ -441,9 +445,10 @@ auto CharMatrix::getMatrixAttributes( )
 
 	do
 	{
-		util::get_chars_from_input( std::cin, str_enteredMatrixAttributes );
+		const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredMatrixAttributes ) };
 
-		isAcceptable = { validateEnteredMatrixAttributes( str_enteredMatrixAttributes, tuple_enteredMatrixAttributes ) };
+		isAcceptable = { validateEnteredMatrixAttributes( { str_enteredMatrixAttributes.data( ), lengthOfInputStr },
+														  tuple_enteredMatrixAttributes ) };
 
 	} while ( !isAcceptable );
 
@@ -466,9 +471,10 @@ void CharMatrix::getCoords( )
 
 		do
 		{
-			util::get_chars_from_input( std::cin, str_enteredCoords );
+			const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredCoords ) };
 
-			isAcceptable = { validateEnteredCoords( str_enteredCoords, int_enteredCoords ) };
+			isAcceptable = { validateEnteredCoords( { str_enteredCoords.data( ), lengthOfInputStr },
+													int_enteredCoords ) };
 
 		} while ( !isAcceptable );
 

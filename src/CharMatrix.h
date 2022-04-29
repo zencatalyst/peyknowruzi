@@ -77,11 +77,11 @@ public:
 	void setCharacterMatrix( const std::array<std::uint32_t, cartesian_components_count>& coordsOfChar ) noexcept;
 
 	[[ nodiscard ]] bool
-	validateEnteredCoords( const std::array<char, default_buffer_size>& str_enteredCoords,
+	validateEnteredCoords( const std::string_view str_enteredCoords,
 						   std::array<std::uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept;
 
 	[[ nodiscard ]] static bool
-	validateEnteredMatrixAttributes( const std::array<char, default_buffer_size>& str_enteredMatrixAttributes,
+	validateEnteredMatrixAttributes( const std::string_view str_enteredMatrixAttributes,
 									 std::tuple<std::uint32_t, std::uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept;
 
 	[[ nodiscard ]] static std::optional<AllowedChars>
