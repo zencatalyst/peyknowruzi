@@ -141,6 +141,16 @@ std::partial_ordering CharMatrix::operator<=>( const CharMatrix& rhs ) const noe
 		   std::partial_ordering::equivalent : std::partial_ordering::unordered;
 }
 
+char& CharMatrix::operator[ ]( const size_t X_Axis, const size_t Y_Axis ) noexcept
+{
+	return m_characterMatrix[ Y_Axis * getX_AxisLen( ) + X_Axis ];
+}
+
+const char& CharMatrix::operator[ ]( const size_t X_Axis, const size_t Y_Axis ) const noexcept
+{
+	return m_characterMatrix[ Y_Axis * getX_AxisLen( ) + X_Axis ];
+}
+
 [[ nodiscard ]] inline const uint32_t& CharMatrix::getY_AxisLen( ) const noexcept
 {
 	return m_Y_AxisLen;

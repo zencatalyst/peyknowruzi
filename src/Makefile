@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -c -std=c++20 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O3 -march=native -flto
+CXXFLAGS = -c -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O3 -march=native -flto
 LDFLAGS = -O3 -march=native -flto -s -static
 DEPS = Scripts.h CharMatrix.h Util.h
 OBJS = Launch.o Scripts.o Util.o CharMatrix.o

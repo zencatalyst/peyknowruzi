@@ -65,6 +65,8 @@ public:
 	explicit operator bool( ) const noexcept;
 	bool operator==( const CharMatrix& rhs ) const noexcept;
 	std::partial_ordering operator<=>( const CharMatrix& rhs ) const noexcept;
+	char& operator[ ]( const std::size_t X_Axis, const std::size_t Y_Axis ) noexcept;
+	const char& operator[ ]( const std::size_t X_Axis, const std::size_t Y_Axis ) const noexcept;
 
 	[[ nodiscard ]] const std::uint32_t& getY_AxisLen( ) const noexcept;
 	[[ nodiscard ]] const std::uint32_t& getX_AxisLen( ) const noexcept;

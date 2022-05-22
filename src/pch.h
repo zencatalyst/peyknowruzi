@@ -39,6 +39,7 @@
 #include <ranges>
 #include <unordered_set>
 #include <utility>
+#include <functional>
 #include <optional>
 #include <concepts>
 
