@@ -31,7 +31,7 @@ namespace peyknowruzi
 
 void runScripts( )
 {
-	CharMatrix::runScript( );
+	runScript( );
 }
 
 }

@@ -46,6 +46,7 @@
 #include <algorithm>
 
 #include <memory>
+#include <memory_resource>
 #include <stdexcept>
 
 #include <cstddef>

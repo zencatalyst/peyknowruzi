@@ -32,6 +32,7 @@ namespace peyknowruzi
 
 inline constexpr std::streamsize default_buffer_size { 169 };
 
+template < class Allocator = std::allocator<char> >
 class CharMatrix
 {
 public:
@@ -58,7 +59,8 @@ private:
 public:
 	explicit CharMatrix( const std::uint32_t Y_AxisLen = default_y_axis_len,
 						 const std::uint32_t X_AxisLen = default_x_axis_len,
-						 const char fillCharacter = default_fill_character );
+						 const char fillCharacter = default_fill_character,
+						 const Allocator& alloc = Allocator { } );
 	CharMatrix( CharMatrix&& rhs ) noexcept;
 	CharMatrix& operator=( CharMatrix&& rhs ) noexcept;
 
@@ -71,7 +73,7 @@ public:
 	[[ nodiscard ]] const std::uint32_t& getY_AxisLen( ) const noexcept;
 	[[ nodiscard ]] const std::uint32_t& getX_AxisLen( ) const noexcept;
 	[[ nodiscard ]] const char& getFillCharacter( ) const noexcept;
-	[[ nodiscard ]] const std::vector<char>& getCharacterMatrix( ) const noexcept;
+	[[ nodiscard ]] const std::vector<char, Allocator>& getCharacterMatrix( ) const noexcept;
 
 	void setY_AxisLen( const std::uint32_t Y_AxisLen );
 	void setX_AxisLen( const std::uint32_t X_AxisLen );
@@ -94,17 +96,39 @@ public:
 	void getCoords( );
 	void draw( std::ostream& output_stream ) const;
 
-	friend std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix& char_matrix );
-	friend std::ifstream& operator>>( std::ifstream& ifs, CharMatrix& char_matrix );
-
-	static void initialize( );
-	static void runScript( );
+	template <class Alloc>
+	friend std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix<Alloc>& char_matrix );
+	template <class Alloc>
+	friend std::ifstream& operator>>( std::ifstream& ifs, CharMatrix<Alloc>& char_matrix );
 
 private:
 	std::uint32_t m_Y_AxisLen;
 	std::uint32_t m_X_AxisLen;
 	char m_fillCharacter;
-	std::vector<char> m_characterMatrix;
+	std::vector<char, Allocator> m_characterMatrix;
+};
+
+namespace pmr
+{
+	using CharMatrix = peyknowruzi::CharMatrix< std::pmr::polymorphic_allocator<char> >;
+}
+
+
+void initialize( );
+void runScript( );
+
+}
+
+namespace std
+{
+
+template <class Allocator>
+struct hash< peyknowruzi::CharMatrix<Allocator> >
+{
+	typedef peyknowruzi::CharMatrix<Allocator> argument_type;
+	typedef std::size_t result_type;
+
+	result_type operator( )( const argument_type& char_matrix ) const;
 };
 
 }
