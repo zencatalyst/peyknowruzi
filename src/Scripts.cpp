@@ -22,8 +22,8 @@
 */
 
 
-#include "Scripts.h"
-#include "CharMatrix.h"
+#include "Scripts.hpp"
+#include "CharMatrix.hpp"
 
 
 namespace peyknowruzi

@@ -37,8 +37,8 @@
 #endif
 
 
-#include "CharMatrix.h"
-#include "Util.h"
+#include "CharMatrix.hpp"
+#include "Util.hpp"
 
 
 using std::uint32_t;
@@ -163,25 +163,29 @@ const char& CharMatrix<Allocator>::operator[ ]( const size_t X_Axis, const size_
 }
 
 template <class Allocator>
-[[ nodiscard ]] inline const uint32_t& CharMatrix<Allocator>::getY_AxisLen( ) const noexcept
+[[ nodiscard ]] inline const uint32_t&
+CharMatrix<Allocator>::getY_AxisLen( ) const noexcept
 {
 	return m_Y_AxisLen;
 }
 
 template <class Allocator>
-[[ nodiscard ]] inline const uint32_t& CharMatrix<Allocator>::getX_AxisLen( ) const noexcept
+[[ nodiscard ]] inline const uint32_t&
+CharMatrix<Allocator>::getX_AxisLen( ) const noexcept
 {
 	return m_X_AxisLen;
 }
 
 template <class Allocator>
-[[ nodiscard ]] inline const char& CharMatrix<Allocator>::getFillCharacter( ) const noexcept
+[[ nodiscard ]] inline const char&
+CharMatrix<Allocator>::getFillCharacter( ) const noexcept
 {
 	return m_fillCharacter;
 }
 
 template <class Allocator>
-[[ nodiscard ]] inline const std::vector<char, Allocator>& CharMatrix<Allocator>::getCharacterMatrix( ) const noexcept
+[[ nodiscard ]] inline const std::vector<char, Allocator>&
+CharMatrix<Allocator>::getCharacterMatrix( ) const noexcept
 {
 	return m_characterMatrix;
 }
@@ -316,21 +320,24 @@ void CharMatrix<Allocator>::setFillCharacter( const char fillCharacter )
 }
 
 template <class Allocator>
-inline void CharMatrix<Allocator>::setCharacterMatrix( const std::array<uint32_t, cartesian_components_count>& coordsOfChar ) noexcept
+inline void CharMatrix<Allocator>::setCharacterMatrix( const std::array<uint32_t, cartesian_components_count>&
+													   coordsOfChar ) noexcept
 {
 	const std::optional< AllowedChars > ch { processCoordsToObtainCharType( coordsOfChar ) };
 
-	if ( ch.has_value( ) && chars_for_drawing.contains( ch.value( ) ) )
+	if ( const auto& [ x1, y1, x2, y2 ] { coordsOfChar };
+		 ch.has_value( ) && chars_for_drawing.contains( ch.value( ) ) )
 	{
-		m_characterMatrix[ coordsOfChar[ 1 ] * getX_AxisLen( ) + coordsOfChar[ 0 ] ] = ch.value( );
-		m_characterMatrix[ coordsOfChar[ 3 ] * getX_AxisLen( ) + coordsOfChar[ 2 ] ] = ch.value( );
+		( *this )[ x1, y1 ] = ch.value( );
+		( *this )[ x2, y2 ] = ch.value( );
 	}
 }
 
 template <class Allocator>
 [[ nodiscard ]] bool
 CharMatrix<Allocator>::validateEnteredMatrixAttributes( const std::string_view str_enteredMatrixAttributes,
-														std::tuple<uint32_t, uint32_t, char>& tuple_enteredMatrixAttributes_OUT ) noexcept
+														std::tuple<uint32_t, uint32_t, char>&
+														tuple_enteredMatrixAttributes_OUT ) noexcept
 {
 	static constexpr size_t required_tokens_count { matrix_attributes_count };
 	static constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
@@ -343,20 +350,24 @@ CharMatrix<Allocator>::validateEnteredMatrixAttributes( const std::string_view s
 
 	std::array<uint32_t, required_tokens_count> int_enteredMatrix_YX { };
 
-	const bool isValid { foundTokensCount == required_tokens_count
-																	&&
-						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX,
-																			  specificTokenIndexFor_Y_AxisLen,
-																			  { min_allowed_y_axis_len, max_allowed_y_axis_len } )
-																																	&&
-						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX,
-																			  specificTokenIndexFor_X_AxisLen,
-																			  { min_allowed_x_axis_len, max_allowed_x_axis_len } )
-																																	&&
-						 foundTokens[ 2 ].size( ) == 1 &&
-						 !chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) )
-
-						 ? true : false };
+	const bool isValid
+	{
+		foundTokensCount == required_tokens_count
+																								&&
+		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX,
+															 specificTokenIndexFor_Y_AxisLen,
+															 { min_allowed_y_axis_len,
+															   max_allowed_y_axis_len } )
+																								&&
+		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX,
+															 specificTokenIndexFor_X_AxisLen,
+															 { min_allowed_x_axis_len,
+															   max_allowed_x_axis_len } )
+																								&&
+		foundTokens[ 2 ].size( ) == 1
+																								&&
+		!chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) )
+	};
 
 	if ( isValid )
 	{
@@ -371,7 +382,8 @@ CharMatrix<Allocator>::validateEnteredMatrixAttributes( const std::string_view s
 template <class Allocator>
 [[ nodiscard ]] bool
 CharMatrix<Allocator>::validateEnteredCoords( const std::string_view str_enteredCoords,
-											  std::array<uint32_t, cartesian_components_count>& int_enteredCoords_OUT ) const noexcept
+											  std::array<uint32_t, cartesian_components_count>&
+											  int_enteredCoords_OUT ) const noexcept
 {
 	static constexpr size_t required_tokens_count { cartesian_components_count };
 	static constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
@@ -387,23 +399,26 @@ CharMatrix<Allocator>::validateEnteredCoords( const std::string_view str_entered
 	const size_t foundTokensCount { util::tokenize_fast( str_enteredCoords, foundTokens,
 														 required_tokens_count ) };
 
-	const bool isValid { foundTokensCount == required_tokens_count
-																	&&
-						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT,
-																			  specificTokensIndicesFor_Y,
-																			  { min_allowed_y, max_allowed_y } )
-																													&&
-						 util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT,
-																			  specificTokensIndicesFor_X,
-																			  { min_allowed_x, max_allowed_x } )
-						 ? true : false };
+	const bool isValid
+	{
+		foundTokensCount == required_tokens_count
+																									&&
+		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT,
+															 specificTokensIndicesFor_Y,
+															 { min_allowed_y, max_allowed_y } )
+																									&&
+		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT,
+															 specificTokensIndicesFor_X,
+															 { min_allowed_x, max_allowed_x } )
+	};
 
 	return isValid;
 }
 
 template <class Allocator>
 [[ nodiscard ]] inline std::optional< typename CharMatrix<Allocator>::AllowedChars >
-CharMatrix<Allocator>::processCoordsToObtainCharType( const std::array<uint32_t, cartesian_components_count>& coordsOfChar ) noexcept
+CharMatrix<Allocator>::processCoordsToObtainCharType( const std::array<uint32_t, cartesian_components_count>&
+													  coordsOfChar ) noexcept
 {
 	const auto& [ x1, y1, x2, y2 ] { coordsOfChar };
 
@@ -465,10 +480,10 @@ size_t CharMatrix<Allocator>::getNumOfInputLines( ) const
 		const size_t foundTokensCount { util::tokenize_fast( { str_numOfInputLines.data( ), lengthOfInputStr },
 															 foundTokens, required_tokens_count ) };
 
-		isValid = { foundTokensCount == required_tokens_count &&
-					util::convert_tokens_to_integers<size_t>( foundTokens, int_numOfInputLines,
-															  { min_allowed_num_of_input_lines,
-															  	max_allowed_num_of_input_lines } ) };
+		isValid = foundTokensCount == required_tokens_count &&
+				  util::convert_tokens_to_integers<size_t>( foundTokens, int_numOfInputLines,
+															{ min_allowed_num_of_input_lines,
+															  max_allowed_num_of_input_lines } );
 
 	} while ( !isValid );
 
@@ -489,8 +504,8 @@ auto CharMatrix<Allocator>::getMatrixAttributes( )
 	{
 		const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredMatrixAttributes ) };
 
-		isAcceptable = { validateEnteredMatrixAttributes( { str_enteredMatrixAttributes.data( ), lengthOfInputStr },
-														  tuple_enteredMatrixAttributes ) };
+		isAcceptable = validateEnteredMatrixAttributes( { str_enteredMatrixAttributes.data( ), lengthOfInputStr },
+														tuple_enteredMatrixAttributes );
 
 	} while ( !isAcceptable );
 
@@ -516,8 +531,8 @@ void CharMatrix<Allocator>::getCoords( )
 		{
 			const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredCoords ) };
 
-			isAcceptable = { validateEnteredCoords( { str_enteredCoords.data( ), lengthOfInputStr },
-													int_enteredCoords ) };
+			isAcceptable = validateEnteredCoords( { str_enteredCoords.data( ), lengthOfInputStr },
+												  int_enteredCoords );
 
 		} while ( !isAcceptable );
 

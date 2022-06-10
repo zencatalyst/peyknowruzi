@@ -25,7 +25,7 @@
 // repo available at https://github.com/zencatalyst/peyknowruzi
 
 
-#include "Scripts.h"
+#include "Scripts.hpp"
 
 
 namespace pynz = peyknowruzi;
