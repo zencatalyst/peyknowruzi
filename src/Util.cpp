@@ -65,9 +65,9 @@ tokenize_fast( const std::string_view inputStr,
 	static constexpr std::string_view delimiter { " \t" };
 
 	size_t start { inputStr.find_first_not_of( delimiter ) };
-	size_t end { };
 
-	for ( size_t idx { }; start != std::string_view::npos && foundTokensCount < expectedTokenCount; ++idx )
+	for ( size_t idx { }, end { }
+		  ; start != std::string_view::npos && foundTokensCount < expectedTokenCount; ++idx )
 	{
 		end = inputStr.find_first_of( delimiter, start );
 		foundTokens_OUT[ idx ] = inputStr.substr( start, end - start );

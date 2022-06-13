@@ -26,6 +26,7 @@
 
 
 #include <iostream>
+#include <ios>
 #include <sstream>
 #include <fstream>
 

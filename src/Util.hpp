@@ -42,9 +42,14 @@ struct ScopedTimer
 	~ScopedTimer( )
 	{
 		end = std::chrono::steady_clock::now( );
-		std::clog << "\nTimer took "
-				  << std::chrono::duration< double, std::milli >( end - start ).count( )
-				  << " ms\n";
+
+		try
+		{
+			std::clog << "\nTimer took "
+					  << std::chrono::duration< double, std::milli >{ end - start }.count( )
+					  << " ms\n";
+		}
+		catch ( const std::ios_base::failure& ) { }
 	}
 	ScopedTimer( const ScopedTimer& ) = delete;
 	ScopedTimer& operator=( const ScopedTimer& ) = delete;
@@ -55,13 +60,13 @@ template < typename Time = std::chrono::microseconds,
 struct FunctionTimer
 {
 	template < typename F, typename... Args >
-	static Time duration( F&& f, Args... args )
+	static Time duration( F&& f, Args&&... args )
 	{
-		auto start { Clock::now( ) };
+		const auto start { Clock::now( ) };
 
 		std::invoke( std::forward<F>( f ), std::forward<Args>( args )... );
 
-		auto end { Clock::now( ) };
+		const auto end { Clock::now( ) };
 
 		return std::chrono::duration_cast<Time>( end - start );
 	}
@@ -98,7 +103,8 @@ template < std::integral T >
 convert_tokens_to_integers( const std::span<const std::string_view> tokens,
 							const std::span<T> result_integers_OUT,
 							const std::pair<T, T> acceptableRange =
-							{ std::numeric_limits<T>::min( ), std::numeric_limits<T>::max( ) } ) noexcept;
+							{ std::numeric_limits<T>::min( ),
+							  std::numeric_limits<T>::max( ) } ) noexcept;
 
 template < std::integral T >
 [[ nodiscard ]] bool
@@ -106,7 +112,8 @@ convert_specific_tokens_to_integers( const std::span<const std::string_view> tok
 									 const std::span<T> result_integers_OUT,
 									 const std::span<const std::size_t> specificTokensIndices,
 									 const std::pair<T, T> acceptableRange =
-									 { std::numeric_limits<T>::min( ), std::numeric_limits<T>::max( ) } ) noexcept;
+									 { std::numeric_limits<T>::min( ),
+									   std::numeric_limits<T>::max( ) } ) noexcept;
 
 std::size_t get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT );
 
@@ -146,9 +153,10 @@ convert_tokens_to_integers( const std::span<const std::string_view> tokens,
 
 	for ( std::size_t idx { }; idx < tokens.size( ); ++idx )
 	{
-		const std::optional<T> tempInteger { util::to_integer<T>( tokens[ idx ], acceptableRange ) };
+		const std::optional<T> tempInteger { util::to_integer<T>( tokens[ idx ],
+																  acceptableRange ) };
 
-		if ( tempInteger ) { result_integers_OUT[ idx ] = tempInteger.value( ); }
+		if ( tempInteger ) { result_integers_OUT[ idx ] = *tempInteger; }
 		else { return areTokensConvertibleToValidIntegers = false; }
 	}
 
@@ -173,9 +181,10 @@ convert_specific_tokens_to_integers( const std::span<const std::string_view> tok
 		if ( specificTokenIndex >= tokens.size( ) )
 		{ return areTokensConvertibleToValidIntegers = false; }
 
-		const std::optional<T> tempInteger { util::to_integer<T>( tokens[ specificTokenIndex ], acceptableRange ) };
+		const std::optional<T> tempInteger { util::to_integer<T>( tokens[ specificTokenIndex ],
+																  acceptableRange ) };
 
-		if ( tempInteger ) { result_integers_OUT[ specificTokenIndex ] = tempInteger.value( ); }
+		if ( tempInteger ) { result_integers_OUT[ specificTokenIndex ] = *tempInteger; }
 		else { return areTokensConvertibleToValidIntegers = false; }
 	}
 
@@ -188,7 +197,8 @@ get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuf
 	input_stream.putback( '\n' );
 	input_stream.clear( );
 	input_stream.ignore( std::numeric_limits<std::streamsize>::max( ), '\n' );
-	input_stream.getline( inputBuffer_OUT.data( ), static_cast< std::streamsize >( inputBuffer_OUT.size( ) ) );
+	input_stream.getline( inputBuffer_OUT.data( ), static_cast< std::streamsize >(
+						  inputBuffer_OUT.size( ) ) );
 
 	return std::char_traits<char>::length( inputBuffer_OUT.data( ) );
 }

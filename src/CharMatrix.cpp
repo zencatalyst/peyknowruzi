@@ -326,10 +326,10 @@ inline void CharMatrix<Allocator>::setCharacterMatrix( const std::array<uint32_t
 	const std::optional< AllowedChars > ch { processCoordsToObtainCharType( coordsOfChar ) };
 
 	if ( const auto& [ x1, y1, x2, y2 ] { coordsOfChar };
-		 ch.has_value( ) && chars_for_drawing.contains( ch.value( ) ) )
+		 ch.has_value( ) && chars_for_drawing.contains( *ch ) )
 	{
-		( *this )[ x1, y1 ] = ch.value( );
-		( *this )[ x2, y2 ] = ch.value( );
+		( *this )[ x1, y1 ] = *ch;
+		( *this )[ x2, y2 ] = *ch;
 	}
 }
 
@@ -600,9 +600,8 @@ std::ifstream& operator>>( std::ifstream& ifs, CharMatrix<Allocator>& char_matri
 	char_matrix.setFillCharacter( temp_char_matrix.getFillCharacter( ) );
 	char_matrix.m_characterMatrix.reserve( temp_char_matrix.getCharacterMatrix( ).size( ) );
 	char_matrix.m_characterMatrix.clear( );
-	std::copy( temp_char_matrix.getCharacterMatrix( ).cbegin( ),
-			   temp_char_matrix.getCharacterMatrix( ).cend( ),
-			   std::back_inserter( char_matrix.m_characterMatrix ) );
+	std::ranges::copy( temp_char_matrix.getCharacterMatrix( ),
+					   std::back_inserter( char_matrix.m_characterMatrix ) );
 
 	return ifs;
 }
@@ -648,14 +647,14 @@ if constexpr ( alloc_strgy == Allocation_Strategy::heap_allocated )
 	matrix->getCoords( );
 	matrix->draw( std::cout );
 }
-else if ( alloc_strgy == Allocation_Strategy::stack_heap_allocated )
+else if constexpr ( alloc_strgy == Allocation_Strategy::stack_heap_allocated )
 {
 	auto matrix { CharMatrix<>( Y_AxisLen, X_AxisLen , fillCharacter ) };
 
 	matrix.getCoords( );
 	matrix.draw( std::cout );
 }
-else if ( alloc_strgy == Allocation_Strategy::stack_allocated )
+else if constexpr ( alloc_strgy == Allocation_Strategy::stack_allocated )
 {
 	constexpr size_t required_buffer_size { Y_AxisLen * X_AxisLen + 500 };
 	std::array< std::byte, required_buffer_size > buffer;
