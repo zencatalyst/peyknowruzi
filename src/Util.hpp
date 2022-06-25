@@ -25,12 +25,10 @@
 #pragma once
 
 #include "pch.hpp"
+#include "Log.hpp"
 
 
-namespace peyknowruzi
-{
-
-namespace util
+namespace peyknowruzi::util
 {
 
 struct ScopedTimer
@@ -45,9 +43,11 @@ struct ScopedTimer
 
 		try
 		{
-			std::clog << "\nTimer took "
-					  << std::chrono::duration< double, std::milli >{ end - start }.count( )
-					  << " ms\n";
+			using std::string_literals::operator""s;
+
+			log( "\nTimer took "s +
+				 std::to_string( std::chrono::duration< double, std::milli >{ end - start }.count( ) ) +
+				 " ms"s );
 		}
 		catch ( const std::ios_base::failure& ) { }
 	}
@@ -115,7 +115,13 @@ convert_specific_tokens_to_integers( const std::span<const std::string_view> tok
 									 { std::numeric_limits<T>::min( ),
 									   std::numeric_limits<T>::max( ) } ) noexcept;
 
-std::size_t get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT );
+std::size_t
+get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT );
+
+#if __cpp_lib_chrono >= 201907L
+[[ nodiscard ]] std::chrono::zoned_time
+retrieve_current_local_time( );
+#endif
 
 
 template < std::integral T >
@@ -203,6 +209,13 @@ get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuf
 	return std::char_traits<char>::length( inputBuffer_OUT.data( ) );
 }
 
+#if __cpp_lib_chrono >= 201907L
+[[ nodiscard ]] inline std::chrono::zoned_time
+retrieve_current_local_time( )
+{
+	using namespace std::chrono;
+	return zoned_time { current_zone { }, system_clock::now( ) };
 }
+#endif
 
 }

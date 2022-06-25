@@ -24,6 +24,9 @@
 
 #include "Scripts.hpp"
 #include "CharMatrix.hpp"
+#include "Log.hpp"
+#include "Util.hpp"
+#include "pch.hpp"
 
 
 namespace peyknowruzi
@@ -33,5 +36,18 @@ void runScripts( )
 {
 	runScript( );
 }
+
+void exit_handler( )
+{
+#if PN_DEBUG == 1
+	using std::string_literals::operator""s;
+
+	log( "\nProgram execution ended in "s +
+		 /*( std::stringstream { } << util::retrieve_current_local_time( ) ).str( ) +*/
+		 "\n"s );
+#endif
+}
+
+const int flag { std::atexit( exit_handler ) };
 
 }

@@ -22,22 +22,8 @@
 */
 
 
-#define PN_DEBUG 0
-//#define GUI_MODE 0
-#define FULL_INPUT_MODE 0
-
-#if PN_DEBUG == 1
-#define LOG(x) std::clog << ( x ) << std::endl
-#define ERR(x) std::cerr << ( x ) << std::endl
-#define WAIT std::cin.get( )
-#else
-#define LOG(x)
-#define ERR(x)
-#define WAIT
-#endif
-
-
 #include "CharMatrix.hpp"
+#include "Log.hpp"
 #include "Util.hpp"
 
 
@@ -555,7 +541,7 @@ inline void CharMatrix<Allocator>::draw( std::ostream& output_stream ) const
 	}
 #endif
 
-	LOG( "\nFinished." );
+	log( "\nFinished." );
 	WAIT;
 }
 
@@ -569,7 +555,7 @@ std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix<Allocator>& char
 	ofs.write( reinterpret_cast<const char*>( &char_matrix.getFillCharacter( ) ),
 			   sizeof( char_matrix.getFillCharacter( ) ) );
 	ofs.write( reinterpret_cast<const char*>( char_matrix.getCharacterMatrix( ).data( ) ),
-											  char_matrix.getCharacterMatrix( ).size( ) );
+					 static_cast<streamsize>( char_matrix.getCharacterMatrix( ).size( ) ) );
 
 	return ofs;
 }
@@ -590,7 +576,7 @@ std::ifstream& operator>>( std::ifstream& ifs, CharMatrix<Allocator>& char_matri
 	temp_char_matrix.m_characterMatrix.resize( temp_char_matrix.getY_AxisLen( ) *
 											   temp_char_matrix.getX_AxisLen( ) );
 	ifs.read( reinterpret_cast<char*>( temp_char_matrix.m_characterMatrix.data( ) ),
-									   temp_char_matrix.m_characterMatrix.size( ) );
+			  static_cast<streamsize>( temp_char_matrix.m_characterMatrix.size( ) ) );
 
 	char_matrix.m_Y_AxisLen = temp_char_matrix.getY_AxisLen( );
 	char_matrix.setY_AxisLen( temp_char_matrix.getY_AxisLen( ) );

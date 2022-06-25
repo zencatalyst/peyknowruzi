@@ -30,4 +30,6 @@ namespace peyknowruzi
 
 void runScripts( );
 
+void exit_handler( );
+
 }

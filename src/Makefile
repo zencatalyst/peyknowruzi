@@ -1,34 +1,108 @@
+
+#
+# Compiler flags
+#
 CXX = g++
-CXXFLAGS = -c -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O3 -march=native -flto
-LDFLAGS = -O3 -march=native -flto -s -static
-DEPS = Scripts.hpp CharMatrix.hpp Util.hpp
-OBJS = Launch.o Scripts.o Util.o CharMatrix.o
+CXXFLAGS = -c -DFULL_INPUT_MODE=0 -DGUI_MODE=0 -std=c++23 -Wall -Wextra \
+		   -Wpedantic -Wconversion -Wsign-conversion -Wshadow
+
+#
+# Linker flags
+#
+LDFLAGS = -static
+
+#
+# Project files
+#
+DEPS = Scripts.hpp Log.hpp Util.hpp CharMatrix.hpp
+SRCS = Launch.cpp Scripts.cpp Util.cpp CharMatrix.cpp
+OBJS = $(SRCS:.cpp=.o)
 TARGET = PeykNowruzi
 
+#
+# Precompiled header files
+#
 PCH_SRC = pch.hpp
 PCH_OUT = pch.hpp.gch
 
-all: $(TARGET)
+#
+# Debug build settings
+#
+DBGDIR = ../build/debug
+DBGTARGET = $(DBGDIR)/$(TARGET)
+DBGOBJS = $(addprefix $(DBGDIR)/, $(OBJS))
+DBGPCH_OUT = $(DBGDIR)/$(PCH_OUT)
+DBGCXXFLAGS = -DPN_DEBUG=1 -g -O0
+DBGLDFLAGS =
 
-$(TARGET): $(OBJS)
-	$(CXX) $(LDFLAGS) $^ -o runPeykNowruzi
+#
+# Release build settings
+#
+RELDIR = ../build/release
+RELTARGET = $(RELDIR)/$(TARGET)
+RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
+RELPCH_OUT = $(RELDIR)/$(PCH_OUT)
+RELCXXFLAGS = -DPN_DEBUG=0 -O3 -march=native -flto
+RELLDFLAGS = -O3 -march=native -flto -s
 
-$(PCH_OUT): $(PCH_SRC)
-	$(CXX) $(CXXFLAGS) $< -o $@
+.PHONY: all clean debug prep release remake
 
-Launch.o: Launch.cpp Scripts.hpp $(PCH_OUT)
-	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
+# Default build
+all: prep release
 
-Scripts.o: Scripts.cpp Scripts.hpp CharMatrix.hpp $(PCH_OUT)
-	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
+#
+# Debug rules
+#
+debug: $(DBGTARGET)
 
-Util.o: Util.cpp Util.hpp $(PCH_OUT)
-	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
+$(DBGTARGET): $(DBGOBJS)
+	$(CXX) $(LDFLAGS) $(DBGLDFLAGS) $^ -o $@
 
-CharMatrix.o: CharMatrix.cpp CharMatrix.hpp Util.hpp $(PCH_OUT)
-	$(CXX) $(CXXFLAGS) -include $(PCH_SRC) $< -o $@
+$(DBGPCH_OUT): $(PCH_SRC)
+	$(CXX) $(CXXFLAGS) $(DBGCXXFLAGS) $< -o $@
 
-.PHONY: clean
+$(DBGDIR)/Launch.o: Launch.cpp Scripts.hpp $(DBGPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(DBGCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+$(DBGDIR)/Scripts.o: Scripts.cpp Scripts.hpp CharMatrix.hpp Log.hpp Util.hpp $(DBGPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(DBGCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+$(DBGDIR)/Util.o: Util.cpp Util.hpp $(DBGPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(DBGCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+$(DBGDIR)/CharMatrix.o: CharMatrix.cpp CharMatrix.hpp Log.hpp Util.hpp $(DBGPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(DBGCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+#
+# Release rules
+#
+release: $(RELTARGET)
+
+$(RELTARGET): $(RELOBJS)
+	$(CXX) $(LDFLAGS) $(RELLDFLAGS) $^ -o $@
+
+$(RELPCH_OUT): $(PCH_SRC)
+	$(CXX) $(CXXFLAGS) $(RELCXXFLAGS) $< -o $@
+
+$(RELDIR)/Launch.o: Launch.cpp Scripts.hpp $(RELPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(RELCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+$(RELDIR)/Scripts.o: Scripts.cpp Scripts.hpp CharMatrix.hpp Log.hpp Util.hpp $(RELPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(RELCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+$(RELDIR)/Util.o: Util.cpp Util.hpp $(RELPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(RELCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+$(RELDIR)/CharMatrix.o: CharMatrix.cpp CharMatrix.hpp Log.hpp Util.hpp $(RELPCH_OUT)
+	$(CXX) $(CXXFLAGS) $(RELCXXFLAGS) -include $(PCH_SRC) $< -o $@
+
+#
+# Other rules
+#
+prep:
+	@mkdir -p $(DBGDIR) $(RELDIR)
+
+remake: clean all
 
 clean:
-	rm *.o runPeykNowruzi
+	rm -f $(RELTARGET) $(RELOBJS) $(DBGTARGET) $(DBGOBJS)

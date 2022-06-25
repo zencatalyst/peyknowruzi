@@ -27,10 +27,7 @@
 
 using std::size_t;
 
-namespace peyknowruzi
-{
-
-namespace util
+namespace peyknowruzi::util
 {
 
 [[ nodiscard ]] std::vector< std::string >
@@ -81,8 +78,6 @@ tokenize_fast( const std::string_view inputStr,
 	}
 
 	return foundTokensCount;
-}
-
 }
 
 }
