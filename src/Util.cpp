@@ -23,6 +23,7 @@
 
 
 #include "Util.hpp"
+#include "pch.hpp"
 
 
 using std::size_t;
@@ -30,19 +31,31 @@ using std::size_t;
 namespace peyknowruzi::util
 {
 
-[[ nodiscard ]] std::vector< std::string >
-tokenize( const std::string_view inputStr, [[ maybe_unused ]] const size_t expectedTokenCount )
+[[ nodiscard ]] std::vector< std::string_view >
+tokenize( const std::string_view inputStr,
+		  const size_t expectedTokenCount )
 {
+	std::vector< std::string_view > foundTokens { };
+
 	if ( inputStr.empty( ) ) [[ unlikely ]]
 	{
-		return std::vector< std::string > { };
+		return foundTokens;
 	}
 
-	std::stringstream ss;
-	ss << inputStr;
+	if ( expectedTokenCount != std::numeric_limits<size_t>::max( ) )
+	{
+		foundTokens.reserve( expectedTokenCount );
+	}
 
-	const std::vector< std::string > foundTokens { std::istream_iterator< std::string >( ss ),
-												   std::istream_iterator< std::string >( ) };
+	static constexpr std::string_view delimiter { " \t" };
+
+	for ( size_t start { inputStr.find_first_not_of( delimiter ) }, end { }
+		  ; start != std::string_view::npos; )
+	{
+		end = inputStr.find_first_of( delimiter, start );
+		foundTokens.emplace_back( inputStr.substr( start, end - start ) );
+		start = inputStr.find_first_not_of( delimiter, end );
+	}
 
 	return foundTokens;
 }
@@ -74,7 +87,7 @@ tokenize_fast( const std::string_view inputStr,
 
 	if ( start != std::string_view::npos )
 	{
-		return std::numeric_limits<size_t>::max( );
+		return foundTokensCount = std::numeric_limits<size_t>::max( );
 	}
 
 	return foundTokensCount;

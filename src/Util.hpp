@@ -72,11 +72,13 @@ struct FunctionTimer
 	}
 };
 
-[[ nodiscard ]] std::vector< std::string >
-tokenize( const std::string_view inputStr, [[ maybe_unused ]] const std::size_t expectedTokenCount );
+[[ nodiscard ]] std::vector< std::string_view >
+tokenize( const std::string_view inputStr,
+		  const std::size_t expectedTokenCount = std::numeric_limits<std::size_t>::max( ) );
 
-[[ nodiscard ]] std::vector< std::string >
-tokenize( const char* const inputStr, [[ maybe_unused ]] const std::size_t expectedTokenCount ) = delete;
+[[ nodiscard ]] std::vector< std::string_view >
+tokenize( const char* const inputStr,
+		  const std::size_t expectedTokenCount = std::numeric_limits<std::size_t>::max( ) ) = delete;
 
 [[ nodiscard ]] std::size_t
 tokenize_fast( const std::string_view inputStr,
@@ -119,7 +121,7 @@ std::size_t
 get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT );
 
 #if __cpp_lib_chrono >= 201907L
-[[ nodiscard ]] std::chrono::zoned_time
+[[ nodiscard ]] auto
 retrieve_current_local_time( );
 #endif
 
@@ -128,9 +130,11 @@ template < std::integral T >
 [[ nodiscard ]] inline std::optional<T>
 to_integer( std::string_view token, const std::pair<T, T> acceptableRange ) noexcept
 {
+	std::optional<T> result { };
+
 	if ( token.empty( ) )
 	{
-		return { };
+		return result = std::nullopt;
 	}
 
 	if ( token.size( ) > 1 && token[ 0 ] == '+' && token[ 1 ] != '-' ) { token.remove_prefix( 1 ); }
@@ -141,9 +145,9 @@ to_integer( std::string_view token, const std::pair<T, T> acceptableRange ) noex
 	const auto& [ minAcceptableValue, maxAcceptableValue ] { acceptableRange };
 
 	if ( ec != std::errc( ) || ptr != token.end( ) ||
-		 value < minAcceptableValue || value > maxAcceptableValue ) { return { }; }
+		 value < minAcceptableValue || value > maxAcceptableValue ) { return result = std::nullopt; }
 
-	return value;
+	return result = value;
 }
 
 template < std::integral T >
@@ -210,11 +214,11 @@ get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuf
 }
 
 #if __cpp_lib_chrono >= 201907L
-[[ nodiscard ]] inline std::chrono::zoned_time
+[[ nodiscard ]] inline auto
 retrieve_current_local_time( )
 {
 	using namespace std::chrono;
-	return zoned_time { current_zone { }, system_clock::now( ) };
+	return zoned_time { current_zone( ), system_clock::now( ) };
 }
 #endif
 

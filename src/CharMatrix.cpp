@@ -23,6 +23,7 @@
 
 
 #include "CharMatrix.hpp"
+#include "pch.hpp"
 #include "Log.hpp"
 #include "Util.hpp"
 
@@ -440,7 +441,7 @@ CharMatrix<Allocator>::processCoordsToObtainCharType( const std::array<uint32_t,
 	}
 	else
 	{
-		return { };
+		return std::nullopt;
 	}
 }
 
