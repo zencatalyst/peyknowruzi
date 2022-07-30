@@ -100,7 +100,7 @@ C:\Users\joel\Desktop\peyknowruzi\Executables>runPeykNowruzi_Windows.exe < "C:\U
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome.<br />
-Thanks for your cooperation!
+Thanks a ton for your cooperation!
 
 ## Author
 
