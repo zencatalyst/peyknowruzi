@@ -34,7 +34,40 @@ namespace peyknowruzi
 
 void runScripts( )
 {
-	runScript( );
+	// runScript( );
+
+    using CharMatrix_1001 = pmr::CharMatrix<1001, std::uint32_t, char>;
+
+    static constexpr CharMatrix_1001::size_type Y_AxisLen { 36 };
+    static constexpr CharMatrix_1001::size_type X_AxisLen { 168 };
+    static constexpr CharMatrix_1001::value_type fillCharacter { ' ' };
+
+    static_assert( Y_AxisLen >= CharMatrix_1001::min_allowed_y_axis_len &&
+                   Y_AxisLen <= CharMatrix_1001::max_allowed_y_axis_len,
+                   "Y_AxisLen can not be greater than max_allowed_y_axis_len or "
+                   "less than min_allowed_y_axis_len" );
+
+    static_assert( X_AxisLen >= CharMatrix_1001::min_allowed_x_axis_len &&
+                   X_AxisLen <= CharMatrix_1001::max_allowed_x_axis_len,
+                   "X_AxisLen can not be greater than max_allowed_x_axis_len or "
+                   "less than min_allowed_x_axis_len" );
+
+    constexpr size_t buffer_size { Y_AxisLen * X_AxisLen + 500 };
+    static auto buffer { std::array< std::byte, buffer_size >{ } };
+    const auto buffer_address { buffer.data( ) };
+    static std::pmr::monotonic_buffer_resource rsrc { buffer_address, buffer_size };
+
+    static auto matrix { CharMatrix_1001( Y_AxisLen, X_AxisLen , fillCharacter, &rsrc ) };
+
+    matrix.getCoords( matrix.getNumOfInputLines( ) );
+    matrix.print( );
+
+    /*constexpr CharMatrix_1001::size_type Y_AxisLen { 36 };
+    constexpr CharMatrix_1001::size_type X_AxisLen { 168 };
+    constexpr CharMatrix_1001::value_type fillCharacter { ' ' };
+    constexpr bool isFullInputModeEnabled { false };*/
+
+    // CharMatrix_1001::runScriptForStackAllocated<Y_AxisLen, X_AxisLen, fillCharacter, isFullInputModeEnabled>( );
 }
 
 void exit_handler( )

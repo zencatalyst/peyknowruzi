@@ -28,7 +28,6 @@
 #include "Util.hpp"
 
 
-using std::uint32_t;
 using std::int64_t;
 using std::size_t;
 using std::streamsize;
@@ -36,43 +35,14 @@ using std::streamsize;
 namespace peyknowruzi
 {
 
-static constexpr uint32_t min_allowed_y_axis_len { 1 };
-static constexpr uint32_t min_allowed_x_axis_len { 2 };
-static constexpr uint32_t max_allowed_y_axis_len { 50 };
-static constexpr uint32_t max_allowed_x_axis_len { 168 };
-static constexpr size_t min_possible_num_of_input_lines { 0 };
-static constexpr size_t max_possible_num_of_input_lines { ( max_allowed_y_axis_len *
-														  ( max_allowed_x_axis_len - 1 ) ) / 2 };
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+inline CharMatrix<unique_ID, sizeT, charT, Allocator>::
+CharMatrix( const sizeT Y_AxisLen, const sizeT X_AxisLen,
+			const charT fillCharacter, const Allocator& alloc )
 
-static_assert( CharMatrix<>::default_y_axis_len >= min_allowed_y_axis_len &&
-			   CharMatrix<>::default_y_axis_len <= max_allowed_y_axis_len,
-			   "default_y_axis_len can not be greater than max_allowed_y_axis_len or "
-			   "less than min_allowed_y_axis_len" );
-
-static_assert( CharMatrix<>::default_x_axis_len >= min_allowed_x_axis_len &&
-			   CharMatrix<>::default_x_axis_len <= max_allowed_x_axis_len,
-			   "default_x_axis_len can not be greater than max_allowed_x_axis_len or "
-			   "less than min_allowed_x_axis_len" );
-
-static_assert( max_possible_num_of_input_lines <= max_allowed_y_axis_len * ( max_allowed_x_axis_len - 1 ) / 2 &&
-			   max_possible_num_of_input_lines >= 0,
-			   "max_possible_num_of_input_lines can not be greater than "
-			   "( max_allowed_y_axis_len * max_allowed_x_axis_len ) / 2 or less than 0" );
-
-static_assert( min_possible_num_of_input_lines <= max_allowed_y_axis_len * ( max_allowed_x_axis_len - 1 ) / 2 &&
-			   min_possible_num_of_input_lines >= 0 &&
-			   min_possible_num_of_input_lines <= max_possible_num_of_input_lines,
-			   "min_possible_num_of_input_lines can not be greater than "
-			   "( max_allowed_y_axis_len * max_allowed_x_axis_len ) / 2 or less than 0 or "
-			   "greater than max_possible_num_of_input_lines" );
-
-
-template <class Allocator>
-inline CharMatrix<Allocator>::CharMatrix( const uint32_t Y_AxisLen, const uint32_t X_AxisLen,
-										  const char fillCharacter, const Allocator& alloc )
-
-	: m_Y_AxisLen( Y_AxisLen ), m_X_AxisLen( X_AxisLen ), m_fillCharacter( fillCharacter ),
-	  m_characterMatrix( Y_AxisLen * X_AxisLen, fillCharacter, alloc )
+	: m_Y_AxisLen { Y_AxisLen }, m_X_AxisLen { X_AxisLen },
+	  m_fillCharacter { fillCharacter }, m_characterMatrix { Y_AxisLen * X_AxisLen, fillCharacter, alloc }
 {
 	for ( size_t last_idx_of_row { m_X_AxisLen - 1 }; last_idx_of_row < m_characterMatrix.size( )
 		  ; last_idx_of_row += m_X_AxisLen )
@@ -81,51 +51,57 @@ inline CharMatrix<Allocator>::CharMatrix( const uint32_t Y_AxisLen, const uint32
 	}
 }
 
-template <class Allocator>
-inline CharMatrix<Allocator>::CharMatrix( CharMatrix<Allocator>&& rhs ) noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+inline CharMatrix<unique_ID, sizeT, charT, Allocator>::
+CharMatrix( CharMatrix<unique_ID, sizeT, charT, Allocator>&& rhs ) noexcept
 
-	: m_Y_AxisLen( rhs.m_Y_AxisLen ), m_X_AxisLen( rhs.m_X_AxisLen ), m_fillCharacter( rhs.m_fillCharacter ),
-	  m_characterMatrix( std::move( rhs.m_characterMatrix ) )
+	: m_Y_AxisLen       { std::exchange( rhs.m_Y_AxisLen, 0 ) },
+	  m_X_AxisLen       { std::exchange( rhs.m_X_AxisLen, 0 ) },
+	  m_fillCharacter   { std::exchange( rhs.m_fillCharacter, 0 ) },
+	  m_characterMatrix { std::move( rhs.m_characterMatrix ) }
 {
-	rhs.m_Y_AxisLen = 0;
-	rhs.m_X_AxisLen = 0;
-	rhs.m_fillCharacter = 0;
 }
 
-template <class Allocator>
-inline CharMatrix<Allocator>& CharMatrix<Allocator>::operator=( CharMatrix<Allocator>&& rhs ) noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+inline CharMatrix<unique_ID, sizeT, charT, Allocator>&
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+operator=( CharMatrix<unique_ID, sizeT, charT, Allocator>&& rhs ) noexcept
 {
 	if ( this != &rhs )
 	{
+		m_Y_AxisLen       = std::exchange( rhs.m_Y_AxisLen, 0 );
+		m_X_AxisLen       = std::exchange( rhs.m_X_AxisLen, 0 );
+		m_fillCharacter   = std::exchange( rhs.m_fillCharacter, 0 );
 		m_characterMatrix = std::move( rhs.m_characterMatrix );
-		m_Y_AxisLen = rhs.m_Y_AxisLen;
-		m_X_AxisLen = rhs.m_X_AxisLen;
-		m_fillCharacter = rhs.m_fillCharacter;
-
-		rhs.m_Y_AxisLen = 0;
-		rhs.m_X_AxisLen = 0;
-		rhs.m_fillCharacter = 0;
 	}
 
 	return *this;
 }
 
-template <class Allocator>
-CharMatrix<Allocator>::operator bool( ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+operator bool( ) const noexcept
 {
 	return !m_characterMatrix.empty( );
 }
 
-template <class Allocator>
-bool CharMatrix<Allocator>::operator==( const CharMatrix<Allocator>& rhs ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+bool CharMatrix<unique_ID, sizeT, charT, Allocator>::
+operator==( const CharMatrix<unique_ID, sizeT, charT, Allocator>& rhs ) const noexcept
 {
 	return m_Y_AxisLen == rhs.m_Y_AxisLen &&
 		   m_X_AxisLen == rhs.m_X_AxisLen &&
 		   m_fillCharacter == rhs.m_fillCharacter;
 }
 
-template <class Allocator>
-std::partial_ordering CharMatrix<Allocator>::operator<=>( const CharMatrix<Allocator>& rhs ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+std::partial_ordering CharMatrix<unique_ID, sizeT, charT, Allocator>::
+operator<=>( const CharMatrix<unique_ID, sizeT, charT, Allocator>& rhs ) const noexcept
 {
 	if ( auto cmp { m_Y_AxisLen * m_X_AxisLen <=> rhs.m_Y_AxisLen * rhs.m_X_AxisLen };
 		 cmp != 0 ) { return cmp; }
@@ -137,48 +113,62 @@ std::partial_ordering CharMatrix<Allocator>::operator<=>( const CharMatrix<Alloc
 		   std::partial_ordering::equivalent : std::partial_ordering::unordered;
 }
 
-template <class Allocator>
-char& CharMatrix<Allocator>::operator[ ]( const size_t X_Axis, const size_t Y_Axis ) noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+charT& CharMatrix<unique_ID, sizeT, charT, Allocator>::
+operator[ ]( const size_t X_Axis, const size_t Y_Axis ) noexcept
 {
 	return m_characterMatrix[ Y_Axis * getX_AxisLen( ) + X_Axis ];
 }
 
-template <class Allocator>
-const char& CharMatrix<Allocator>::operator[ ]( const size_t X_Axis, const size_t Y_Axis ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+const charT& CharMatrix<unique_ID, sizeT, charT, Allocator>::
+operator[ ]( const size_t X_Axis, const size_t Y_Axis ) const noexcept
 {
 	return m_characterMatrix[ Y_Axis * getX_AxisLen( ) + X_Axis ];
 }
 
-template <class Allocator>
-[[ nodiscard ]] inline const uint32_t&
-CharMatrix<Allocator>::getY_AxisLen( ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] inline const sizeT&
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getY_AxisLen( ) const noexcept
 {
 	return m_Y_AxisLen;
 }
 
-template <class Allocator>
-[[ nodiscard ]] inline const uint32_t&
-CharMatrix<Allocator>::getX_AxisLen( ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] inline const sizeT&
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getX_AxisLen( ) const noexcept
 {
 	return m_X_AxisLen;
 }
 
-template <class Allocator>
-[[ nodiscard ]] inline const char&
-CharMatrix<Allocator>::getFillCharacter( ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] inline const charT&
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getFillCharacter( ) const noexcept
 {
 	return m_fillCharacter;
 }
 
-template <class Allocator>
-[[ nodiscard ]] inline const std::vector<char, Allocator>&
-CharMatrix<Allocator>::getCharacterMatrix( ) const noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] inline const std::vector<charT, Allocator>&
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getCharacterMatrix( ) const noexcept
 {
 	return m_characterMatrix;
 }
 
-template <class Allocator>
-void CharMatrix<Allocator>::setY_AxisLen( const uint32_t Y_AxisLen )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+setY_AxisLen( const sizeT Y_AxisLen )
 {
 	if ( Y_AxisLen > max_allowed_y_axis_len || Y_AxisLen < min_allowed_y_axis_len )
 	{
@@ -193,8 +183,8 @@ void CharMatrix<Allocator>::setY_AxisLen( const uint32_t Y_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	const uint32_t& current_Y_AxisLen { getY_AxisLen( ) };
-	const uint32_t& new_Y_AxisLen { Y_AxisLen };
+	const sizeT& current_Y_AxisLen { getY_AxisLen( ) };
+	const sizeT& new_Y_AxisLen { Y_AxisLen };
 
 	if ( new_Y_AxisLen == current_Y_AxisLen ) { return; }
 
@@ -218,8 +208,10 @@ void CharMatrix<Allocator>::setY_AxisLen( const uint32_t Y_AxisLen )
 	m_Y_AxisLen = { new_Y_AxisLen };
 }
 
-template <class Allocator>
-void CharMatrix<Allocator>::setX_AxisLen( const uint32_t X_AxisLen )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+setX_AxisLen( const sizeT X_AxisLen )
 {
 	if ( X_AxisLen > max_allowed_x_axis_len || X_AxisLen < min_allowed_x_axis_len )
 	{
@@ -234,8 +226,8 @@ void CharMatrix<Allocator>::setX_AxisLen( const uint32_t X_AxisLen )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	const uint32_t& current_X_AxisLen { getX_AxisLen( ) };
-	const uint32_t& new_X_AxisLen { X_AxisLen };
+	const sizeT& current_X_AxisLen { getX_AxisLen( ) };
+	const sizeT& new_X_AxisLen { X_AxisLen };
 
 	if ( new_X_AxisLen == current_X_AxisLen ) { return; }
 
@@ -274,8 +266,10 @@ void CharMatrix<Allocator>::setX_AxisLen( const uint32_t X_AxisLen )
 	m_X_AxisLen = { new_X_AxisLen };
 }
 
-template <class Allocator>
-void CharMatrix<Allocator>::setFillCharacter( const char fillCharacter )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+setFillCharacter( const charT fillCharacter )
 {
 	if ( chars_for_drawing.contains( static_cast<AllowedChars>( fillCharacter ) ) )
 	{
@@ -296,8 +290,8 @@ void CharMatrix<Allocator>::setFillCharacter( const char fillCharacter )
 		throw std::invalid_argument( exceptionMsg );
 	}
 
-	const char& current_fillCharacter { getFillCharacter( ) };
-	const char& new_fillCharacter { fillCharacter };
+	const charT& current_fillCharacter { getFillCharacter( ) };
+	const charT& new_fillCharacter { fillCharacter };
 
 	if ( new_fillCharacter == current_fillCharacter ) { return; }
 
@@ -306,9 +300,10 @@ void CharMatrix<Allocator>::setFillCharacter( const char fillCharacter )
 	m_fillCharacter = { new_fillCharacter };
 }
 
-template <class Allocator>
-inline void CharMatrix<Allocator>::setCharacterMatrix( const std::array<uint32_t, cartesian_components_count>&
-													   coordsOfChar ) noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+setCharacterMatrix( const std::array<sizeT, cartesian_components_count>& coordsOfChar ) noexcept
 {
 	const std::optional< AllowedChars > ch { processCoordsToObtainCharType( coordsOfChar ) };
 
@@ -320,100 +315,16 @@ inline void CharMatrix<Allocator>::setCharacterMatrix( const std::array<uint32_t
 	}
 }
 
-template <class Allocator>
-[[ nodiscard ]] bool
-CharMatrix<Allocator>::validateEnteredMatrixAttributes( const std::string_view str_enteredMatrixAttributes,
-														std::tuple<uint32_t, uint32_t, char>&
-														tuple_enteredMatrixAttributes_OUT ) noexcept
-{
-	static constexpr size_t required_tokens_count { matrix_attributes_count };
-	static constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
-	static constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
-
-	std::array< std::string_view, required_tokens_count > foundTokens;
-
-	const size_t foundTokensCount { util::tokenize_fast( str_enteredMatrixAttributes,
-														 foundTokens, required_tokens_count ) };
-
-	std::array<uint32_t, required_tokens_count> int_enteredMatrix_YX { };
-
-	const bool isValid
-	{
-		foundTokensCount == required_tokens_count
-																								&&
-		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX,
-															 specificTokenIndexFor_Y_AxisLen,
-															 { min_allowed_y_axis_len,
-															   max_allowed_y_axis_len } )
-																								&&
-		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredMatrix_YX,
-															 specificTokenIndexFor_X_AxisLen,
-															 { min_allowed_x_axis_len,
-															   max_allowed_x_axis_len } )
-																								&&
-		foundTokens[ 2 ].size( ) == 1
-																								&&
-		!chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) )
-	};
-
-	if ( isValid )
-	{
-		std::get<0>( tuple_enteredMatrixAttributes_OUT ) = int_enteredMatrix_YX[ 0 ];
-		std::get<1>( tuple_enteredMatrixAttributes_OUT ) = int_enteredMatrix_YX[ 1 ];
-		std::get<2>( tuple_enteredMatrixAttributes_OUT ) = foundTokens[ 2 ][ 0 ];
-	}
-
-	return isValid;
-}
-
-template <class Allocator>
-[[ nodiscard ]] bool
-CharMatrix<Allocator>::validateEnteredCoords( const std::string_view str_enteredCoords,
-											  std::array<uint32_t, cartesian_components_count>&
-											  int_enteredCoords_OUT ) const noexcept
-{
-	static constexpr size_t required_tokens_count { cartesian_components_count };
-	static constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
-	static constexpr std::array<size_t, 2> specificTokensIndicesFor_X { 0, 2 };
-
-	const uint32_t max_allowed_y { getY_AxisLen( ) - 1 };
-	const uint32_t max_allowed_x { getX_AxisLen( ) - 2 };
-	static constexpr uint32_t min_allowed_y { 0 };
-	static constexpr uint32_t min_allowed_x { 0 };
-
-	std::array< std::string_view, required_tokens_count > foundTokens;
-
-	const size_t foundTokensCount { util::tokenize_fast( str_enteredCoords, foundTokens,
-														 required_tokens_count ) };
-
-	const bool isValid
-	{
-		foundTokensCount == required_tokens_count
-																									&&
-		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT,
-															 specificTokensIndicesFor_Y,
-															 { min_allowed_y, max_allowed_y } )
-																									&&
-		util::convert_specific_tokens_to_integers<uint32_t>( foundTokens, int_enteredCoords_OUT,
-															 specificTokensIndicesFor_X,
-															 { min_allowed_x, max_allowed_x } )
-	};
-
-	return isValid;
-}
-
-template <class Allocator>
-[[ nodiscard ]] inline std::optional< typename CharMatrix<Allocator>::AllowedChars >
-CharMatrix<Allocator>::processCoordsToObtainCharType( const std::array<uint32_t, cartesian_components_count>&
-													  coordsOfChar ) noexcept
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] std::optional< typename CharMatrix<unique_ID, sizeT, charT, Allocator>::AllowedChars > inline
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+processCoordsToObtainCharType( const std::array<sizeT, cartesian_components_count>& coordsOfChar ) noexcept
 {
 	const auto& [ x1, y1, x2, y2 ] { coordsOfChar };
 
-	const bool isDifferenceOfX_AxisLensEqualTo_1 { std::abs( static_cast<int64_t>( x1 ) -
-															 static_cast<int64_t>( x2 ) ) == 1 };
-
-	const bool isDifferenceOfY_AxisLensEqualTo_1 { std::abs( static_cast<int64_t>( y1 ) -
-															 static_cast<int64_t>( y2 ) ) == 1 };
+	const bool isDifferenceOfX_AxisLensEqualTo_1 { util::isDifferenceEqualTo_1( x1, x2 ) };
+	const bool isDifferenceOfY_AxisLensEqualTo_1 { util::isDifferenceEqualTo_1( y1, y2 ) };
 
 	if ( isDifferenceOfX_AxisLensEqualTo_1 &&
 		 ( y1 == y2 ) )
@@ -445,90 +356,203 @@ CharMatrix<Allocator>::processCoordsToObtainCharType( const std::array<uint32_t,
 	}
 }
 
-template <class Allocator>
-size_t CharMatrix<Allocator>::getNumOfInputLines( ) const
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] bool
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+validateEnteredMatrixAttributes( const std::string_view str_enteredMatrixAttributes,
+								 std::tuple<sizeT, sizeT, charT>&
+								 tuple_enteredMatrixAttributes_OUT ) noexcept
+{
+	static constexpr size_t required_tokens_count { matrix_attributes_count };
+	static constexpr std::array<size_t, 1> specificTokenIndexFor_Y_AxisLen { 0 };
+	static constexpr std::array<size_t, 1> specificTokenIndexFor_X_AxisLen { 1 };
+
+	std::array< std::string_view, required_tokens_count > foundTokens;
+
+	const size_t foundTokensCount { util::tokenize_fast( str_enteredMatrixAttributes,
+														 foundTokens, required_tokens_count ) };
+
+	std::array<sizeT, required_tokens_count> int_enteredMatrix_YX { };
+
+	const bool isValid
+	{
+		foundTokensCount == required_tokens_count
+																								&&
+		util::convert_specific_tokens_to_integers<sizeT>( foundTokens, int_enteredMatrix_YX,
+															  specificTokenIndexFor_Y_AxisLen,
+															  { min_allowed_y_axis_len,
+																max_allowed_y_axis_len } )
+																								&&
+		util::convert_specific_tokens_to_integers<sizeT>( foundTokens, int_enteredMatrix_YX,
+															  specificTokenIndexFor_X_AxisLen,
+															  { min_allowed_x_axis_len,
+																max_allowed_x_axis_len } )
+																								&&
+		foundTokens[ 2 ].size( ) == 1
+																								&&
+		!chars_for_drawing.contains( static_cast<AllowedChars>( foundTokens[ 2 ][ 0 ] ) )
+	};
+
+	if ( isValid )
+	{
+		std::get<0>( tuple_enteredMatrixAttributes_OUT ) = int_enteredMatrix_YX[ 0 ];
+		std::get<1>( tuple_enteredMatrixAttributes_OUT ) = int_enteredMatrix_YX[ 1 ];
+		std::get<2>( tuple_enteredMatrixAttributes_OUT ) = foundTokens[ 2 ][ 0 ];
+	}
+
+	return isValid;
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] bool
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+validateEnteredNumOfInputLines( const std::string_view str_enteredNumOfInputLines,
+								std::array<size_t, 1>& int_enteredNumOfInputLines_OUT ) const noexcept
 {
 	const size_t max_allowed_num_of_input_lines { ( getY_AxisLen( ) * ( getX_AxisLen( ) - 1 ) ) / 2 };
 	const size_t min_allowed_num_of_input_lines { min_possible_num_of_input_lines };
 
-	static constexpr streamsize stream_size { default_buffer_size };
 	static constexpr size_t required_tokens_count { 1 };
 
-	std::array<char, stream_size> str_numOfInputLines { };
-	std::array<size_t, required_tokens_count> int_numOfInputLines { };
 	std::array< std::string_view, required_tokens_count > foundTokens;
+
+	const size_t foundTokensCount { util::tokenize_fast( str_enteredNumOfInputLines,
+														 foundTokens, required_tokens_count ) };
+
+	const bool isValid
+	{
+		foundTokensCount == required_tokens_count
+																						&&
+		util::convert_tokens_to_integers<size_t>( foundTokens,
+												  int_enteredNumOfInputLines_OUT,
+												  { min_allowed_num_of_input_lines,
+													max_allowed_num_of_input_lines } )
+	};
+
+	return isValid;
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] bool
+CharMatrix<unique_ID, sizeT, charT, Allocator>::
+validateEnteredCoords( const std::string_view str_enteredCoords,
+					   std::array<sizeT, cartesian_components_count>&
+					   int_enteredCoords_OUT ) const noexcept
+{
+	static constexpr size_t required_tokens_count { cartesian_components_count };
+	static constexpr std::array<size_t, 2> specificTokensIndicesFor_Y { 1, 3 };
+	static constexpr std::array<size_t, 2> specificTokensIndicesFor_X { 0, 2 };
+
+	const sizeT max_allowed_y { getY_AxisLen( ) - 1 };
+	const sizeT max_allowed_x { getX_AxisLen( ) - 2 };
+	static constexpr sizeT min_allowed_y { 0 };
+	static constexpr sizeT min_allowed_x { 0 };
+
+	std::array< std::string_view, required_tokens_count > foundTokens;
+
+	const size_t foundTokensCount { util::tokenize_fast( str_enteredCoords, foundTokens,
+														 required_tokens_count ) };
+
+	const bool isValid
+	{
+		foundTokensCount == required_tokens_count
+																									&&
+		util::convert_specific_tokens_to_integers<sizeT>( foundTokens, int_enteredCoords_OUT,
+															  specificTokensIndicesFor_Y,
+															  { min_allowed_y, max_allowed_y } )
+																									&&
+		util::convert_specific_tokens_to_integers<sizeT>( foundTokens, int_enteredCoords_OUT,
+															  specificTokensIndicesFor_X,
+															  { min_allowed_x, max_allowed_x } )
+	};
+
+	return isValid;
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] auto CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getMatrixAttributes( )
+{
+	static constexpr streamsize stream_size { default_buffer_size };
+
+	std::array<char, stream_size> str_enteredMatrixAttributes { };
+	std::tuple<sizeT, sizeT, charT> tuple_enteredMatrixAttributes { };
 
 	bool isValid;
 
 	do
 	{
-		const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_numOfInputLines ) };
-
-		const size_t foundTokensCount { util::tokenize_fast( { str_numOfInputLines.data( ), lengthOfInputStr },
-															 foundTokens, required_tokens_count ) };
-
-		isValid = foundTokensCount == required_tokens_count &&
-				  util::convert_tokens_to_integers<size_t>( foundTokens, int_numOfInputLines,
-															{ min_allowed_num_of_input_lines,
-															  max_allowed_num_of_input_lines } );
-
-	} while ( !isValid );
-
-	return int_numOfInputLines[0];
-}
-
-template <class Allocator>
-auto CharMatrix<Allocator>::getMatrixAttributes( )
-{
-	static constexpr streamsize stream_size { default_buffer_size };
-
-	std::array<char, stream_size> str_enteredMatrixAttributes { };
-	std::tuple<uint32_t, uint32_t, char> tuple_enteredMatrixAttributes { };
-
-	bool isAcceptable;
-
-	do
-	{
 		const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredMatrixAttributes ) };
 
-		isAcceptable = validateEnteredMatrixAttributes( { str_enteredMatrixAttributes.data( ), lengthOfInputStr },
-														tuple_enteredMatrixAttributes );
+		isValid = validateEnteredMatrixAttributes( { str_enteredMatrixAttributes.data( ), lengthOfInputStr },
+												   tuple_enteredMatrixAttributes );
 
-	} while ( !isAcceptable );
+	} while ( !isValid );
 
 	return tuple_enteredMatrixAttributes;
 }
 
-template <class Allocator>
-void CharMatrix<Allocator>::getCoords( )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+[[ nodiscard ]] size_t CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getNumOfInputLines( ) const
 {
-	const size_t numOfInputLines { getNumOfInputLines( ) };
+	static constexpr streamsize stream_size { default_buffer_size };
+	static constexpr size_t required_tokens_count { 1 };
 
+	std::array<char, stream_size> str_enteredNumOfInputLines { };
+	std::array<size_t, required_tokens_count> int_enteredNumOfInputLines { };
+
+	bool isValid;
+
+	do
+	{
+		const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredNumOfInputLines ) };
+
+		isValid = validateEnteredNumOfInputLines( { str_enteredNumOfInputLines.data( ), lengthOfInputStr },
+												  int_enteredNumOfInputLines );
+
+	} while ( !isValid );
+
+	return int_enteredNumOfInputLines[ 0 ];
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+getCoords( const size_t numOfInputLines )
+{
 	static constexpr streamsize stream_size { default_buffer_size };
 	static constexpr size_t required_tokens_count { cartesian_components_count };
 
 	std::array<char, stream_size> str_enteredCoords { };
-	std::array<uint32_t, required_tokens_count> int_enteredCoords { };
+	std::array<sizeT, required_tokens_count> int_enteredCoords { };
 
 	for ( size_t counter { }; counter < numOfInputLines; ++counter )
 	{
-		bool isAcceptable;
+		bool isValid;
 
 		do
 		{
 			const size_t lengthOfInputStr { util::get_chars_from_input( std::cin, str_enteredCoords ) };
 
-			isAcceptable = validateEnteredCoords( { str_enteredCoords.data( ), lengthOfInputStr },
-												  int_enteredCoords );
+			isValid = validateEnteredCoords( { str_enteredCoords.data( ), lengthOfInputStr },
+											 int_enteredCoords );
 
-		} while ( !isAcceptable );
+		} while ( !isValid );
 
 		setCharacterMatrix( int_enteredCoords );
 	}
 }
 
-template <class Allocator>
-inline void CharMatrix<Allocator>::draw( std::ostream& output_stream ) const
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+draw( std::basic_ostream<charT>& output_stream ) const
 {
 #if PN_DEBUG == 1
 	{
@@ -546,38 +570,70 @@ inline void CharMatrix<Allocator>::draw( std::ostream& output_stream ) const
 	WAIT;
 }
 
-template <class Allocator>
-std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix<Allocator>& char_matrix )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+print( ) const
+{
+	using CharMatrix_t = std::remove_pointer_t<decltype( this )>;
+
+	if constexpr ( std::is_same_v< typename CharMatrix_t::value_type,
+								   decltype( std::cout )::char_type > )
+	{
+		this->draw( std::cout );
+	}
+	else if constexpr ( std::is_same_v< typename CharMatrix_t::value_type,
+										decltype( std::wcout )::char_type > )
+	{
+		this->draw( std::wcout );
+	}
+	else
+	{
+		static_assert( std::is_same_v< typename CharMatrix_t::value_type,
+									   decltype( std::cout )::char_type > ||
+					   std::is_same_v< typename CharMatrix_t::value_type,
+									   decltype( std::wcout )::char_type >,
+					   "character type not supported by the current print function" );
+	}
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+std::ofstream& operator<<( std::ofstream& ofs,
+						   const CharMatrix<unique_ID, sizeT, charT, Allocator>& char_matrix )
 {
 	ofs.write( reinterpret_cast<const char*>( &char_matrix.getY_AxisLen( ) ),
-			   sizeof( char_matrix.getY_AxisLen( ) ) );
+			   static_cast<streamsize>( sizeof( char_matrix.getY_AxisLen( ) ) ) );
 	ofs.write( reinterpret_cast<const char*>( &char_matrix.getX_AxisLen( ) ),
-			   sizeof( char_matrix.getX_AxisLen( ) ) );
+			   static_cast<streamsize>( sizeof( char_matrix.getX_AxisLen( ) ) ) );
 	ofs.write( reinterpret_cast<const char*>( &char_matrix.getFillCharacter( ) ),
-			   sizeof( char_matrix.getFillCharacter( ) ) );
+			   static_cast<streamsize>( sizeof( char_matrix.getFillCharacter( ) ) ) );
 	ofs.write( reinterpret_cast<const char*>( char_matrix.getCharacterMatrix( ).data( ) ),
-					 static_cast<streamsize>( char_matrix.getCharacterMatrix( ).size( ) ) );
+					 static_cast<streamsize>( char_matrix.getCharacterMatrix( ).size( ) * sizeof( charT ) ) );
 
 	return ofs;
 }
 
-template <class Allocator>
-std::ifstream& operator>>( std::ifstream& ifs, CharMatrix<Allocator>& char_matrix )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+std::ifstream& operator>>( std::ifstream& ifs,
+						   CharMatrix<unique_ID, sizeT, charT, Allocator>& char_matrix )
 {
-	static CharMatrix<Allocator> temp_char_matrix { CharMatrix<Allocator>::default_y_axis_len,
-													CharMatrix<Allocator>::default_x_axis_len,
-													CharMatrix<Allocator>::default_fill_character };
+	static CharMatrix<unique_ID, sizeT, charT, Allocator> temp_char_matrix
+	{ CharMatrix<unique_ID, sizeT, charT, Allocator>::default_y_axis_len,
+	  CharMatrix<unique_ID, sizeT, charT, Allocator>::default_x_axis_len,
+	  CharMatrix<unique_ID, sizeT, charT, Allocator>::default_fill_character };
 
 	ifs.read( reinterpret_cast<char*>( &temp_char_matrix.m_Y_AxisLen ),
-			  sizeof( temp_char_matrix.m_Y_AxisLen ) );
+			  static_cast<streamsize>( sizeof( temp_char_matrix.m_Y_AxisLen ) ) );
 	ifs.read( reinterpret_cast<char*>( &temp_char_matrix.m_X_AxisLen ),
-			  sizeof( temp_char_matrix.m_X_AxisLen ) );
+			  static_cast<streamsize>( sizeof( temp_char_matrix.m_X_AxisLen ) ) );
 	ifs.read( reinterpret_cast<char*>( &temp_char_matrix.m_fillCharacter ),
-			  sizeof( temp_char_matrix.m_fillCharacter ) );
+			  static_cast<streamsize>( sizeof( temp_char_matrix.m_fillCharacter ) ) );
 	temp_char_matrix.m_characterMatrix.resize( temp_char_matrix.getY_AxisLen( ) *
 											   temp_char_matrix.getX_AxisLen( ) );
 	ifs.read( reinterpret_cast<char*>( temp_char_matrix.m_characterMatrix.data( ) ),
-			  static_cast<streamsize>( temp_char_matrix.m_characterMatrix.size( ) ) );
+			  static_cast<streamsize>( temp_char_matrix.m_characterMatrix.size( ) * sizeof( charT ) ) );
 
 	char_matrix.m_Y_AxisLen = temp_char_matrix.getY_AxisLen( );
 	char_matrix.setY_AxisLen( temp_char_matrix.getY_AxisLen( ) );
@@ -593,7 +649,211 @@ std::ifstream& operator>>( std::ifstream& ifs, CharMatrix<Allocator>& char_matri
 	return ifs;
 }
 
-inline void initialize( )
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+template < sizeT Y_AxisLen_v, sizeT X_AxisLen_v,
+		   charT fillCharacter_v, bool isFullInputModeEnabled >
+requires ( std::is_same_v< Allocator, std::pmr::polymorphic_allocator<charT> > )
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+runScriptForStaticAllocated( )
+{
+#if FULL_INPUT_MODE_ALLOWED == 1
+constexpr bool isFullInputModeAllowed { true };
+#else
+constexpr bool isFullInputModeAllowed { false };
+#endif
+
+static_assert( !( isFullInputModeEnabled ),
+			   "‘Allocation_Strategy::static_allocated’ cannot be selected "
+			   "when a dynamically allocated buffer is required "
+			   "(isFullInputModeEnabled == true)" );
+
+if constexpr ( isFullInputModeAllowed && isFullInputModeEnabled )
+{
+}
+else
+{
+	using CharMatrix_t = CharMatrix<unique_ID, sizeT, charT, Allocator>;
+
+	static constexpr CharMatrix_t::size_type Y_AxisLen { Y_AxisLen_v };
+	static constexpr CharMatrix_t::size_type X_AxisLen { X_AxisLen_v };
+	static constexpr CharMatrix_t::value_type fillCharacter { fillCharacter_v };
+
+	static_assert( Y_AxisLen >= CharMatrix_t::min_allowed_y_axis_len &&
+				   Y_AxisLen <= CharMatrix_t::max_allowed_y_axis_len,
+				   "Y_AxisLen can not be greater than max_allowed_y_axis_len or "
+				   "less than min_allowed_y_axis_len" );
+
+	static_assert( X_AxisLen >= CharMatrix_t::min_allowed_x_axis_len &&
+				   X_AxisLen <= CharMatrix_t::max_allowed_x_axis_len,
+				   "X_AxisLen can not be greater than max_allowed_x_axis_len or "
+				   "less than min_allowed_x_axis_len" );
+
+	constexpr size_t buffer_size { Y_AxisLen * X_AxisLen + 500 };
+	static auto buffer { std::array< std::byte, buffer_size >{ } };
+	const auto buffer_address { buffer.data( ) };
+	static std::pmr::monotonic_buffer_resource rsrc { buffer_address, buffer_size };
+
+	static auto matrix { CharMatrix_t( Y_AxisLen, X_AxisLen , fillCharacter, &rsrc ) };
+
+	matrix.getCoords( matrix.getNumOfInputLines( ) );
+	matrix.print( );
+}
+
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+template < sizeT Y_AxisLen_v, sizeT X_AxisLen_v,
+		   charT fillCharacter_v, bool isFullInputModeEnabled >
+requires ( std::is_same_v< Allocator, std::pmr::polymorphic_allocator<charT> > )
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+runScriptForStackAllocated( )
+{
+#if FULL_INPUT_MODE_ALLOWED == 1
+constexpr bool isFullInputModeAllowed { true };
+#else
+constexpr bool isFullInputModeAllowed { false };
+#endif
+
+static_assert( !( isFullInputModeEnabled ),
+			   "‘Allocation_Strategy::stack_allocated’ cannot be selected "
+			   "when a dynamically allocated buffer is required "
+			   "(isFullInputModeEnabled == true)" );
+
+if constexpr ( isFullInputModeAllowed && isFullInputModeEnabled )
+{
+}
+else
+{
+	using CharMatrix_t = CharMatrix<unique_ID, sizeT, charT, Allocator>;
+
+	static constexpr CharMatrix_t::size_type Y_AxisLen { Y_AxisLen_v };
+	static constexpr CharMatrix_t::size_type X_AxisLen { X_AxisLen_v };
+	static constexpr CharMatrix_t::value_type fillCharacter { fillCharacter_v };
+
+	static_assert( Y_AxisLen >= CharMatrix_t::min_allowed_y_axis_len &&
+				   Y_AxisLen <= CharMatrix_t::max_allowed_y_axis_len,
+				   "Y_AxisLen can not be greater than max_allowed_y_axis_len or "
+				   "less than min_allowed_y_axis_len" );
+
+	static_assert( X_AxisLen >= CharMatrix_t::min_allowed_x_axis_len &&
+				   X_AxisLen <= CharMatrix_t::max_allowed_x_axis_len,
+				   "X_AxisLen can not be greater than max_allowed_x_axis_len or "
+				   "less than min_allowed_x_axis_len" );
+
+	constexpr size_t buffer_size { Y_AxisLen * X_AxisLen + 500 };
+	auto buffer { std::array< std::byte, buffer_size >{ } };
+	const auto buffer_address { buffer.data( ) };
+	std::pmr::monotonic_buffer_resource rsrc { buffer_address, buffer_size };
+
+	auto matrix { CharMatrix_t( Y_AxisLen, X_AxisLen , fillCharacter, &rsrc ) };
+
+	matrix.getCoords( matrix.getNumOfInputLines( ) );
+	matrix.print( );
+}
+
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+template < sizeT Y_AxisLen_v, sizeT X_AxisLen_v,
+		   charT fillCharacter_v, bool isFullInputModeEnabled >
+requires ( std::is_same_v< Allocator, std::allocator<charT> > )
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+runScriptForStackHeapAllocated( )
+{
+#if FULL_INPUT_MODE_ALLOWED == 1
+constexpr bool isFullInputModeAllowed { true };
+#else
+constexpr bool isFullInputModeAllowed { false };
+#endif
+
+	using CharMatrix_t = CharMatrix<unique_ID, sizeT, charT, Allocator>;
+
+if constexpr ( isFullInputModeAllowed && isFullInputModeEnabled )
+{
+	const auto [ Y_AxisLen, X_AxisLen, fillCharacter ] { CharMatrix_t::getMatrixAttributes( ) };
+
+	auto matrix { CharMatrix_t( Y_AxisLen, X_AxisLen , fillCharacter ) };
+
+	matrix.getCoords( matrix.getNumOfInputLines( ) );
+	matrix.print( );
+}
+else
+{
+	static constexpr CharMatrix_t::size_type Y_AxisLen { Y_AxisLen_v };
+	static constexpr CharMatrix_t::size_type X_AxisLen { X_AxisLen_v };
+	static constexpr CharMatrix_t::value_type fillCharacter { fillCharacter_v };
+
+	static_assert( Y_AxisLen >= CharMatrix_t::min_allowed_y_axis_len &&
+				   Y_AxisLen <= CharMatrix_t::max_allowed_y_axis_len,
+				   "Y_AxisLen can not be greater than max_allowed_y_axis_len or "
+				   "less than min_allowed_y_axis_len" );
+
+	static_assert( X_AxisLen >= CharMatrix_t::min_allowed_x_axis_len &&
+				   X_AxisLen <= CharMatrix_t::max_allowed_x_axis_len,
+				   "X_AxisLen can not be greater than max_allowed_x_axis_len or "
+				   "less than min_allowed_x_axis_len" );
+
+	auto matrix { CharMatrix_t( Y_AxisLen, X_AxisLen , fillCharacter ) };
+
+	matrix.getCoords( matrix.getNumOfInputLines( ) );
+	matrix.print( );
+}
+
+}
+
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   util::Character charT, class Allocator >
+template < sizeT Y_AxisLen_v, sizeT X_AxisLen_v,
+		   charT fillCharacter_v, bool isFullInputModeEnabled >
+requires ( std::is_same_v< Allocator, std::allocator<charT> > )
+void CharMatrix<unique_ID, sizeT, charT, Allocator>::
+runScriptForHeapAllocated( )
+{
+#if FULL_INPUT_MODE_ALLOWED == 1
+constexpr bool isFullInputModeAllowed { true };
+#else
+constexpr bool isFullInputModeAllowed { false };
+#endif
+
+	using CharMatrix_t = CharMatrix<unique_ID, sizeT, charT, Allocator>;
+
+if constexpr ( isFullInputModeAllowed && isFullInputModeEnabled )
+{
+	const auto [ Y_AxisLen, X_AxisLen, fillCharacter ] { CharMatrix_t::getMatrixAttributes( ) };
+
+	auto matrix { std::make_unique< CharMatrix_t >( Y_AxisLen, X_AxisLen , fillCharacter ) };
+
+	matrix->getCoords( matrix->getNumOfInputLines( ) );
+	matrix->print( );
+}
+else
+{
+	static constexpr CharMatrix_t::size_type Y_AxisLen { Y_AxisLen_v };
+	static constexpr CharMatrix_t::size_type X_AxisLen { X_AxisLen_v };
+	static constexpr CharMatrix_t::value_type fillCharacter { fillCharacter_v };
+
+	static_assert( Y_AxisLen >= CharMatrix_t::min_allowed_y_axis_len &&
+				   Y_AxisLen <= CharMatrix_t::max_allowed_y_axis_len,
+				   "Y_AxisLen can not be greater than max_allowed_y_axis_len or "
+				   "less than min_allowed_y_axis_len" );
+
+	static_assert( X_AxisLen >= CharMatrix_t::min_allowed_x_axis_len &&
+				   X_AxisLen <= CharMatrix_t::max_allowed_x_axis_len,
+				   "X_AxisLen can not be greater than max_allowed_x_axis_len or "
+				   "less than min_allowed_x_axis_len" );
+
+	auto matrix { std::make_unique< CharMatrix_t >( Y_AxisLen, X_AxisLen , fillCharacter ) };
+
+	matrix->getCoords( matrix->getNumOfInputLines( ) );
+	matrix->print( );
+}
+
+}
+
+void inline initialize( )
 {
 	std::ios_base::sync_with_stdio( false );
 }
@@ -602,24 +862,12 @@ void runScript( )
 {
 	// initialize( );
 
-#if FULL_INPUT_MODE == 1
-	const auto [ Y_AxisLen, X_AxisLen, fillCharacter ] { getMatrixAttributes( ) };
-#else
-	[[ maybe_unused ]] static constexpr uint32_t Y_AxisLen { 36 };
-	[[ maybe_unused ]] static constexpr uint32_t X_AxisLen { 168 };
-	[[ maybe_unused ]] static constexpr char fillCharacter { ' ' };
-
-	static_assert( Y_AxisLen >= min_allowed_y_axis_len && Y_AxisLen <= max_allowed_y_axis_len,
-				   "Y_AxisLen can not be greater than max_allowed_y_axis_len or "
-				   "less than min_allowed_y_axis_len" );
-
-	static_assert( X_AxisLen >= min_allowed_x_axis_len && X_AxisLen <= max_allowed_x_axis_len,
-				   "X_AxisLen can not be greater than max_allowed_x_axis_len or "
-				   "less than min_allowed_x_axis_len" );
-#endif
+	using CharMatrix_1000 = CharMatrix<1000, std::uint32_t, char>;
+	using CharMatrix_1001 = pmr::CharMatrix<1001, std::uint32_t, char>;
 
 enum class Allocation_Strategy
 {
+	static_allocated,
 	stack_allocated,
 	stack_heap_allocated,
 	heap_allocated,
@@ -627,34 +875,46 @@ enum class Allocation_Strategy
 
 constexpr Allocation_Strategy alloc_strgy { Allocation_Strategy::stack_allocated };
 
-if constexpr ( alloc_strgy == Allocation_Strategy::heap_allocated )
+if constexpr ( alloc_strgy == Allocation_Strategy::static_allocated )
 {
-	const auto matrix { std::make_unique< CharMatrix<> >( Y_AxisLen, X_AxisLen , fillCharacter ) };
+	constexpr CharMatrix_1001::size_type Y_AxisLen { 36 };
+	constexpr CharMatrix_1001::size_type X_AxisLen { 168 };
+	constexpr CharMatrix_1001::value_type fillCharacter { ' ' };
+	constexpr bool isFullInputModeEnabled { false };
 
-	matrix->getCoords( );
-	matrix->draw( std::cout );
-}
-else if constexpr ( alloc_strgy == Allocation_Strategy::stack_heap_allocated )
-{
-	auto matrix { CharMatrix<>( Y_AxisLen, X_AxisLen , fillCharacter ) };
-
-	matrix.getCoords( );
-	matrix.draw( std::cout );
+	CharMatrix_1001::runScriptForStaticAllocated<Y_AxisLen, X_AxisLen, fillCharacter, isFullInputModeEnabled>( );
 }
 else if constexpr ( alloc_strgy == Allocation_Strategy::stack_allocated )
 {
-	constexpr size_t required_buffer_size { Y_AxisLen * X_AxisLen + 500 };
-	std::array< std::byte, required_buffer_size > buffer;
-	std::pmr::monotonic_buffer_resource rsrc { buffer.data( ), buffer.size( ) };
+	constexpr CharMatrix_1001::size_type Y_AxisLen { 36 };
+	constexpr CharMatrix_1001::size_type X_AxisLen { 168 };
+	constexpr CharMatrix_1001::value_type fillCharacter { ' ' };
+	constexpr bool isFullInputModeEnabled { false };
 
-	auto matrix { pmr::CharMatrix( Y_AxisLen, X_AxisLen , fillCharacter, &rsrc ) };
+	CharMatrix_1001::runScriptForStackAllocated<Y_AxisLen, X_AxisLen, fillCharacter, isFullInputModeEnabled>( );
+}
+else if constexpr ( alloc_strgy == Allocation_Strategy::stack_heap_allocated )
+{
+	constexpr CharMatrix_1000::size_type Y_AxisLen { 36 };
+	constexpr CharMatrix_1000::size_type X_AxisLen { 168 };
+	constexpr CharMatrix_1000::value_type fillCharacter { ' ' };
+	constexpr bool isFullInputModeEnabled { false };
 
-	matrix.getCoords( );
-	matrix.draw( std::cout );
+	CharMatrix_1000::runScriptForStackHeapAllocated<Y_AxisLen, X_AxisLen, fillCharacter, isFullInputModeEnabled>( );
+}
+else if constexpr ( alloc_strgy == Allocation_Strategy::heap_allocated )
+{
+	constexpr CharMatrix_1000::size_type Y_AxisLen { 36 };
+	constexpr CharMatrix_1000::size_type X_AxisLen { 168 };
+	constexpr CharMatrix_1000::value_type fillCharacter { ' ' };
+	constexpr bool isFullInputModeEnabled { false };
+
+	CharMatrix_1000::runScriptForHeapAllocated<Y_AxisLen, X_AxisLen, fillCharacter, isFullInputModeEnabled>( );
 }
 else
 {
-	static_assert( alloc_strgy == Allocation_Strategy::stack_allocated ||
+	static_assert( alloc_strgy == Allocation_Strategy::static_allocated ||
+				   alloc_strgy == Allocation_Strategy::stack_allocated ||
 				   alloc_strgy == Allocation_Strategy::stack_heap_allocated ||
 				   alloc_strgy == Allocation_Strategy::heap_allocated,
 				   "Unknown allocation strategy" );
@@ -662,26 +922,21 @@ else
 
 }
 
-template class CharMatrix<>;
-template std::ofstream& operator<<( std::ofstream& ofs, const CharMatrix< std::allocator<char> >& char_matrix );
-template std::ifstream& operator>>( std::ifstream& ifs, CharMatrix< std::allocator<char> >& char_matrix );
+template class CharMatrix<1001, std::uint32_t, char, std::pmr::polymorphic_allocator<char>>;
 
 }
 
 
-namespace std
-{
-
-template <class Allocator>
-hash< peyknowruzi::CharMatrix<Allocator> >::result_type
-hash< peyknowruzi::CharMatrix<Allocator> >::operator( )( const argument_type& char_matrix ) const
+template < std::size_t unique_ID, std::unsigned_integral sizeT,
+		   peyknowruzi::util::Character charT, class Allocator >
+std::hash< peyknowruzi::CharMatrix<unique_ID, sizeT, charT, Allocator> >::result_type
+std::hash< peyknowruzi::CharMatrix<unique_ID, sizeT, charT, Allocator> >::
+operator( )( const argument_type& char_matrix ) const
 {
 	result_type hashValue { 17 };
-	hashValue = 31 * hashValue + std::hash<uint32_t>{ }( char_matrix.getY_AxisLen( ) );
-	hashValue = 31 * hashValue + std::hash<uint32_t>{ }( char_matrix.getX_AxisLen( ) );
-	hashValue = 31 * hashValue + std::hash<char>{ }( char_matrix.getFillCharacter( ) );
+	hashValue = 31 * hashValue + std::hash<sizeT>{ }( char_matrix.getY_AxisLen( ) );
+	hashValue = 31 * hashValue + std::hash<sizeT>{ }( char_matrix.getX_AxisLen( ) );
+	hashValue = 31 * hashValue + std::hash<charT>{ }( char_matrix.getFillCharacter( ) );
 
 	return hashValue;
-}
-
 }

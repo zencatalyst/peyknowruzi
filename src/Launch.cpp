@@ -26,19 +26,22 @@
 
 
 #include "Scripts.hpp"
+#include "Util.hpp"
 
 
 namespace pynz = peyknowruzi;
 
 
-inline static void launch( [[ maybe_unused ]] int argc, [[ maybe_unused ]] char* argv[] )
+void inline static launch( [[ maybe_unused ]] int argc, [[ maybe_unused ]] char* argv[] )
 {
 	pynz::runScripts( );
 }
 
 int main( int argc, char* argv[] )
 {
-	launch( argc, argv );
+	// launch( argc, argv );
+    const auto time { pynz::util::FunctionTimer<>::duration( launch, argc, argv ) };
+    std::clog << "\nTime: " << time << '\n';
 
 	return 0;
 }

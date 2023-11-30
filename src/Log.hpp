@@ -41,7 +41,7 @@
 namespace peyknowruzi
 {
 
-inline void log( [[ maybe_unused ]] const std::string& msg )
+void inline log( [[ maybe_unused ]] const std::string& msg )
 {
 #if PN_DEBUG == 1
 	std::clog << msg << std::endl;

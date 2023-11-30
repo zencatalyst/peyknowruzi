@@ -27,7 +27,6 @@
 
 #include <iostream>
 #include <ios>
-#include <sstream>
 #include <fstream>
 
 #include <string>
@@ -51,7 +50,9 @@
 #include <stdexcept>
 
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 
+#include <compare>
 #include <limits>
 #include <chrono>

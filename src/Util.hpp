@@ -31,6 +31,15 @@
 namespace peyknowruzi::util
 {
 
+template <typename T>
+concept Character = std::same_as< std::remove_cv_t<T>, char > ||
+					std::same_as< std::remove_cv_t<T>, signed char > ||
+					std::same_as< std::remove_cv_t<T>, unsigned char > ||
+					std::same_as< std::remove_cv_t<T>, wchar_t > ||
+					std::same_as< std::remove_cv_t<T>, char8_t > ||
+					std::same_as< std::remove_cv_t<T>, char16_t > ||
+					std::same_as< std::remove_cv_t<T>, char32_t >;
+
 struct ScopedTimer
 {
 	const std::chrono::time_point< std::chrono::steady_clock > start { std::chrono::steady_clock::now( ) };
@@ -46,8 +55,8 @@ struct ScopedTimer
 			using std::string_literals::operator""s;
 
 			log( "\nTimer took "s +
-				 std::to_string( std::chrono::duration< double, std::milli >{ end - start }.count( ) ) +
-				 " ms"s );
+				 std::to_string( std::chrono::duration_cast<std::chrono::microseconds>( end - start ).count( ) ) +
+				 "µs"s );
 		}
 		catch ( const std::ios_base::failure& ) { }
 	}
@@ -71,6 +80,10 @@ struct FunctionTimer
 		return std::chrono::duration_cast<Time>( end - start );
 	}
 };
+
+template < std::unsigned_integral T >
+[[ nodiscard ]] bool constexpr
+isDifferenceEqualTo_1( const T num1, const T num2 ) noexcept;
 
 [[ nodiscard ]] std::vector< std::string_view >
 tokenize( const std::string_view inputStr,
@@ -126,8 +139,18 @@ retrieve_current_local_time( );
 #endif
 
 
+template < std::unsigned_integral T >
+[[ nodiscard ]] bool inline constexpr
+isDifferenceEqualTo_1( const T num1, const T num2 ) noexcept
+{
+	const bool isDifference_1 { ( num1 > num2 ) ? num1 - num2 == static_cast<T>( 1 ) :
+												  num2 - num1 == static_cast<T>( 1 ) };
+
+	return isDifference_1;
+}
+
 template < std::integral T >
-[[ nodiscard ]] inline std::optional<T>
+[[ nodiscard ]] std::optional<T> inline
 to_integer( std::string_view token, const std::pair<T, T> acceptableRange ) noexcept
 {
 	std::optional<T> result { };
@@ -201,7 +224,7 @@ convert_specific_tokens_to_integers( const std::span<const std::string_view> tok
 	return areTokensConvertibleToValidIntegers = true;
 }
 
-inline std::size_t
+std::size_t inline
 get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuffer_OUT )
 {
 	input_stream.putback( '\n' );
@@ -214,7 +237,7 @@ get_chars_from_input( std::istream& input_stream, const std::span<char> inputBuf
 }
 
 #if __cpp_lib_chrono >= 201907L
-[[ nodiscard ]] inline auto
+[[ nodiscard ]] auto inline
 retrieve_current_local_time( )
 {
 	using namespace std::chrono;

@@ -3,13 +3,13 @@
 # Compiler flags
 #
 CXX = g++
-CXXFLAGS = -c -DFULL_INPUT_MODE=0 -DGUI_MODE=0 -std=c++23 -Wall -Wextra \
+CXXFLAGS = -c -fpie -DFULL_INPUT_MODE_ALLOWED=1 -DGUI_MODE=0 -std=c++23 -Wall -Wextra \
 		   -Wpedantic -Wconversion -Wsign-conversion -Wshadow
 
 #
 # Linker flags
 #
-LDFLAGS = -static
+LDFLAGS = -static-pie
 
 #
 # Project files
@@ -32,8 +32,8 @@ DBGDIR = ../build/debug
 DBGTARGET = $(DBGDIR)/$(TARGET)
 DBGOBJS = $(addprefix $(DBGDIR)/, $(OBJS))
 DBGPCH_OUT = $(DBGDIR)/$(PCH_OUT)
-DBGCXXFLAGS = -DPN_DEBUG=1 -g -O0
-DBGLDFLAGS =
+DBGCXXFLAGS = -DPN_DEBUG=1 -Og -g
+DBGLDFLAGS = -Og
 
 #
 # Release build settings
@@ -42,8 +42,8 @@ RELDIR = ../build/release
 RELTARGET = $(RELDIR)/$(TARGET)
 RELOBJS = $(addprefix $(RELDIR)/, $(OBJS))
 RELPCH_OUT = $(RELDIR)/$(PCH_OUT)
-RELCXXFLAGS = -DPN_DEBUG=0 -O3 -march=native -flto
-RELLDFLAGS = -O3 -march=native -flto -s
+RELCXXFLAGS = -DPN_DEBUG=0 -O3 -march=native -mtune=native -flto
+RELLDFLAGS = -O3 -march=native -mtune=native -flto -s
 
 .PHONY: all clean debug prep release remake
 
